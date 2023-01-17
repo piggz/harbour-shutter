@@ -1,0 +1,27 @@
+# Rename this file as harbour-advanced-camera.changes to include changelog
+# entries in your RPM file.
+#
+# Add new changelog entries following the format below.
+# Add newest entries to the top of the list.
+# Separate entries from eachother with a blank line.
+#
+# Alternatively, if your changelog is automatically generated (e.g. with
+# the git-change-log command provided with Sailfish OS SDK), create a
+# harbour-advanced-camera.changes.run script to let mb2 run the required commands for you.
+
+# * date Author's Name <author's email> version-release
+# - Summary of changes
+
+* Mon Oct 11 2021 Adam Pigg <adam@piggz.co.uk> 0.9.5-1
+- Several improvements from Lukáš Karas:
+-  Dont use an unsupported focus mode
+-  Better viewfinder resolution selection
+-  Update models when the camera changes
+-  Simulate manual focus mode
+-  Gallery media information view
+-  Turn off GPS correctly
+-  Manual exposure slider
+- Added settings to turn off telelense buttons
+- Added option to turn off manual exposure
+- Added optiont to enable/disable camera selection
+- Added current camera label

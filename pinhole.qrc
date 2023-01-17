@@ -1,0 +1,154 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="qml/components/platform/ApplicationWindowPL.qml">qml/components/platform.kirigami/ApplicationWindowPL.qml</file>
+        <file alias="qml/components/platform/BusyIndicatorPL.qml">qml/components/platform.kirigami/BusyIndicatorPL.qml</file>
+        <file alias="qml/components/platform/BusyIndicatorSmallPL.qml">qml/components/platform.kirigami/BusyIndicatorSmallPL.qml</file>
+        <file alias="qml/components/platform/ButtonPL.qml">qml/components/platform.kirigami/ButtonPL.qml</file>
+        <file alias="qml/components/platform/ClipboardPL.qml">qml/components/platform.kirigami/ClipboardPL.qml</file>
+        <file alias="qml/components/platform/ComboBoxPL.qml">qml/components/platform.kirigami/ComboBoxPL.qml</file>
+        <file alias="qml/components/platform/ContextMenuItemPL.qml">qml/components/platform.kirigami/ContextMenuItemPL.qml</file>
+        <file alias="qml/components/platform/ContextMenuPL.qml">qml/components/platform.kirigami/ContextMenuPL.qml</file>
+        <file alias="qml/components/platform/DatePickerDialogPL.qml">qml/components/platform.kirigami/DatePickerDialogPL.qml</file>
+        <file alias="qml/components/platform/DialogAutoPL.qml">qml/components/platform.kirigami/DialogAutoPL.qml</file>
+        <file alias="qml/components/platform/DialogListPL.qml">qml/components/platform.kirigami/DialogListPL.qml</file>
+        <file alias="qml/components/platform/DialogPL.qml">qml/components/platform.kirigami/DialogPL.qml</file>
+        <file alias="qml/components/platform/DockedPanelPL.qml">qml/components/platform.kirigami/DockedPanelPL.qml</file>
+        <file alias="qml/components/platform/ExpandingSectionGroupPL.qml">qml/components/platform.kirigami/ExpandingSectionGroupPL.qml</file>
+        <file alias="qml/components/platform/ExpandingSectionPL.qml">qml/components/platform.kirigami/ExpandingSectionPL.qml</file>
+        <file alias="qml/components/platform/FileSelectorPL.qml">qml/components/platform.kirigami/FileSelectorPL.qml</file>
+        <file alias="qml/components/platform/FormLayoutPL.qml">qml/components/platform.kirigami/FormLayoutPL.qml</file>
+        <file alias="qml/components/platform/IconButtonPL.qml">qml/components/platform.kirigami/IconButtonPL.qml</file>
+        <file alias="qml/components/platform/IconPL.qml">qml/components/platform.kirigami/IconPL.qml</file>
+        <file alias="qml/components/platform/LabelPL.qml">qml/components/platform.kirigami/LabelPL.qml</file>
+        <file alias="qml/components/platform/ListViewPL.qml">qml/components/platform.kirigami/ListViewPL.qml</file>
+        <file alias="qml/components/platform/ListItemPL.qml">qml/components/platform.kirigami/ListItemPL.qml</file>
+        <file alias="qml/components/platform/MenuDrawerItemPL.qml">qml/components/platform.kirigami/MenuDrawerItemPL.qml</file>
+        <file alias="qml/components/platform/MenuDrawerPL.qml">qml/components/platform.kirigami/MenuDrawerPL.qml</file>
+        <file alias="qml/components/platform/MenuDrawerSubmenuItemPL.qml">qml/components/platform.kirigami/MenuDrawerSubmenuItemPL.qml</file>
+        <file alias="qml/components/platform/MenuDrawerSubmenuPL.qml">qml/components/platform.kirigami/MenuDrawerSubmenuPL.qml</file>
+        <file alias="qml/components/platform/PageEmptyPL.qml">qml/components/platform.kirigami/PageEmptyPL.qml</file>
+        <file alias="qml/components/platform/PageListPL.qml">qml/components/platform.kirigami/PageListPL.qml</file>
+        <file alias="qml/components/platform/PageMenuItemPL.qml">qml/components/platform.kirigami/PageMenuItemPL.qml</file>
+        <file alias="qml/components/platform/PageMenuPL.qml">qml/components/platform.kirigami/PageMenuPL.qml</file>
+        <file alias="qml/components/platform/PagePL.qml">qml/components/platform.kirigami/PagePL.qml</file>
+        <file alias="qml/components/platform/PopupPL.qml">qml/components/platform.kirigami/PopupPL.qml</file>
+        <file alias="qml/components/platform/RemorsePopupPL.qml">qml/components/platform.kirigami/RemorsePopupPL.qml</file>
+        <file alias="qml/components/platform/SearchFieldPL.qml">qml/components/platform.kirigami/SearchFieldPL.qml</file>
+        <file alias="qml/components/platform/SectionHeaderPL.qml">qml/components/platform.kirigami/SectionHeaderPL.qml</file>
+        <file alias="qml/components/platform/SliderPL.qml">qml/components/platform.kirigami/SliderPL.qml</file>
+        <file alias="qml/components/platform/StackPL.qml">qml/components/platform.kirigami/StackPL.qml</file>
+        <file alias="qml/components/platform/StylerPL.qml">qml/components/platform.kirigami/StylerPL.qml</file>
+        <file alias="qml/components/platform/TextAreaPL.qml">qml/components/platform.kirigami/TextAreaPL.qml</file>
+        <file alias="qml/components/platform/TextFieldPL.qml">qml/components/platform.kirigami/TextFieldPL.qml</file>
+        <file alias="qml/components/platform/TextSwitchPL.qml">qml/components/platform.kirigami/TextSwitchPL.qml</file>
+        <file alias="qml/components/platform/TimePickerDialogPL.qml">qml/components/platform.kirigami/TimePickerDialogPL.qml</file>
+        <file alias="qml/components/platform/ToolItemPL.qml">qml/components/platform.kirigami/ToolItemPL.qml</file>
+        <file alias="qml/components/platform/ValueButtonPL.qml">qml/components/platform.kirigami/ValueButtonPL.qml</file>
+        <file>qml/cover/CoverPage.qml</file>
+        <file>qml/harbour-pinhole.qml</file>
+        <file>qml/components/TruncationModes.qml</file>
+        <file>qml/pages/AboutImage.qml</file>
+        <file>qml/pages/AboutVideo.qml</file>
+        <file>qml/pages/CameraUI.qml</file>
+        <file>qml/pages/GalleryUI.qml</file>
+        <file>qml/pages/GridOverlay.qml</file>
+        <file>qml/pages/Settings.qml</file>
+        <file>qml/pages/SettingsOverlay.qml</file>
+        <file>qml/pages/VideoPlayer.qml</file>
+        <file>qml/components/IconSwitch.qml</file>
+        <file>qml/components/RoundButton.qml</file>
+        <file>qml/components/DockedListView.qml</file>
+        <file>qml/components/DockModes.qml</file>
+        <file>qml/pics/icon-camera-focus-continuous.png</file>
+        <file>qml/pics/icon-camera-focus-hyperfocal.png</file>
+        <file>qml/pics/icon-camera-focus-manual.png</file>
+        <file>qml/pics/icon-m-effect-aqua.svg</file>
+        <file>qml/pics/icon-m-effect-blackboard.svg</file>
+        <file>qml/pics/icon-m-effect-default.svg</file>
+        <file>qml/pics/icon-m-effect-emboss.svg</file>
+        <file>qml/pics/icon-m-effect-grayscale.svg</file>
+        <file>qml/pics/icon-m-effect-negative.svg</file>
+        <file>qml/pics/icon-m-effect-neon.svg</file>
+        <file>qml/pics/icon-m-effect-none.svg</file>
+        <file>qml/pics/icon-m-effect-posterize.svg</file>
+        <file>qml/pics/icon-m-effect-sepia.svg</file>
+        <file>qml/pics/icon-m-effect-sketch.svg</file>
+        <file>qml/pics/icon-m-effect-solarize.svg</file>
+        <file>qml/pics/icon-m-effect-whiteboard.svg</file>
+        <file>qml/pics/icon-m-effect.png</file>
+        <file>qml/pics/icon-m-iso-100.png</file>
+        <file>qml/pics/icon-m-iso-1600.png</file>
+        <file>qml/pics/icon-m-iso-200.png</file>
+        <file>qml/pics/icon-m-iso-3200.png</file>
+        <file>qml/pics/icon-m-iso-400.png</file>
+        <file>qml/pics/icon-m-iso-6400.png</file>
+        <file>qml/pics/icon-m-iso-800.png</file>
+        <file>qml/pics/icon-m-iso-auto.png</file>
+        <file>qml/pics/icon-m-iso-hjr.png</file>
+        <file>qml/pics/icon-m-resolution.png</file>
+        <file>qml/pics/icon-m-scene_mode_action.svg</file>
+        <file>qml/pics/icon-m-scene_mode_ar.svg</file>
+        <file>qml/pics/icon-m-scene_mode_asd.svg</file>
+        <file>qml/pics/icon-m-scene_mode_backlight.svg</file>
+        <file>qml/pics/icon-m-scene_mode_barcode.svg</file>
+        <file>qml/pics/icon-m-scene_mode_beach.svg</file>
+        <file>qml/pics/icon-m-scene_mode_candlelight.svg</file>
+        <file>qml/pics/icon-m-scene_mode_fireworks.svg</file>
+        <file>qml/pics/icon-m-scene_mode_flowers.svg</file>
+        <file>qml/pics/icon-m-scene_mode_hdr.svg</file>
+        <file>qml/pics/icon-m-scene_mode_landscape.svg</file>
+        <file>qml/pics/icon-m-scene_mode_large_aperture.svg</file>
+        <file>qml/pics/icon-m-scene_mode_night.svg</file>
+        <file>qml/pics/icon-m-scene_mode_night_portrait.svg</file>
+        <file>qml/pics/icon-m-scene_mode_none.svg</file>
+        <file>qml/pics/icon-m-scene_mode_party.svg</file>
+        <file>qml/pics/icon-m-scene_mode_portrait.svg</file>
+        <file>qml/pics/icon-m-scene_mode_small_aperture.svg</file>
+        <file>qml/pics/icon-m-scene_mode_snow.svg</file>
+        <file>qml/pics/icon-m-scene_mode_sports.svg</file>
+        <file>qml/pics/icon-m-scene_mode_spotlight.svg</file>
+        <file>qml/pics/icon-m-scene_mode_steady_photo.svg</file>
+        <file>qml/pics/icon-m-scene_mode_sunset.svg</file>
+        <file>qml/pics/icon-m-scene_mode_theatre.svg</file>
+        <file>qml/pics/icon-m-scene_mode_unknown.svg</file>
+        <file>qml/pics/icon-m-tele-lense-active.png</file>
+        <file>qml/pics/icon-m-tele-lense.png</file>
+        <file>qml/pics/icon-m-tele-lense.svg</file>
+        <file>qml/pics/icon-m-uwide-lense-active.png</file>
+        <file>qml/pics/icon-m-uwide-lense.png</file>
+        <file>qml/pics/icon-m-uwide-lense.svg</file>
+        <file>qml/pics/icon-m-wide-lense-active.png</file>
+        <file>qml/pics/icon-m-wide-lense.png</file>
+        <file>qml/pics/icon-m-wide-lense.svg</file>
+        <file>qml/pics/icon-camera-switch.svg</file>
+        <file>qml/pics/icon-m-video.svg</file>
+        <file>qml/pics/icon-m-camera.svg</file>
+        <file>qml/pics/icon-m-sd-card.svg</file>
+        <file>qml/pics/icon-m-developer-mode.svg</file>
+        <file>qml/pics/icon-m-image.svg</file>
+        <file>qml/pics/icon-camera-wb-tungsten.png</file>
+        <file>qml/pics/icon-camera-wb-sunny.png</file>
+        <file>qml/pics/icon-camera-wb-fluorecent.png</file>
+        <file>qml/pics/icon-camera-wb-cloudy.png</file>
+        <file>qml/pics/icon-camera-wb-automatic.png</file>
+        <file>qml/pics/icon-camera-video-shutter-on.png</file>
+        <file>qml/pics/icon-camera-video-shutter-off.png</file>
+        <file>qml/pics/icon-camera-shutter.png</file>
+        <file>qml/pics/icon-camera-shutter-release.png</file>
+        <file>qml/pics/icon-camera-focus.png</file>
+        <file>qml/pics/icon-camera-focus-macro.png</file>
+        <file>qml/pics/icon-camera-focus-infinity.png</file>
+        <file>qml/pics/icon-camera-focus-auto.png</file>
+        <file>qml/pics/icon-camera-flash-on.png</file>
+        <file>qml/pics/icon-camera-flash-off.png</file>
+        <file>qml/pics/icon-camera-flash-automatic.png</file>
+        <file>qml/assets/bayer_1x_packed.frag</file>
+        <file>qml/assets/bayer_8.frag</file>
+        <file>qml/assets/bayer_8.vert</file>
+        <file>qml/assets/identity.vert</file>
+        <file>qml/assets/RGB.frag</file>
+        <file>qml/assets/YUV_2_planes.frag</file>
+        <file>qml/assets/YUV_3_planes.frag</file>
+        <file>qml/assets/YUV_packed.frag</file>
+    </qresource>
+</RCC>
