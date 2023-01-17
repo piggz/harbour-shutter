@@ -31,6 +31,8 @@ Item {
             //icon.fillMode: Image.PreserveAspectFit
             onClicked: button.clicked()
             //onPressed: button.pressed()
+            iconWidth: (parent.width / 4) * 3
+            iconHeight: iconWidth
         }
     }
 }
