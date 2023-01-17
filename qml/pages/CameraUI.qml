@@ -302,6 +302,21 @@ PagePL {
         id: controlsOuter
         anchors.fill: parent
 
+        SettingsOverlay {
+            id: settingsOverlay
+            rotation: controlsContainer.rotation
+            anchors.margins: 10
+            //iconRotation: page.controlsRotation
+            onRotationChanged: {
+                console.log("Control rotation:", page._orientation, rotation, width, height, page.width, page.height);
+                console.log(OrientationReading.TopUp, OrientationReading.TopDown, OrientationReading.LeftUp, OrientationReading.RightUp);
+            }
+
+            width: page._orientation === OrientationReading.TopUp ? page.height : page.width
+            height: page._orientation === OrientationReading.TopUp ? page.width : page.height
+
+        }
+
         Item {
             id: controlsContainer
             anchors.centerIn: parent
@@ -495,11 +510,6 @@ PagePL {
                     }
                 }*/
                 }
-            }
-
-            SettingsOverlay {
-                id: settingsOverlay
-                iconRotation: page.controlsRotation
             }
 
             RoundButton {
