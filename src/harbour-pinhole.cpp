@@ -34,6 +34,7 @@
 #include "viewfinderitem.h"
 #include "viewfinder2d.h"
 #include "cameraproxy.h"
+#include "settings.h"
 
 int main(int argc, char *argv[])
 {
@@ -80,6 +81,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<FormatModel>("uk.co.piggz.pinhole", 1, 0, "FormatModel");
     qmlRegisterType<ViewFinderItem>("uk.co.piggz.pinhole", 1, 0, "ViewFinderItem");
     qmlRegisterType<ViewFinder2D>("uk.co.piggz.pinhole", 1, 0, "ViewFinder2D");
+    qmlRegisterType<Settings>("uk.co.piggz.pinhole", 1, 0, "Settings");
 
     ResolutionModel resolutionModel;
     QSortFilterProxyModel sortedResolutionModel;

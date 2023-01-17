@@ -33,6 +33,7 @@ SOURCES += \
     src/isomodel.cpp \
     src/metadatamodel.cpp \
     src/resolutionmodel.cpp \
+    src/settings.cpp \
     src/viewfinder2d.cpp \
     src/viewfinderitem.cpp \
     src/viewfinderrenderer.cpp \
@@ -49,6 +50,7 @@ DISTFILES += \
     qml/components/DockedListView.qml \
     qml/components/platform.qtcontrols/DockedPanelPL.qml \
     qml/components/platform.silica/DockedPanelPL.qml \
+    qml/pages/SettingsX.qml \
     qml/pics/icon-camera-switch.svg \
     qml/pics/icon-m-camera.svg \
     qml/pics/icon-m-developer-mode.svg \
@@ -74,7 +76,6 @@ DISTFILES += \
     qml/cover/CoverPage.qml \
     qml/pages/CameraUI.qml \
     qml/pages/GalleryUI.qml \
-    qml/pages/Settings.qml \
     qml/pages/SettingsOverlay.qml \
     qml/components/platform.silica/ApplicationWindowPL.qml \
     qml/components/platform.silica/BusyIndicatorPL.qml \
@@ -145,6 +146,7 @@ HEADERS += \
     src/isomodel.h \
     src/metadatamodel.h \
     src/resolutionmodel.h \
+    src/settings.h \
     src/viewfinder.h \
     src/viewfinder2d.h \
     src/viewfinderitem.h \

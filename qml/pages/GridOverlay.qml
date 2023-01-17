@@ -7,7 +7,7 @@ Item {
     id: root
 
     property double aspect: 16.0 / 9.0
-    visible: settings.global.gridMode != "none"
+    visible: settings.get("global", "gridMode", "none") != "none"
     anchors.centerIn: parent
     width: parent.width// * aspect
     height: parent.height
@@ -29,7 +29,7 @@ Item {
     }
 
     Repeater {
-        model: horizontalLines(settings.global.gridMode)
+        model: horizontalLines(settings.get("global", "gridMode", "none"))
 
         delegate: Item {
             width: parent.width
@@ -67,7 +67,7 @@ Item {
     }
 
     Repeater {
-        model: verticalLines(settings.global.gridMode)
+        model: verticalLines(settings.get("global", "gridMode", "none"))
 
         delegate: Item {
             width: 5

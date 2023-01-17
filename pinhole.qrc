@@ -52,7 +52,6 @@
         <file>qml/pages/CameraUI.qml</file>
         <file>qml/pages/GalleryUI.qml</file>
         <file>qml/pages/GridOverlay.qml</file>
-        <file>qml/pages/Settings.qml</file>
         <file>qml/pages/SettingsOverlay.qml</file>
         <file>qml/pages/VideoPlayer.qml</file>
         <file>qml/components/IconSwitch.qml</file>

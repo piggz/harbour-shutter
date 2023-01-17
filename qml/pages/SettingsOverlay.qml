@@ -166,7 +166,7 @@ Item {
     DockedListView {
         id: panelFormats
         model: modelFormats
-        selectedItem: settings.mode.format
+        selectedItem: settings.getCameraValue("format", "")
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -181,7 +181,7 @@ Item {
     DockedListView {
         id: panelEffects
         model: modelEffects
-        selectedItem: settings.mode.effect
+        selectedItem: settings.getCameraValue("efffect", 0)
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -196,7 +196,7 @@ Item {
     DockedListView {
         id: panelExposure
         model: modelExposure
-        selectedItem: settings.mode.exposure
+        selectedItem: settings.getCameraValue("exposure", 0)
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -211,7 +211,7 @@ Item {
     DockedListView {
         id: panelFlash
         model: modelFlash
-        selectedItem: settings.mode.flash
+        selectedItem: settings.getCameraValue("flash", 0)
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -226,7 +226,7 @@ Item {
     DockedListView {
         id: panelWhiteBalance
         model: modelWhiteBalance
-        selectedItem: settings.mode.whiteBalance
+        selectedItem: settings.getCameraValue("whiteBalance", 0)
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -241,7 +241,7 @@ Item {
     DockedListView {
         id: panelFocus
         model: modelFocus
-        selectedItem: settings.mode.focus
+        selectedItem: settings.getCameraValue("focus", 0)
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -255,7 +255,7 @@ Item {
     DockedListView {
         id: panelIso
         model: modelIso
-        selectedItem: settings.mode.iso
+        selectedItem: settings.getCameraValue("iso", 0)
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -274,23 +274,23 @@ Item {
     DockedListView {
         id: panelResolution
         model: sortedModelResolution
-        selectedItem: settings.resolution(settings.global.captureMode)
+        selectedItem: settings.getCameraValue(settings.get("global", "captureMode", "image") + "_resolution", modelResolution.defaultResolution(settings.get("global", "captureMode", "still")))
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
 
         onClicked: {
-            settings.mode.resolution = settings.sizeToStr(value)
-            hide()
-            console.log("selected resolution", value, settings.mode.resolution)
-            cameraProxy.se
+            settings.setCameraValue("resolution", settings.sizeToStr(value));
+            hide();
+            console.log("selected resolution", value, settings.mode.resolution);
+            cameraProxy.setResolution(value);
         }
     }
 
     DockedListView {
         id: panelStorage
         model: modelStorage
-        selectedItem: settings.global.storagePath
+        selectedItem: settings.get("global", "storagePath", "")
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -320,12 +320,12 @@ Item {
             if (loadingComplete) {
                 if (visible) {
                     console.log("loading...")
-                    sldAudioBitrate.value = settings.global.audioBitrate;
-                    sldVideoBitrate.value = settings.global.videoBitrate;
+                    sldAudioBitrate.value = settings.get("global", "audioBitrate", 128000);
+                    sldVideoBitrate.value = settings.get("global", "videoBitrate", 1280000);
                 } else {
                     console.log("saving...")
-                    settings.global.audioBitrate = sldAudioBitrate.value;
-                    settings.global.videoBitrate = sldVideoBitrate.value;
+                    settings.set("global", "audioBitrate", sldAudioBitrate.value);
+                    settings.set("global", "videoBitrate", sldVideoBitrate.value);
                 }
             }
         }
@@ -350,16 +350,17 @@ Item {
                     TextSwitchPL {
                         id: zoomSwitch
                         text: qsTr("Swap zoom controls")
-                        checked: settings.global.swapZoomControl
+                        checked: settings.get("global", "swapZoomControl", false)
                         onCheckedChanged: {
-                            settings.global.swapZoomControl = checked
+                            settings.set("global", "swapZoomControl", checked);
                         }
                     }
 
                     ComboBoxPL {
                         id: gridSwitch
                         label: qsTr("Grid:")
-                        model: [
+                        model: grids
+                        property var grids: [
                             qsTr("None"),
                             qsTr("Thirds"),
                             qsTr("Ambience")
@@ -375,10 +376,10 @@ Item {
                             return 0
                         }
 
-                        currentIndex: findIndex(settings.global.gridMode)
+                        currentIndex: findIndex(settings.get("global", "gridMode", "none"))
                         onValueChanged: {
                             var index = gridSwitch.currentIndex;
-                            settings.global.gridMode = gridSwitch.values[index];
+                            settings.set("global", "gridMode", gridSwitch.values[index]);
                         }
                     }
                     SliderPL {
@@ -411,11 +412,11 @@ Item {
                         id: locationMetadataSwitch
                         width: parent.width
 
-                        checked: settings.global.locationMetadata
+                        checked: settings.get("global", "locationMetadata", false)
                         text: qsTr("Store GPS location to metadata")
 
                         onCheckedChanged: {
-                            settings.global.locationMetadata = checked;
+                            settings.set("global", "locationMetadata", checked);
                         }
                     }
 
@@ -423,11 +424,11 @@ Item {
                         id: showManualControls
                         width: parent.width
 
-                        checked: settings.global.showManualControls
+                        checked: settings.get("global", "showManualControls", false)
                         text: qsTr("Display manual controls")
 
                         onCheckedChanged: {
-                            settings.global.showManualControls = checked;
+                            settings.set("global", "showManualControls", checked);
                         }
                     }
 
@@ -517,7 +518,7 @@ Item {
 
     function flashIcon() {
         var flashIcon = ""
-        switch (settings.mode.flash) {
+        switch (settings.getCameraModeValue("flash", 0)) {
         case Camera.FlashAuto:
             flashIcon = "../pics/icon-camera-flash-automatic"
             break
@@ -539,7 +540,7 @@ Item {
 
     function focusIcon() {
         var focusIcon = ""
-        switch (settings.mode.focus) {
+        switch (settings.getCameraModeValue("focus", 0)) {
         case Camera.FocusAuto:
             focusIcon = "../pics/icon-camera-focus-auto"
             break
@@ -567,7 +568,7 @@ Item {
 
     function whiteBalanceIcon() {
         var wbIcon = ""
-        switch (settings.mode.whiteBalance) {
+        switch (settings.getCameraModeValue("whiteBalance", 0)) {
         case CameraImageProcessing.WhiteBalanceAuto:
             wbIcon = "../pics/icon-camera-wb-automatic"
             break
@@ -601,12 +602,12 @@ Item {
 
     function isoIcon() {
         var iso = ""
-        if (settings.mode.iso === 0) {
+        if (settings.getCameraModeValue("iso", 0) === 0) {
             iso = "../pics/icon-m-iso-auto.png"
-        } else if (settings.mode.iso === 1) {
+        } else if (settings.getCameraModeValue("iso", 0) === 1) {
             iso = "../pics/icon-m-iso-hjr.png"
         } else {
-            iso = "../pics/icon-m-iso-" + settings.mode.iso + ".png"
+            iso = "../pics/icon-m-iso-" + settings.getCameraModeValue("iso") + ".png"
         }
         return styler.customIconPrefix + iso
     }
@@ -614,7 +615,7 @@ Item {
     function effectIcon() {
         var effectIcon = ""
 
-        switch (settings.mode.effect) {
+        switch (settings.getCameraModeValue("effect", CameraImageProcessing.ColorFilterNone)) {
         case CameraImageProcessing.ColorFilterNone:
             effectIcon = "none"
             break
@@ -660,12 +661,12 @@ Item {
 
     function sceneModeIcon(scene) {
         return styler.customIconPrefix + "../pics/icon-m-scene_mode_" + modelExposure.iconName(
-                    settings.mode.exposure) + ".svg"
+                    settings.getCameraModeValue("exposure", 0)) + ".svg"
     }
 
     function setMode(mode) {
         modelResolution.setMode(mode)
-        settings.global.captureMode = mode
+        settings.set("global", "captureMode", mode);
         settings.mode.path = settings.global.cameraId + "/" + mode
     }
 
@@ -686,14 +687,14 @@ Item {
         for (var i = 0; i < modelStorage.rowCount; i++) {
             var name = modelStorage.getName(i)
             var path = modelStorage.getPath(i)
-            if (path === settings.global.storagePath) {
-                settings.global.storagePath = path
-                console.log("Selecting", name, "->", path)
-                return i
+            if (path === settings.get("global", "storagePath", "")) {
+                settings.set("global", "storagePath", path);
+                console.log("Selecting", name, "->", path);
+                return i;
             }
         }
         console.log("Defaulting to internal storage")
-        settings.global.storagePath = modelStorage.getPath(0)
+        settings.set("global", "storagePath", modelStorage.getPath(0));
     }
 
     Connections {

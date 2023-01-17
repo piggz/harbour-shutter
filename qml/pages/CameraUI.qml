@@ -330,7 +330,7 @@ PagePL {
             height: page._orientation === OrientationReading.TopUp ? page.width : page.height
 
             GridOverlay {
-                aspect: settings.global.captureMode
+                aspect: settings.get("global", "captureMode", "image")
                         === "image" ? ratio(camera.imageCapture.resolution) : ratio(
                                           camera.videoRecorder.resolution)
 
@@ -461,7 +461,7 @@ PagePL {
 
                     LabelPL {
                         id: lblCameraId
-                        text: qsTr("Camera: ") + modelCamera.get(settings.global.cameraId)
+                        text: qsTr("Camera: ") + modelCamera.get(settings.get("global", "cameraId", ""))
                         color: styler.themePrimaryColor
                     }
 
@@ -471,12 +471,12 @@ PagePL {
                         color: styler.themePrimaryColor
                         text: (forceUpdate
                                || !forceUpdate) ? settings.sizeToStr(
-                                                      (settings.global.captureMode === "video" ? camera.videoRecorder.resolution : camera.imageCapture.resolution)) : ""
+                                                      (settings.get("global", "captureMode", "image") === "video" ? camera.videoRecorder.resolution : camera.imageCapture.resolution)) : ""
                     }
 
                     LabelPL {
                         id: lblRecordTime
-                        visible: settings.global.captureMode === "video"
+                        visible: settings.get("global", "captureMode", "image") === "video"
                         color: styler.themePrimaryColor
                         text: msToTime(camera.videoRecorder.duration)
                     }
@@ -493,7 +493,7 @@ PagePL {
                     maximumValue: +2
                     value: 0
                     stepSize: 0.1
-                    visible: settings.global.showManualControls
+                    visible: settings.get("global", "showManualControls", false)
                     valueText : (Math.round(value*10)/10) + " EV"
 
                     onValueChanged: {
@@ -732,16 +732,16 @@ PagePL {
         running: true
         interval: 200
         onTriggered: {
-            console.log("camera delayed start", settings.global.cameraId)
+            console.log("camera delayed start", settings.get("global", "cameraId", ""))
             _loadParameters = true
-            camera.deviceId = settings.global.cameraId
+            camera.deviceId = settings.get("global", "cameraId", "")
 
             cameraProxy.setViewFinder(viewFinder);
             cameraProxy.setCameraIndex(modelCamera.get(0));
 
-            settings.global.cameraCount = modelCamera.rowCount;
+            settings.set("global", "cameraCount", modelCamera.rowCount);
             settings.calculateEnabledCameras()
-            camera.deviceId = settings.global.cameraId
+            camera.deviceId = settings.get("global", "cameraId", "")
 
             _cameraReload = true
         }
