@@ -950,7 +950,7 @@ PagePL {
 
         var filename = fsOperations.writableLocation(
                 "image",
-                settings.global.storagePath) + "/IMG_" + Qt.formatDateTime(
+                settings.get("global", "storagePath", "")) + "/IMG_" + Qt.formatDateTime(
                 new Date(), "yyyyMMdd_hhmmss") + ".jpg";
 
         cameraProxy.stillCapture(filename);
