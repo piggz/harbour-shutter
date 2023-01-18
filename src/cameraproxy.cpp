@@ -499,6 +499,7 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
         request = freeQueue_.dequeue();
     }
 
+    /// This fails on still stream because you are trying to add a buffer to a stream that doesn't exist in this configuration
     request->addBuffer(m_viewFinderStream, buffer);
     m_currentCamera->queueRequest(request);
 }
