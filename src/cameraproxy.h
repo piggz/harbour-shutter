@@ -26,6 +26,12 @@ class CameraProxy : public QObject
 public:
     explicit CameraProxy(QObject *parent = nullptr);
 
+    enum CameraState {
+        Stopped = 0,
+        CapturingStill,
+        CapturingViewFinder
+    };
+
     bool event(QEvent *e) override;
 
     void setCameraManager(std::shared_ptr<libcamera::CameraManager> cm);
@@ -64,7 +70,7 @@ private:
     libcamera::FrameBufferAllocator *m_stillAllocator;
 
     // Capture state, buffers queue and statistics
-    bool m_isCapturing = false;
+    CameraState m_state = Stopped;
     libcamera::Stream *m_viewFinderStream;
     libcamera::Stream *m_stillStream;
     std::map<const libcamera::Stream *, QQueue<libcamera::FrameBuffer *>> freeBuffers_;

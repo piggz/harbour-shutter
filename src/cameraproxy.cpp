@@ -224,6 +224,7 @@ void CameraProxy::startViewFinder()
         //goto error;
         return;
     }
+    m_state = CapturingViewFinder;
 
     m_currentCamera->requestCompleted.connect(this, &CameraProxy::requestComplete);
 
@@ -236,8 +237,6 @@ void CameraProxy::startViewFinder()
             return;
         }
     }
-
-    m_isCapturing = true;
 }
 
 void CameraProxy::requestComplete(libcamera::Request *request)
@@ -302,7 +301,7 @@ void CameraProxy::stop()
     qDebug() << Q_FUNC_INFO;
     if (m_currentCamera) {
         m_currentCamera->stop();
-        m_isCapturing = false;
+        m_state = Stopped;
     }
 }
 
@@ -366,6 +365,8 @@ void CameraProxy::stillCapture(const QString &filename)
         freeBuffers_[m_stillStream].enqueue(buffer.get());
     }
 
+    requests_.clear();
+
     /* Create requests and fill them with buffers from the viewfinder. */
     while (!freeBuffers_[m_stillStream].isEmpty()) {
         libcamera::FrameBuffer *buffer = freeBuffers_[m_stillStream].dequeue();
@@ -394,6 +395,7 @@ void CameraProxy::stillCapture(const QString &filename)
         //goto error;
         return;
     }
+    m_state = CapturingStill;
 
     //m_currentCamera->requestCompleted.connect(this, &CameraProxy::requestComplete);
 
@@ -406,12 +408,6 @@ void CameraProxy::stillCapture(const QString &filename)
             return;
         }
     }
-
-    m_isCapturing = true;
-
-
-    //Finish off starting the viewfinder again
-    //startViewFinder();
 }
 
 void CameraProxy::processCapture()
@@ -461,7 +457,7 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
            return;
     }
 
-    file.write((const char*)mappedBuffers_[buffer].get());
+    file.write((const char*)mappedBuffers_[buffer].get()->data(0).data());
 
     file.close();
 
@@ -481,7 +477,9 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
         request = freeQueue_.dequeue();
     }
 
-    request->addBuffer(m_viewFinderStream, buffer);
-    m_currentCamera->queueRequest(request);
+    if (m_state == CapturingViewFinder) {
+        request->addBuffer(m_viewFinderStream, buffer);
+        m_currentCamera->queueRequest(request);
+    }
 }
 
