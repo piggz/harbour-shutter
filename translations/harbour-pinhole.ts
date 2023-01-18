@@ -4,7 +4,7 @@
 <context>
     <name>CameraUI</name>
     <message>
-        <location filename="../qml/pages/CameraUI.qml" line="449"/>
+        <location filename="../qml/pages/CameraUI.qml" line="464"/>
         <source>Camera: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -290,52 +290,52 @@
 <context>
     <name>SettingsOverlay</name>
     <message>
-        <location filename="../qml/pages/SettingsOverlay.qml" line="356"/>
+        <location filename="../qml/pages/SettingsOverlay.qml" line="352"/>
         <source>Swap zoom controls</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsOverlay.qml" line="365"/>
+        <location filename="../qml/pages/SettingsOverlay.qml" line="361"/>
         <source>Grid:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsOverlay.qml" line="367"/>
+        <location filename="../qml/pages/SettingsOverlay.qml" line="363"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsOverlay.qml" line="368"/>
+        <location filename="../qml/pages/SettingsOverlay.qml" line="364"/>
         <source>Thirds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsOverlay.qml" line="369"/>
+        <location filename="../qml/pages/SettingsOverlay.qml" line="365"/>
         <source>Ambience</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsOverlay.qml" line="390"/>
+        <location filename="../qml/pages/SettingsOverlay.qml" line="386"/>
         <source>Video Bitrate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsOverlay.qml" line="403"/>
+        <location filename="../qml/pages/SettingsOverlay.qml" line="399"/>
         <source>Audio Bitrate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsOverlay.qml" line="419"/>
+        <location filename="../qml/pages/SettingsOverlay.qml" line="415"/>
         <source>Store GPS location to metadata</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsOverlay.qml" line="431"/>
+        <location filename="../qml/pages/SettingsOverlay.qml" line="427"/>
         <source>Display manual controls</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsOverlay.qml" line="439"/>
+        <location filename="../qml/pages/SettingsOverlay.qml" line="435"/>
         <source>Disabled Cameras</source>
         <translation type="unfinished"></translation>
     </message>
