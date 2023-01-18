@@ -366,6 +366,16 @@ void CameraProxy::stillCapture(const QString &filename)
         freeBuffers_[m_stillStream].enqueue(buffer.get());
     }
 
+    /* You crash below because you have '4' old requests without buffers,
+     * and 4 new requests with buffers, then try to queue all 8.
+     * Clearing the old request queue here could solve it...
+     * But it might be worth keeping the view finder stream/buffers/requests around
+     * to re-use them without reallocating when we want to swap back?
+     *
+     * For now - this got the capture to progress past this:
+     */
+    requests_.clear();
+
     /* Create requests and fill them with buffers from the viewfinder. */
     while (!freeBuffers_[m_stillStream].isEmpty()) {
         libcamera::FrameBuffer *buffer = freeBuffers_[m_stillStream].dequeue();
@@ -397,8 +407,16 @@ void CameraProxy::stillCapture(const QString &filename)
 
     //m_currentCamera->requestCompleted.connect(this, &CameraProxy::requestComplete);
 
+    for (std::unique_ptr<libcamera::Request> &request : requests_) {
+        qWarning() << "Request " << request->toString().c_str();
+    }
+
     /* Queue all requests. */
     for (std::unique_ptr<libcamera::Request> &request : requests_) {
+
+        /* You crash here because requests_ contains the old requests
+         * as well as the new ones you've created for the still capture. */
+
         ret = m_currentCamera->queueRequest(request.get());
         if (ret < 0) {
             qWarning() << "Can't queue request";
