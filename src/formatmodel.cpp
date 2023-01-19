@@ -62,6 +62,18 @@ void FormatModel::setCameraProxy(CameraProxy *cameraproxy)
     connect(m_cameraProxy.get(), &CameraProxy::cameraChanged, this, &FormatModel::populateFormats);
 }
 
+QString FormatModel::defaultFormat() const
+{
+    if (m_formats.contains("MJPEG")) {
+        return "MJPEG";
+    } else {
+        if (m_formats.size() > 0) {
+            return m_formats[0];
+        }
+    }
+    return QString();
+}
+
 void FormatModel::populateFormats()
 {
     qDebug() << Q_FUNC_INFO;

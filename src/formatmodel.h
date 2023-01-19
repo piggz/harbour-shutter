@@ -21,6 +21,7 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
 
     Q_INVOKABLE void setCameraProxy(CameraProxy *cameraproxy);
+    Q_INVOKABLE QString defaultFormat() const;
 
 private:
     QStringList m_formats;
