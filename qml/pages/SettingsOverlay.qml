@@ -166,7 +166,7 @@ Item {
     DockedListView {
         id: panelFormats
         model: modelFormats
-        selectedItem: settings.getCameraValue("format", "")
+        selectedItem: settings.getCameraModeValue("format", modelFormats.defaultFormat())
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -179,9 +179,25 @@ Item {
     }
 
     DockedListView {
+        id: panelResolution
+        model: sortedModelResolution
+        selectedItem: settings.getCameraModeValue("resolution", modelResolution.defaultResolution(settings.get("global", "captureMode", "image")))
+        rotation: iconRotation
+        width: (iconRotation === 90
+                || iconRotation === 270) ? parent.height : parent.width / 2
+
+        onClicked: {
+            settings.setCameraValue("resolution", settings.sizeToStr(value));
+            hide();
+            console.log("selected resolution", value, settings.mode.resolution);
+            cameraProxy.setResolution(value);
+        }
+    }
+
+    DockedListView {
         id: panelEffects
         model: modelEffects
-        selectedItem: settings.getCameraValue("efffect", 0)
+        selectedItem: settings.getCameraModeValue("efffect", 0)
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -196,7 +212,7 @@ Item {
     DockedListView {
         id: panelExposure
         model: modelExposure
-        selectedItem: settings.getCameraValue("exposure", 0)
+        selectedItem: settings.getCameraModeValue("exposure", 0)
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -211,7 +227,7 @@ Item {
     DockedListView {
         id: panelFlash
         model: modelFlash
-        selectedItem: settings.getCameraValue("flash", 0)
+        selectedItem: settings.getCameraModeValue("flash", 0)
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -226,7 +242,7 @@ Item {
     DockedListView {
         id: panelWhiteBalance
         model: modelWhiteBalance
-        selectedItem: settings.getCameraValue("whiteBalance", 0)
+        selectedItem: settings.getCameraModeValue("whiteBalance", 0)
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -241,7 +257,7 @@ Item {
     DockedListView {
         id: panelFocus
         model: modelFocus
-        selectedItem: settings.getCameraValue("focus", 0)
+        selectedItem: settings.getCameraModeValue("focus", 0)
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -255,7 +271,7 @@ Item {
     DockedListView {
         id: panelIso
         model: modelIso
-        selectedItem: settings.getCameraValue("iso", 0)
+        selectedItem: settings.getCameraModeValue("iso", 0)
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -268,22 +284,6 @@ Item {
             }
             settings.mode.iso = value
             hide()
-        }
-    }
-
-    DockedListView {
-        id: panelResolution
-        model: sortedModelResolution
-        selectedItem: settings.getCameraValue(settings.get("global", "captureMode", "image") + "_resolution", modelResolution.defaultResolution(settings.get("global", "captureMode", "still")))
-        rotation: iconRotation
-        width: (iconRotation === 90
-                || iconRotation === 270) ? parent.height : parent.width / 2
-
-        onClicked: {
-            settings.setCameraValue("resolution", settings.sizeToStr(value));
-            hide();
-            console.log("selected resolution", value, settings.mode.resolution);
-            cameraProxy.setResolution(value);
         }
     }
 
@@ -667,7 +667,6 @@ Item {
     function setMode(mode) {
         modelResolution.setMode(mode)
         settings.set("global", "captureMode", mode);
-        settings.mode.path = settings.global.cameraId + "/" + mode
     }
 
     function hideAllPanels() {
@@ -703,5 +702,13 @@ Item {
         onModelReset: {
             restoreStorage()
         }
+    }
+
+    Component.onCompleted: {
+        var s = settings.getCameraModeValue("format", modelFormats.defaultFormat());
+        settings.setCameraModeValue("format", s);
+
+        s = settings.getCameraModeValue("resolution", modelResolution.defaultResolution(settings.get("global", "captureMode", "image")));
+        settings.setCameraModeValue("resolution", s);
     }
 }

@@ -19,7 +19,7 @@ PagePL {
     property bool _manualModeSelected: false
     readonly property real zoomStepSize: 0.05
     readonly property real zoomStepButton: 5.0
-    property int controlsRotation: 90
+    property int controlsRotation: 0
     property int _pictureRotation: 90//Screen.primaryOrientation == Qt.PortraitOrientation ? 0 : 90
     // Use easy device orientation values
     // 0=unknown, 1=portrait, 2=portrait inverted, 3=landscape, 4=landscape inverted
@@ -689,6 +689,9 @@ PagePL {
             console.log("Camera: ", modelCamera.get(i) );
         }
 
+        var mode = settings.get("global", "captureMode", "image");
+        settings.captureMode = mode;
+
         settingsOverlay.setCameraProxy(cameraProxy);
         _completed = true
     }
@@ -739,6 +742,13 @@ PagePL {
             cameraProxy.setViewFinder(viewFinder);
             cameraProxy.setCameraIndex(modelCamera.get(0));
 
+            var s = settings.getCameraModeValue("format", "");
+            cameraProxy.setStillFormat(s);
+
+            var r = settings.getCameraModeValue("resolution", "");
+            console.log(r);
+            cameraProxy.setResolution(r);
+
             settings.set("global", "cameraCount", modelCamera.rowCount);
             settings.calculateEnabledCameras()
             camera.deviceId = settings.get("global", "cameraId", "")
@@ -746,7 +756,6 @@ PagePL {
             _cameraReload = true
         }
     }
-
     Timer {
         id: reloadTimer
         interval: 100
