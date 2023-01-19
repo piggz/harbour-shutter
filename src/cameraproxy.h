@@ -51,11 +51,11 @@ public Q_SLOTS:
     void stop();
     void stillCapture(const QString &filename);
 
-
 Q_SIGNALS:
     void cameraChanged();
     void formatChanged();
     void resolutionChanged();
+    void stillSaveComplete(libcamera::FrameBuffer *buffer);
 
 private:
     std::shared_ptr<libcamera::CameraManager> m_cameraManager;
@@ -89,6 +89,7 @@ private:
     QString m_currentStillFormat;
     QSize m_currentStillResolution;
     QString m_saveFileName;
+    int m_frame = 0;
 
     void processCapture();
     void processViewfinder(libcamera::FrameBuffer *buffer);

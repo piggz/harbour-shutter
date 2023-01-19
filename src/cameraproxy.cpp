@@ -25,6 +25,8 @@ CameraProxy::CameraProxy(QObject *parent)
     : QObject{parent}
 {
     qDebug() << Q_FUNC_INFO;
+    connect(this, &CameraProxy::stillSaveComplete,
+            this, &CameraProxy::renderComplete);
 }
 
 bool CameraProxy::event(QEvent *e)
@@ -196,6 +198,8 @@ void CameraProxy::startViewFinder()
         }
     }
 
+    requests_.clear();
+
     /* Create requests and fill them with buffers from the viewfinder. */
     while (!freeBuffers_[m_viewFinderStream].isEmpty()) {
         libcamera::FrameBuffer *buffer = freeBuffers_[m_viewFinderStream].dequeue();
@@ -313,7 +317,7 @@ void CameraProxy::stillCapture(const QString &filename)
     m_saveFileName = filename;
 
     int ret;
-
+    m_frame = 0;
     //Do stuff
     libcamera::StreamConfiguration &stillConfig = m_stillConfig->at(0);
 
@@ -397,7 +401,7 @@ void CameraProxy::stillCapture(const QString &filename)
     }
     m_state = CapturingStill;
 
-    //m_currentCamera->requestCompleted.connect(this, &CameraProxy::requestComplete);
+    m_currentCamera->requestCompleted.connect(this, &CameraProxy::requestComplete);
 
     /* Queue all requests. */
     for (std::unique_ptr<libcamera::Request> &request : requests_) {
@@ -428,11 +432,11 @@ void CameraProxy::processCapture()
     }
 
     /* Process buffers. */
-    if (request->buffers().count(m_viewFinderStream)) {
+    if (m_state == CapturingViewFinder && request->buffers().count(m_viewFinderStream)) {
         processViewfinder(request->buffers().at(m_viewFinderStream));
     }
 
-    if (request->buffers().count(m_stillStream)) {
+    if (m_state == CapturingStill && request->buffers().count(m_stillStream)) {
         processStill(request->buffers().at(m_stillStream));
     }
 
@@ -452,18 +456,37 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
 {
     qDebug() << Q_FUNC_INFO << m_saveFileName;
 
+    libcamera::Request *request;
+    {
+        QMutexLocker locker(&m_mutex);
+        if (freeQueue_.isEmpty())
+            return;
+
+        request = freeQueue_.dequeue();
+    }
+
+    if (m_frame < 5) {
+        qDebug() << "Skipping frame " << m_frame;
+        m_frame++;
+        stillSaveComplete(buffer);
+        return;
+    }
+
     QFile file(m_saveFileName);
     if (!file.open(QIODevice::WriteOnly)) {
            return;
     }
 
-    file.write((const char*)mappedBuffers_[buffer].get()->data(0).data());
-
+    size_t size = buffer->metadata().planes()[0].bytesused;
+    file.write((const char*)mappedBuffers_[buffer].get()->data(0).data(), size);
     file.close();
+
+    stillSaveComplete(buffer);
 
     stop();
     startViewFinder();
 }
+
 
 
 void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
@@ -481,5 +504,8 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
         request->addBuffer(m_viewFinderStream, buffer);
         m_currentCamera->queueRequest(request);
     }
+    if (m_state == CapturingStill && m_frame < 5) {
+        request->addBuffer(m_stillStream, buffer);
+        m_currentCamera->queueRequest(request);
+    }
 }
-
