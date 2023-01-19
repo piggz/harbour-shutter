@@ -157,8 +157,6 @@ PagePL {
     focus: true
     Item {
         id: camera
-        property int cameraId: 0
-        property string deviceId
 
         function start(){}
         function stop(){}
@@ -330,9 +328,7 @@ PagePL {
             height: page._orientation === OrientationReading.TopUp ? page.width : page.height
 
             GridOverlay {
-                aspect: settings.get("global", "captureMode", "image")
-                        === "image" ? ratio(camera.imageCapture.resolution) : ratio(
-                                          camera.videoRecorder.resolution)
+                aspect: ratio(settings.getCameraModeValue("resolution", Qt.size(1280, 720)))
 
                 function ratio(resolution) {
                     return resolution.width / resolution.height
@@ -361,8 +357,10 @@ PagePL {
                 }
 
                 onValueChanged: {
-                    if (value != camera.digitalZoom)
-                        camera.digitalZoom = value
+                    if (value != camera.digitalZoom) {
+                        //TODO camera.digitalZoom = value
+
+                    }
                 }
 
                 /*TODO
@@ -470,8 +468,7 @@ PagePL {
                         id: lblResolution
                         color: styler.themePrimaryColor
                         text: (forceUpdate
-                               || !forceUpdate) ? settings.sizeToStr(
-                                                      (settings.get("global", "captureMode", "image") === "video" ? camera.videoRecorder.resolution : camera.imageCapture.resolution)) : ""
+                               || !forceUpdate) ? settings.sizeToStr(settings.getCameraModeValue("resolution", Qt.size(1280, 720))) : ""
                     }
 
                     LabelPL {
@@ -539,7 +536,7 @@ PagePL {
             RoundButton {
                 id: btnCameraSwitch
                 iconSource: "../pics/icon-camera-switch.svg"
-                visible: settings.global.cameraCount > 1
+                visible: settings.cameraCount > 1
                 iconRotation: page.controlsRotation
                 property string prevCamId
                 anchors {
@@ -737,7 +734,6 @@ PagePL {
         onTriggered: {
             console.log("camera delayed start", settings.get("global", "cameraId", ""))
             _loadParameters = true
-            camera.deviceId = settings.get("global", "cameraId", "")
 
             cameraProxy.setViewFinder(viewFinder);
             cameraProxy.setCameraIndex(modelCamera.get(0));
@@ -751,7 +747,6 @@ PagePL {
 
             settings.set("global", "cameraCount", modelCamera.rowCount);
             settings.calculateEnabledCameras()
-            camera.deviceId = settings.get("global", "cameraId", "")
 
             _cameraReload = true
         }
@@ -840,9 +835,8 @@ PagePL {
     }
 
     function applySettings() {
-        console.log("Applying settings in", settings.global.captureMode,
-                    "mode for", camera.deviceId, "camera with status",
-                    cameraStatusStr())
+        console.log("Applying settings in", settings.captureMode,
+                    "mode for", settings.cameraIndex)
 
         camera.imageProcessing.setColorFilter(settings.mode.effect)
         camera.exposure.setExposureMode(settings.mode.exposure)

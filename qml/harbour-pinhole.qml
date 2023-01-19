@@ -13,6 +13,7 @@ ApplicationWindowPL {
         id: settings
         property string cameraIndex
         property string captureMode
+        property int cameraCount
         property variant enabledCameras: [] //Calculated on startup and when disabledCameras changes
 
         function getCameraValue(s, d) {
@@ -56,6 +57,14 @@ ApplicationWindowPL {
                     settings.enabledCameras.push(QtMultimedia.availableCameras[i].deviceId)
                 }
             }
+        }
+
+        Component.onCompleted: {
+            console.log("Setting up default settings");
+            captureMode = get("global", "captureMode", "image");
+            cameraIndex = get("global", "cameraIndex", "");
+
+            cameraCount = modelCamera.rowCount();
         }
     }
 

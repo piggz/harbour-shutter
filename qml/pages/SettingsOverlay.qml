@@ -444,7 +444,7 @@ Item {
                             Rectangle {
                                 width: styler.itemSizeSmall
                                 height: width
-                                color: (settings.global.disabledCameras.indexOf("[" + QtMultimedia.availableCameras[index].deviceId + "]") >=0) ? "red" : "green"
+                                color: (settings.enabledCameras.indexOf("[" + QtMultimedia.availableCameras[index].deviceId + "]") >=0) ? "green" : "red"
                                 LabelPL  {
                                     anchors.centerIn: parent
                                     text: QtMultimedia.availableCameras[index].deviceId
