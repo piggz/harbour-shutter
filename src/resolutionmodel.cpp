@@ -152,6 +152,6 @@ void ResolutionModel::populateResolutions()
     Q_EMIT rowCountChanged();
 
     if (m_resolutions.size() == 0) {
-        qDebug() << "No formats found";
+        qDebug() << "No resolution found";
     }
 }
