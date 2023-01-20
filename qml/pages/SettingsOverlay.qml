@@ -16,6 +16,8 @@ Item {
                              || panelResolution.expanded
                              || panelStorage.expanded || panelGeneral.expanded
 
+    property alias modelFormat: modelFormats
+
     Item {
         id: buttonPanel
         opacity: (panelOpen ? 0 : 1)
@@ -181,15 +183,15 @@ Item {
     DockedListView {
         id: panelResolution
         model: sortedModelResolution
-        selectedItem: settings.getCameraModeValue("resolution", modelResolution.defaultResolution(settings.get("global", "captureMode", "image")))
+        selectedItem: settings.getCameraModeValue("resolution", modelResolution.defaultResolution(settings.captureMode))
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
 
         onClicked: {
-            settings.setCameraValue("resolution", settings.sizeToStr(value));
+            settings.setCameraModeValue("resolution", value);
             hide();
-            console.log("selected resolution", value, settings.mode.resolution);
+            console.log("selected resolution", value, settings.getCameraModeValue("resolution"));
             cameraProxy.setResolution(value);
         }
     }
@@ -702,13 +704,5 @@ Item {
         onModelReset: {
             restoreStorage()
         }
-    }
-
-    Component.onCompleted: {
-        var s = settings.getCameraModeValue("format", modelFormats.defaultFormat());
-        settings.setCameraModeValue("format", s);
-
-        s = settings.getCameraModeValue("resolution", modelResolution.defaultResolution(settings.get("global", "captureMode", "image")));
-        settings.setCameraModeValue("resolution", s);
     }
 }

@@ -11,22 +11,24 @@ ApplicationWindowPL {
     property bool loadingComplete: false;
     Settings {
         id: settings
-        property string cameraIndex
+        property string cameraName
+        property int cameraId: 0
         property string captureMode
         property int cameraCount
         property variant enabledCameras: [] //Calculated on startup and when disabledCameras changes
+        property variant disabledCameras: [] //Calculated on startup and when disabledCameras changes
 
         function getCameraValue(s, d) {
-            return get(cameraIndex, s, d);
+            return get(cameraId, s, d);
         }
         function setCameraValue(s, v) {
-            set(cameraIndex, s, v);
+            set(cameraId, s, v);
         }
         function getCameraModeValue(s, d) {
-            return get(cameraIndex + "/" + captureMode, s, d);
+            return get(cameraId + "_" + captureMode, s, d);
         }
         function setCameraModeValue(s, v) {
-            set(cameraIndex + "/" + captureMode, s, v);
+            set(cameraId + "_" + captureMode, s, v);
         }
         function strToSize(siz) {
             var w = parseInt(siz.substring(0, siz.indexOf("x")))
@@ -52,9 +54,9 @@ ApplicationWindowPL {
         function calculateEnabledCameras()
         {
             settings.enabledCameras = []
-            for (var i = 0; i < globalSettings.cameraCount; ++i) {
-                if (settings.global.disabledCameras.indexOf("[" + QtMultimedia.availableCameras[i].deviceId + "]") == -1) {
-                    settings.enabledCameras.push(QtMultimedia.availableCameras[i].deviceId)
+            for (var i = 0; i < settings.cameraCount; ++i) {
+                if (settings.disabledCameras.indexOf("[" + modelCamera.get(i) + "]") == -1) {
+                    settings.enabledCameras.push(modelCamera.get(i))
                 }
             }
         }
@@ -62,9 +64,14 @@ ApplicationWindowPL {
         Component.onCompleted: {
             console.log("Setting up default settings");
             captureMode = get("global", "captureMode", "image");
-            cameraIndex = get("global", "cameraIndex", "");
+            cameraName = get("global", "cameraName", "");
+            cameraId = get("global", "cameraId", 0);
 
-            cameraCount = modelCamera.rowCount();
+            set("global", "cameraId", cameraId);
+            set("global", "cameraName", cameraName);
+            set("global", "captureMode", captureMode);
+
+            cameraCount = modelCamera.rowCount;
         }
     }
 
@@ -85,6 +92,7 @@ ApplicationWindowPL {
     }
 
     Component.onCompleted: {
+        cameraUI.startup();
         loadingComplete = true;
     }
 

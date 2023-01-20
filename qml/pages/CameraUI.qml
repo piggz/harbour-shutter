@@ -458,8 +458,8 @@ PagePL {
                     }
 
                     LabelPL {
-                        id: lblCameraId
-                        text: qsTr("Camera: ") + modelCamera.get(settings.get("global", "cameraId", ""))
+                        id: lblCameraName
+                        text: qsTr("Camera: ") + modelCamera.get(settings.get("global", "cameraId", 0))
                         color: styler.themePrimaryColor
                     }
 
@@ -678,18 +678,20 @@ PagePL {
         }
     }
 
-    Component.onCompleted: {
+    function startup() {
         console.log("Orientations:", OrientationReading.TopUp, OrientationReading.TopDown, OrientationReading.LeftUp, OrientationReading.RightUp)
         console.log("Orientation: ", _orientation, _pictureRotation, controlsRotation);
+
+        cameraProxy.setViewFinder(viewFinder);
+        settingsOverlay.setCameraProxy(cameraProxy);
 
         for( var i = 0; i < modelCamera.rowCount; i++ ) {
             console.log("Camera: ", modelCamera.get(i) );
         }
 
-        var mode = settings.get("global", "captureMode", "image");
-        settings.captureMode = mode;
+        settings.cameraName = modelCamera.get(settings.cameraId);
+        cameraProxy.setCameraIndex(settings.cameraName);
 
-        settingsOverlay.setCameraProxy(cameraProxy);
         _completed = true
     }
 
@@ -732,21 +734,21 @@ PagePL {
         running: true
         interval: 200
         onTriggered: {
-            console.log("camera delayed start", settings.get("global", "cameraId", ""))
+            console.log("camera delayed start", settings.cameraId)
             _loadParameters = true
-
-            cameraProxy.setViewFinder(viewFinder);
-            cameraProxy.setCameraIndex(modelCamera.get(0));
-
-            var s = settings.getCameraModeValue("format", "");
-            cameraProxy.setStillFormat(s);
-
-            var r = settings.getCameraModeValue("resolution", "");
-            console.log(r);
-            cameraProxy.setResolution(r);
 
             settings.set("global", "cameraCount", modelCamera.rowCount);
             settings.calculateEnabledCameras()
+
+            var f = settings.getCameraModeValue("format", settingsOverlay.modelFormat.defaultFormat());
+            settings.setCameraModeValue("format", f);
+            cameraProxy.setStillFormat(f);
+
+            var r = settings.getCameraModeValue("resolution", modelResolution.defaultResolution(settings.captureMode));
+            settings.setCameraModeValue("resolution", r);
+
+            console.log(f, r);
+            cameraProxy.setResolution(r);
 
             _cameraReload = true
         }
@@ -836,7 +838,7 @@ PagePL {
 
     function applySettings() {
         console.log("Applying settings in", settings.captureMode,
-                    "mode for", settings.cameraIndex)
+                    "mode for", settings.cameraName)
 
         camera.imageProcessing.setColorFilter(settings.mode.effect)
         camera.exposure.setExposureMode(settings.mode.exposure)

@@ -115,14 +115,16 @@ void ResolutionModel::setMode(const QString &mode)
 
 QSize ResolutionModel::defaultResolution(const QString &mode)
 {
+    qDebug() << "Getting default resolution for mode" << mode;
     if (mode == "video") {
         //if (m_supportedVideoResolutions.count() > 0) {
         //    return m_supportedVideoResolutions.at(m_supportedVideoResolutions.count() - 1);
         //}
     } else if (mode == "image") {
-        //if (m_supportedImageResolutions.count() > 0) {
-        //    return m_supportedImageResolutions.at(m_supportedImageResolutions.count() - 1);
-        //}
+        if (m_resolutions.size() > 0) {
+            qDebug() << m_resolutions.at(m_resolutions.size() - 1).second;
+            return m_resolutions.at(m_resolutions.size() - 1).second;
+        }
     }
     return QSize(0, 0);
 }
