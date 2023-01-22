@@ -157,6 +157,8 @@ PagePL {
     focus: true
     Item {
         id: camera
+        property real digitalZoom: 1
+        property real maximumDigitalZoom: 1
 
         function start(){}
         function stop(){}
@@ -344,6 +346,7 @@ PagePL {
                 maximumValue: camera.maximumDigitalZoom
                 value: camera.digitalZoom
                 stepSize: zoomStepSize
+                visible: camera.maximumDigitalZoom > 1
                 rotation: {
                     // Zoom slider should be slide up to zoom in
                     if (_orientation === OrientationReading.TopUp)
@@ -471,12 +474,6 @@ PagePL {
                                || !forceUpdate) ? settings.sizeToStr(settings.getCameraModeValue("resolution", Qt.size(1280, 720))) : ""
                     }
 
-                    LabelPL {
-                        id: lblRecordTime
-                        visible: settings.get("global", "captureMode", "image") === "video"
-                        color: styler.themePrimaryColor
-                        text: msToTime(camera.videoRecorder.duration)
-                    }
                     Item {
                         height: 1
                         width: styler.themeItemSizeLarge
@@ -494,18 +491,8 @@ PagePL {
                     valueText : (Math.round(value*10)/10) + " EV"
 
                     onValueChanged: {
-                        if (value != camera.exposure.exposureCompensation)
-                            camera.exposure.exposureCompensation = value
+                        console.log("Need to implement exposure compensation");
                     }
-
-                    /*TODO
-                Connections {
-                    target: camera.exposure
-
-                    onExposureCompensationChanged: {
-                        exposureCompensationSlider.value = camera.exposure.exposureCompensation
-                    }
-                }*/
                 }
             }
 
