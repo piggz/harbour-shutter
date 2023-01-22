@@ -73,28 +73,6 @@ Item {
             }
 
             RoundButton {
-                id: btnScene
-                iconColor: styler.themePrimaryColor
-                iconRotation: iconRotation
-                iconSource: effectIcon()
-                visible: modelEffects.rowCount > 1
-
-                onClicked: {
-                    panelEffects.show()
-                }
-            }
-            RoundButton {
-                id: btnExposure
-                iconSource: sceneModeIcon()
-                iconColor: styler.themePrimaryColor
-                iconRotation: iconRotation
-                visible: modelExposure.rowCount > 1
-
-                onClicked: {
-                    panelExposure.show()
-                }
-            }
-            RoundButton {
                 id: btnFocus
                 iconSource: focusIcon()
                 iconRotation: iconRotation
@@ -193,36 +171,6 @@ Item {
             hide();
             console.log("selected resolution", value, settings.getCameraModeValue("resolution"));
             cameraProxy.setResolution(value);
-        }
-    }
-
-    DockedListView {
-        id: panelEffects
-        model: modelEffects
-        selectedItem: settings.getCameraModeValue("efffect", 0)
-        rotation: iconRotation
-        width: (iconRotation === 90
-                || iconRotation === 270) ? parent.height : parent.width / 2
-
-        onClicked: {
-            camera.imageProcessing.setColorFilter(value)
-            settings.mode.effect = value
-            hide()
-        }
-    }
-
-    DockedListView {
-        id: panelExposure
-        model: modelExposure
-        selectedItem: settings.getCameraModeValue("exposure", 0)
-        rotation: iconRotation
-        width: (iconRotation === 90
-                || iconRotation === 270) ? parent.height : parent.width / 2
-
-        onClicked: {
-            camera.exposure.setExposureMode(value)
-            settings.mode.exposure = value
-            hide()
         }
     }
 
