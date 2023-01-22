@@ -32,6 +32,8 @@ Kirigami.ApplicationWindow {
     width: 640
     visible: true
     pageStack.initialPage: initialPage
+    pageStack.globalToolBar.style: Kirigami.ApplicationHeaderStyle.None
+
     pageStack.globalToolBar.showNavigationButtons: pages && pages.currentIndex > 0 ?
                                                        Kirigami.ApplicationHeaderStyle.ShowBackButton :
                                                        Kirigami.ApplicationHeaderStyle.NoNavigationButtons
