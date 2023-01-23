@@ -1,7 +1,7 @@
 Priority: optional
 Maintainer: unknown <unknown@debian.org>
 Source: harbour-pinhole
-Build-Depends: debhelper (>= 5), pkg-config, libqt5core5a, libqt5multimedia5, libqt5qml5, libqt5quick5, qtdeclarative5-dev, libexif-dev, desktop-file-utils, libcamera-dev, qtmultimedia5-dev
+Build-Depends: debhelper (>= 5), pkg-config, libqt5core5a, libqt5multimedia5, libqt5qml5, libqt5quick5, qtdeclarative5-dev, libexif-dev, desktop-file-utils, libcamera-dev, qtmultimedia5-dev, qml-module-qtsensors
 Standards-Version: 3.8.2
 Homepage: http://github.com/piggz/harbour-pinhole
 
