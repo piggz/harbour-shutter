@@ -258,7 +258,7 @@ void CameraProxy::requestComplete(libcamera::Request *request)
 {
     //qDebug() << Q_FUNC_INFO;
 
-    if (request->status() == libcamera::Request::RequestCancelled || request->status() == libcamera::Request::RequestPending)
+    if (request->status() == libcamera::Request::RequestCancelled)
         return;
 
     /*
