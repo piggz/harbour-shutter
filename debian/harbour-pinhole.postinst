@@ -1,0 +1,12 @@
+#!/bin/bash
+if   [ "configure" = "$1" ] && [ "." = ".$2" ]; then  shift ; set -- "1" "$@"
+elif [ "configure" = "$1" ] && [ "." != ".$2" ]; then shift ; set -- "2" "$@"
+fi
+
+dpkg -L harbour-pinhole | grep '^-' | xargs -d '\n' -i chown root:root {} || true
+dpkg -L harbour-pinhole | grep '^/usr/bin' | xargs -d '\n' -i chown root:root {} || true
+dpkg -L harbour-pinhole | grep '^/usr/share/harbour-pinhole' | xargs -d '\n' -i chown root:root {} || true
+dpkg -L harbour-pinhole | grep '^/usr/share/applications/harbour-pinhole.desktop' | xargs -d '\n' -i chown root:root {} || true
+dpkg -L harbour-pinhole | grep '^/usr/share/icons/hicolor/.*/apps/harbour-pinhole.png' | xargs -d '\n' -i chown root:root {} || true
+dpkg -L harbour-pinhole | grep '^# >> files' | xargs -d '\n' -i chown root:root {} || true
+dpkg -L harbour-pinhole | grep '^# << files' | xargs -d '\n' -i chown root:root {} || true
