@@ -46,6 +46,7 @@ SOURCES += \
 
 DISTFILES += \
     README.md \
+    qml/components/ControlSlider.qml \
     qml/components/DockModes.qml \
     qml/components/DockedListView.qml \
     qml/components/platform.qtcontrols/DockedPanelPL.qml \

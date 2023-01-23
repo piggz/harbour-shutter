@@ -303,41 +303,36 @@ Item {
                     height: childrenRect.height
                     spacing: styler.themePaddingMedium
 
-                    SliderPL {
+                    ControlSlider {
                         id: sldBrightness
-                        label: qsTr("Brightness")
-                        width: parent.width
-                        visible: cameraProxy.controlExists(CameraProxy.Brightness);
-                        minimumValue: cameraProxy.controlMin(CameraProxy.Brightness);
-                        maximumValue: cameraProxy.controlMax(CameraProxy.Brightness);
-
-                        Text {
-                            text: sldBrightness.value
-                            anchors.centerIn: parent
-                        }
-
-                        onValueChanged: {
-                            cameraProxy.setControlValue(CameraProxy.Brightness, value);
-                        }
+                        title: qsTr("Brightness")
+                        control: CameraProxy.Brightness;
                     }
 
-                    SliderPL {
+                    ControlSlider {
+                        id: sldContrast
+                        title: qsTr("Contrast")
+                        control: CameraProxy.Contrast;
+                    }
+
+                    ControlSlider {
                         id: sldSaturation
-                        label: qsTr("Saturation")
-                        width: parent.width
-                        visible: cameraProxy.controlExists(CameraProxy.Saturation);
-                        minimumValue: cameraProxy.controlMin(CameraProxy.Saturation);
-                        maximumValue: cameraProxy.controlMax(CameraProxy.Saturation);
-
-                        Text {
-                            text: sldSaturation.value
-                            anchors.centerIn: parent
-                        }
-
-                        onValueChanged: {
-                            cameraProxy.setControlValue(CameraProxy.Saturation, value);
-                        }
+                        title: qsTr("Saturation")
+                        control: CameraProxy.Saturation;
                     }
+
+                    ControlSlider {
+                        id: sldAnalogueGain
+                        title: qsTr("Gain")
+                        control: CameraProxy.AnalogueGain;
+                    }
+
+                    /*
+                    ControlSlider {
+                        id: sldExposure
+                        title: qsTr("Exposure")
+                        control: CameraProxy.ExposureTime;
+                    }*/
 
                 }
             }
@@ -380,6 +375,7 @@ Item {
                 contentHeight: mainColumn.height
 
                 Column {
+                    id: mainColumn
                     width: parent.width
                     height: childrenRect.height
                     spacing: styler.themePaddingMedium
