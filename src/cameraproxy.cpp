@@ -115,6 +115,17 @@ void CameraProxy::setCameraIndex(QString id)
         m_currentCamera = cam;
         cacheFormats();
 
+        //Print controls
+        qDebug() << "Controls:";
+        auto controls = m_currentCamera->controls();
+
+        for(auto control: controls) {
+            qDebug() << "Control:" << control.first->id() << QString::fromStdString(control.first->name()) <<  QString::fromStdString(control.second.toString());
+            for (auto val : control.second.values()) {
+                qDebug() << "Value: " << QString::fromStdString(val.toString());
+            }
+        }
+
         cameraChanged();
         startViewFinder();
     }
@@ -247,7 +258,7 @@ void CameraProxy::requestComplete(libcamera::Request *request)
 {
     //qDebug() << Q_FUNC_INFO;
 
-    if (request->status() == libcamera::Request::RequestCancelled)
+    if (request->status() == libcamera::Request::RequestCancelled || request->status() == libcamera::Request::RequestPending)
         return;
 
     /*
@@ -414,9 +425,74 @@ void CameraProxy::stillCapture(const QString &filename)
     }
 }
 
+bool CameraProxy::controlExists(Control c)
+{
+    qDebug() << Q_FUNC_INFO << c;
+    qDebug() << Brightness << Saturation;
+    if (!m_currentCamera) {
+        return false;
+    }
+    qDebug() << (m_currentCamera->controls().find(c) != m_currentCamera->controls().end());
+    return m_currentCamera->controls().find(c) != m_currentCamera->controls().end();
+}
+
+float CameraProxy::controlMin(Control c)
+{
+    if (!m_currentCamera) {
+        return false;
+    }
+    auto control = m_currentCamera->controls().find(c);
+
+    if (control != m_currentCamera->controls().end()) {
+        return control->second.min().get<float>();
+    }
+    return 0;
+}
+
+float CameraProxy::controlMax(Control c)
+{
+    if (!m_currentCamera) {
+        return false;
+    }
+    auto control = m_currentCamera->controls().find(c);
+
+    if (control != m_currentCamera->controls().end()) {
+        return control->second.max().get<float>();
+    }
+    return 0;
+}
+
+float CameraProxy::controlValue(Control c)
+{
+    if (!m_currentCamera) {
+        return false;
+    }
+    float v = 0;
+    for (std::unique_ptr<libcamera::Request> &request : requests_) {
+        auto controllist = request->controls();
+        v = controllist.get(c).get<float>();
+    }
+    qDebug() << Q_FUNC_INFO << c << v;
+
+    return v;
+}
+
+void CameraProxy::setControlValue(Control c, float val)
+{
+    qDebug() << Q_FUNC_INFO << c << val;
+    if (!m_currentCamera) {
+        return;
+    }
+    m_controlValues[c] = val;
+}
+
 void CameraProxy::processCapture()
 {
-    qDebug() << Q_FUNC_INFO;
+    //qDebug() << Q_FUNC_INFO;
+    if (m_state == Stopped) {
+        qDebug() << "dont process event if camera stopped";
+        return;
+    }
     /*
          * Retrieve the next buffer from the done queue. The queue may be empty
          * if stopCapture() has been called while a CaptureEvent was posted but
@@ -482,12 +558,8 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
     file.close();
 
     stillSaveComplete(buffer);
-
-    stop();
-    startViewFinder();
+    stillCaptureFinished();
 }
-
-
 
 void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
 {
@@ -502,6 +574,9 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
 
     if (m_state == CapturingViewFinder) {
         request->addBuffer(m_viewFinderStream, buffer);
+        for(auto c : m_controlValues) {
+            request->controls().set(c.first, c.second);
+        }
         m_currentCamera->queueRequest(request);
     }
     if (m_state == CapturingStill && m_frame < 5) {

@@ -150,5 +150,6 @@
         <file>qml/assets/YUV_3_planes.frag</file>
         <file>qml/assets/YUV_packed.frag</file>
         <file>qml/pics/icon-m-pixelformat.png</file>
+        <file>qml/pics/icon-m-controls.svg</file>
     </qresource>
 </RCC>

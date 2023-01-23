@@ -9,8 +9,7 @@ import "../components/platform"
 Item {
     anchors.fill: parent
     property int iconRotation: 0
-    property bool panelOpen: panelEffects.expanded || panelExposure.expanded
-                             || panelFlash.expanded
+    property bool panelOpen: panelFlash.expanded
                              || panelWhiteBalance.expanded
                              || panelFocus.expanded || panelIso.expanded
                              || panelResolution.expanded
@@ -39,7 +38,7 @@ Item {
             rowSpacing: styler.themePaddingSmall
             columnSpacing: styler.themePaddingSmall
             rows: Math.floor(
-                      height / (btnScene.height + rowSpacing)) //using the button height and not styler size incase we change the RoundButton size
+                      height / (btnGeneral.height + rowSpacing)) //using the button height and not styler size incase we change the RoundButton size
 
             anchors {
                 top: parent.top
@@ -127,6 +126,17 @@ Item {
                 onClicked: {
                     modelStorage.scan("/media/sdcard")
                     panelStorage.show()
+                }
+            }
+
+            RoundButton {
+                id: btnControls
+                iconColor: styler.themePrimaryColor
+                iconRotation: iconRotation
+                iconSource: styler.customIconPrefix + "../pics/icon-m-controls.svg"
+
+                onClicked: {
+                    panelControls.show()
                 }
             }
 
@@ -256,6 +266,85 @@ Item {
     }
 
     DockedPanelPL {
+        id: panelControls
+        modal: true
+        width: (iconRotation === 90
+                || iconRotation === 270) ? parent.height : parent.width / 2
+        height: parent.height
+        z: 99
+        dock: dockModes.left
+        clip: true
+
+        onVisibleChanged: {
+            if (loadingComplete) {
+                if (visible) {
+                    console.log("loading...")
+                    sldBrightness.value = settings.getCameraModeValue("brightness", 1);
+                } else {
+                    console.log("saving...")
+                    settings.setCameraModeValue("brightness", sldBrightness.value);
+                }
+            }
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            color: "black"
+            opacity: 0.7
+
+            Flickable {
+                anchors.fill: parent
+                anchors.margins: styler.themePaddingMedium
+                contentHeight: colControls.height
+
+                Column {
+                    id: colControls
+                    width: parent.width
+                    height: childrenRect.height
+                    spacing: styler.themePaddingMedium
+
+                    SliderPL {
+                        id: sldBrightness
+                        label: qsTr("Brightness")
+                        width: parent.width
+                        visible: cameraProxy.controlExists(CameraProxy.Brightness);
+                        minimumValue: cameraProxy.controlMin(CameraProxy.Brightness);
+                        maximumValue: cameraProxy.controlMax(CameraProxy.Brightness);
+
+                        Text {
+                            text: sldBrightness.value
+                            anchors.centerIn: parent
+                        }
+
+                        onValueChanged: {
+                            cameraProxy.setControlValue(CameraProxy.Brightness, value);
+                        }
+                    }
+
+                    SliderPL {
+                        id: sldSaturation
+                        label: qsTr("Saturation")
+                        width: parent.width
+                        visible: cameraProxy.controlExists(CameraProxy.Saturation);
+                        minimumValue: cameraProxy.controlMin(CameraProxy.Saturation);
+                        maximumValue: cameraProxy.controlMax(CameraProxy.Saturation);
+
+                        Text {
+                            text: sldSaturation.value
+                            anchors.centerIn: parent
+                        }
+
+                        onValueChanged: {
+                            cameraProxy.setControlValue(CameraProxy.Saturation, value);
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    DockedPanelPL {
         id: panelGeneral
         modal: true
         width: (iconRotation === 90
@@ -289,11 +378,8 @@ Item {
                 anchors.fill: parent
                 anchors.margins: styler.themePaddingMedium
                 contentHeight: mainColumn.height
-                //VerticalScrollDecorator {
-                //}
 
                 Column {
-                    id: mainColumn
                     width: parent.width
                     height: childrenRect.height
                     spacing: styler.themePaddingMedium
@@ -620,14 +706,12 @@ Item {
     }
 
     function hideAllPanels() {
-        panelEffects.hide()
-        panelExposure.hide()
         panelFlash.hide()
         panelFocus.hide()
         panelGeneral.hide()
         panelIso.hide()
         panelResolution.hide()
-        panelWhiteBalance.hide()
+        panelControls.hide()
         panelStorage.hide()
     }
 

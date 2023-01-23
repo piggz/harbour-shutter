@@ -82,6 +82,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<ViewFinderItem>("uk.co.piggz.pinhole", 1, 0, "ViewFinderItem");
     qmlRegisterType<ViewFinder2D>("uk.co.piggz.pinhole", 1, 0, "ViewFinder2D");
     qmlRegisterType<Settings>("uk.co.piggz.pinhole", 1, 0, "Settings");
+    qmlRegisterType<CameraProxy>("uk.co.piggz.pinhole", 1, 0, "CameraProxy");
 
     ResolutionModel resolutionModel;
     QSortFilterProxyModel sortedResolutionModel;
