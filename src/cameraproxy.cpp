@@ -120,7 +120,7 @@ void CameraProxy::setCameraIndex(QString id)
         auto controls = m_currentCamera->controls();
 
         for(auto control: controls) {
-            qDebug() << "Control:" << control.first->id() << QString::fromStdString(control.first->name()) <<  QString::fromStdString(control.second.toString());
+            qDebug() << "Control:" << control.first->id() << control.first->type() << QString::fromStdString(control.first->name()) <<  QString::fromStdString(control.second.toString());
             for (auto val : control.second.values()) {
                 qDebug() << "Value: " << QString::fromStdString(val.toString());
             }
@@ -428,7 +428,6 @@ void CameraProxy::stillCapture(const QString &filename)
 bool CameraProxy::controlExists(Control c)
 {
     qDebug() << Q_FUNC_INFO << c;
-    qDebug() << Brightness << Saturation;
     if (!m_currentCamera) {
         return false;
     }
