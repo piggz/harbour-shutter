@@ -34,7 +34,10 @@ public:
     };
     enum Control {
         Brightness = libcamera::controls::BRIGHTNESS,
-        Saturation = libcamera::controls::SATURATION
+        Saturation = libcamera::controls::SATURATION,
+        AnalogueGain = libcamera::controls::ANALOGUE_GAIN,
+        Contrast = libcamera::controls::CONTRAST,
+        ExposureTime = libcamera::controls::EXPOSURE_TIME
     };
 
     Q_ENUM(Control);

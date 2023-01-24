@@ -49,6 +49,7 @@ Item {
         width: inForm ? 0 : implicitWidth
         text: !inForm ? label : ""
         visible: text
+        color: styler.themePrimaryColor
     }
 
     Slider {
@@ -68,6 +69,7 @@ Item {
         x: val.x + val.handle.x + val.handle.width/2 - width/2
         text: valueText
         font.pixelSize: val.pressed ? styler.themeFontSizeLarge : styler.themeFontSizeMedium
+        color: styler.themePrimaryColor
     }
 
     Label {
@@ -81,5 +83,6 @@ Item {
         height: text ? implicitHeight : 0
         visible: text
         wrapMode: Text.WordWrap
+        color: styler.themePrimaryColor
     }
 }

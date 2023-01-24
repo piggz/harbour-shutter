@@ -151,5 +151,6 @@
         <file>qml/assets/YUV_packed.frag</file>
         <file>qml/pics/icon-m-pixelformat.png</file>
         <file>qml/pics/icon-m-controls.svg</file>
+        <file>qml/components/ControlSlider.qml</file>
     </qresource>
 </RCC>

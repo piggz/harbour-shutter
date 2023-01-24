@@ -77,7 +77,9 @@ ApplicationWindowPL {
 
     StylerPL {
         id: styler
+        themePrimaryColor: "white"
     }
+
     TruncationModes { id: truncModes }
     DockModes { id: dockModes }
 
