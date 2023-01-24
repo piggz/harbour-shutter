@@ -1,13 +1,16 @@
+Source: harbour-pinhole
 Priority: optional
-Maintainer: unknown <unknown@debian.org>
+Maintainer: Rafael Diniz <rafael@riseup.net>
 Source: harbour-pinhole
 Build-Depends: debhelper (>= 5), pkg-config, libqt5core5a, libqt5multimedia5, libqt5qml5, libqt5quick5, qtdeclarative5-dev, libexif-dev, desktop-file-utils, libcamera-dev, qtmultimedia5-dev, qml-module-qtsensors
-Standards-Version: 3.8.2
+Standards-Version: 4.6.2
+Section: utils
 Homepage: http://github.com/piggz/harbour-pinhole
 
 Package: harbour-pinhole
 Section: utils
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Multi-Arch: same
 Description: Pinhole is a camera application built ontop of libcamera.
 
