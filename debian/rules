@@ -25,11 +25,3 @@ endif
 
 override_dh_auto_configure:
 	dh_auto_configure -- FLAVOR=kirigami
-
-override_dh_install:
-	dh_install
-	install -D harbour-pinhole.svg debian/tmp/usr/share/icons/hicolor/scalable/apps/harbour-pinhole.svg
-	install -D icons/86x86/harbour-pinhole.png debian/tmp/usr/share/icons/hicolor/86x86/apps/harbour-pinhole.png
-	install -D icons/108x108/harbour-pinhole.png debian/tmp/usr/share/icons/hicolor/108x108/apps/harbour-pinhole.png
-	install -D icons/128x128/harbour-pinhole.png debian/tmp/usr/share/icons/hicolor/128x128/apps/harbour-pinhole.png
-	install -D icons/172x172/harbour-pinhole.png debian/tmp/usr/share/icons/hicolor/172x172/apps/harbour-pinhole.png

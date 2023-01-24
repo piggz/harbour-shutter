@@ -1,0 +1,6 @@
+harbour-pinhole.svg debian /usr/share/icons/hicolor/scalable/apps/
+icons/86x86/harbour-pinhole.png /usr/share/icons/hicolor/86x86/apps/
+icons/108x108/harbour-pinhole.png /usr/share/icons/hicolor/108x108/apps/
+icons/128x128/harbour-pinhole.png /tmp/usr/share/icons/hicolor/128x128/apps/
+icons/172x172/harbour-pinhole.png /tmp/usr/share/icons/hicolor/172x172/apps/
+harbour-pinhole.desktop /usr/share/applications/hildon/
