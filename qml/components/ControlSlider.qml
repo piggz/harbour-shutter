@@ -6,12 +6,13 @@ SliderPL {
 
     property string title
     property int control
+    property bool forceUpdate: app.forceUpdate
 
     label: title
     width: parent.width
-    visible: cameraProxy.controlExists(control);
-    minimumValue: cameraProxy.controlMin(control);
-    maximumValue: cameraProxy.controlMax(control);
+    visible: (forceUpdate || !forceUpdate) ? cameraProxy.controlExists(control) : false
+    minimumValue: (forceUpdate || !forceUpdate) ? cameraProxy.controlMin(control) : 0
+    maximumValue: (forceUpdate || !forceUpdate) ? cameraProxy.controlMax(control) : 0
 
     Text {
         text: sldControl.value.toFixed(2)
