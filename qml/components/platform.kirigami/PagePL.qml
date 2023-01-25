@@ -25,6 +25,7 @@ import "."
 Kirigami.ScrollablePage {
     id: page
     Kirigami.Theme.colorSet: Kirigami.Theme.Window
+    Kirigami.Theme.backgroundColor: "black"
     leftPadding: 0
     rightPadding: 0
 
