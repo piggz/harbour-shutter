@@ -39,6 +39,12 @@ PagePL {
         }
     }
 
+    Rectangle {
+        anchors.fill: parent
+        z: -10
+        color: "black"
+    }
+
     OrientationSensor {
         id: orientationSensor
         active: true
@@ -679,6 +685,7 @@ PagePL {
         settings.cameraName = modelCamera.get(settings.cameraId);
         cameraProxy.setCameraIndex(settings.cameraName);
 
+        app.forceUpdate = !app.forceUpdate;
         _completed = true
     }
 
@@ -704,6 +711,25 @@ PagePL {
                 console.log("Calling camera.start() due to pageStack change")
                 camera.start()
             }
+        }
+    }
+
+    Connections {
+        target: cameraProxy
+
+        onStillCaptureFinished: {
+            console.log("Still capture finished, starting viewfinder timer");
+            cameraProxy.stop();
+            tmrStartViewfinder.start();
+        }
+    }
+
+    Timer {
+        id: tmrStartViewfinder
+        interval: 200
+        onTriggered: {
+            console.log("Still capture finished, starting viewfinder");
+            cameraProxy.startViewFinder();
         }
     }
 

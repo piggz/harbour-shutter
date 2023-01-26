@@ -9,6 +9,8 @@ import "./components/platform"
 ApplicationWindowPL {
     id: app
     property bool loadingComplete: false;
+    property bool forceUpdate: false;
+
     Settings {
         id: settings
         property string cameraName
@@ -82,12 +84,6 @@ ApplicationWindowPL {
 
     TruncationModes { id: truncModes }
     DockModes { id: dockModes }
-
-    Rectangle {
-        anchors.fill: parent
-        z: -10
-        color: "black"
-    }
 
     initialPage: CameraUI {
             id: cameraUI

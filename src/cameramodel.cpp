@@ -43,5 +43,8 @@ QVariant CameraModel::data(const QModelIndex &index, int role) const
 
 QVariant CameraModel::get(int idx)
 {
-    return m_cameras.at(idx);
+    if (idx < m_cameras.count()) {
+        return m_cameras.at(idx);
+    }
+    return QString();
 }
