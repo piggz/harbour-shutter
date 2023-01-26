@@ -96,7 +96,7 @@ void CameraProxy::setCameraIndex(QString id)
 {
     qDebug() << Q_FUNC_INFO;
     stop();
-    if (m_cameraManager) {
+    if (m_cameraManager && !id.isEmpty()) {
         m_currentCameraId = id;
         const std::shared_ptr<libcamera::Camera> &cam = m_cameraManager->get(id.toStdString());
 
@@ -382,7 +382,7 @@ void CameraProxy::stillCapture(const QString &filename)
 
     requests_.clear();
 
-    /* Create requests and fill them with buffers from the viewfinder. */
+    /* Create requests and fill them with buffers from the still stream. */
     while (!freeBuffers_[m_stillStream].isEmpty()) {
         libcamera::FrameBuffer *buffer = freeBuffers_[m_stillStream].dequeue();
 
@@ -428,17 +428,17 @@ void CameraProxy::stillCapture(const QString &filename)
 bool CameraProxy::controlExists(Control c)
 {
     qDebug() << Q_FUNC_INFO << c;
-    if (!m_currentCamera) {
-        return false;
+    if (m_currentCamera && m_currentCamera->controls().size() > 0) {
+        qDebug() << (m_currentCamera->controls().find(c) != m_currentCamera->controls().end());
+        return m_currentCamera->controls().find(c) != m_currentCamera->controls().end();
     }
-    qDebug() << (m_currentCamera->controls().find(c) != m_currentCamera->controls().end());
-    return m_currentCamera->controls().find(c) != m_currentCamera->controls().end();
+    return false;
 }
 
 float CameraProxy::controlMin(Control c)
 {
-    if (!m_currentCamera) {
-        return false;
+    if (!controlExists(c)) {
+        return 0;
     }
     auto control = m_currentCamera->controls().find(c);
 
@@ -450,8 +450,8 @@ float CameraProxy::controlMin(Control c)
 
 float CameraProxy::controlMax(Control c)
 {
-    if (!m_currentCamera) {
-        return false;
+    if (!controlExists(c)) {
+        return 0;
     }
     auto control = m_currentCamera->controls().find(c);
 
@@ -463,8 +463,8 @@ float CameraProxy::controlMax(Control c)
 
 float CameraProxy::controlValue(Control c)
 {
-    if (!m_currentCamera) {
-        return false;
+    if (!controlExists(c)) {
+        return 0;
     }
     float v = 0;
     for (std::unique_ptr<libcamera::Request> &request : requests_) {
@@ -478,11 +478,12 @@ float CameraProxy::controlValue(Control c)
 
 void CameraProxy::setControlValue(Control c, float val)
 {
-    qDebug() << Q_FUNC_INFO << c << val;
-    if (!m_currentCamera) {
-        return;
+    qDebug() << Q_FUNC_INFO << c << val << controlMin(c) << controlMax(c);
+    if (controlExists(c) && val <= controlMax(c) && val >= controlMin(c)) {
+        m_controlValues[c] = val;
+    } else {
+        qWarning() << "Value" << val << "is out of range for" << c;
     }
-    m_controlValues[c] = val;
 }
 
 void CameraProxy::processCapture()
