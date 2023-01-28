@@ -29,6 +29,7 @@ public:
 
     enum CameraState {
         Stopped = 0,
+        Stopping,
         CapturingStill,
         CapturingViewFinder
     };
@@ -84,8 +85,8 @@ private:
     QMutex m_mutex;
 
     std::map<libcamera::FrameBuffer *, std::unique_ptr<Image>> mappedBuffers_;
-    libcamera::FrameBufferAllocator *m_viewFinderAllocator;
-    libcamera::FrameBufferAllocator *m_stillAllocator;
+    libcamera::FrameBufferAllocator *m_viewFinderAllocator = nullptr;
+    libcamera::FrameBufferAllocator *m_stillAllocator = nullptr;
 
     // Capture state, buffers queue and statistics
     CameraState m_state = Stopped;

@@ -25,8 +25,6 @@ CameraProxy::CameraProxy(QObject *parent)
     : QObject{parent}
 {
     qDebug() << Q_FUNC_INFO;
-    connect(this, &CameraProxy::stillSaveComplete,
-            this, &CameraProxy::renderComplete);
 }
 
 bool CameraProxy::event(QEvent *e)
@@ -135,6 +133,11 @@ void CameraProxy::startViewFinder()
 {
     qDebug() << Q_FUNC_INFO;
     int ret;
+
+    if (m_state != Stopped) {
+        qWarning() << "Camera not stopped, not starting viewfinder";
+        return;
+    }
 
     libcamera::StreamConfiguration &vfConfig = m_viewFinderConfig->at(0);
 
@@ -315,7 +318,29 @@ void CameraProxy::stop()
 {
     qDebug() << Q_FUNC_INFO;
     if (m_currentCamera) {
+        qDebug() << "stopping";
+        m_state = Stopping;
+
         m_currentCamera->stop();
+
+        m_currentCamera->requestCompleted.disconnect(this);
+
+        mappedBuffers_.clear();
+        requests_.clear();
+        freeQueue_.clear();
+
+        if (m_viewFinderAllocator) {
+            qDebug() << "deleting vf allocator";
+            delete m_viewFinderAllocator;
+            m_viewFinderAllocator = nullptr;
+        }
+        if (m_stillAllocator) {
+            qDebug() << "deleting still allocator";
+            delete m_stillAllocator;
+            m_stillAllocator = nullptr;
+        }
+        freeBuffers_.clear();
+        doneQueue_.clear();
         m_state = Stopped;
     }
 }
@@ -516,6 +541,10 @@ void CameraProxy::processCapture()
         processStill(request->buffers().at(m_stillStream));
     }
 
+    if (m_state <= Stopping) {
+        return;
+    }
+
     request->reuse();
     QMutexLocker locker(&m_mutex);
     freeQueue_.enqueue(request);
@@ -530,21 +559,13 @@ void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
 
 void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
 {
-    qDebug() << Q_FUNC_INFO << m_saveFileName;
-
-    libcamera::Request *request;
-    {
-        QMutexLocker locker(&m_mutex);
-        if (freeQueue_.isEmpty())
-            return;
-
-        request = freeQueue_.dequeue();
-    }
+    qDebug() << Q_FUNC_INFO << m_saveFileName << m_frame;
 
     if (m_frame < 5) {
         qDebug() << "Skipping frame " << m_frame;
         m_frame++;
-        stillSaveComplete(buffer);
+        if (buffer)
+            renderComplete(buffer);
         return;
     }
 
@@ -557,7 +578,8 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
     file.write((const char*)mappedBuffers_[buffer].get()->data(0).data(), size);
     file.close();
 
-    stillSaveComplete(buffer);
+    if (buffer)
+        renderComplete(buffer);
     stillCaptureFinished();
 }
 
