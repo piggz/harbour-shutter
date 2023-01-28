@@ -27,6 +27,7 @@ class CameraProxy : public QObject
 public:
     explicit CameraProxy(QObject *parent = nullptr);
 
+    Q_PROPERTY(CameraState state READ state WRITE setState NOTIFY stateChanged)
     enum CameraState {
         Stopped = 0,
         Stopping,
@@ -41,6 +42,7 @@ public:
         ExposureTime = libcamera::controls::EXPOSURE_TIME
     };
 
+    Q_ENUM(CameraState)
     Q_ENUM(Control);
 
     bool event(QEvent *e) override;
@@ -53,6 +55,9 @@ public:
     Q_INVOKABLE void setResolution(const QSize &res);
 
     std::vector<libcamera::Size> supportedReoluions(QString format);
+
+    CameraState state() const;
+    void setState(CameraState newState);
 
 public Q_SLOTS:
     void renderComplete(libcamera::FrameBuffer *buffer);
@@ -75,6 +80,7 @@ Q_SIGNALS:
     void resolutionChanged();
     void stillSaveComplete(libcamera::FrameBuffer *buffer);
     void stillCaptureFinished();
+    void stateChanged();
 
 private:
     std::shared_ptr<libcamera::CameraManager> m_cameraManager;

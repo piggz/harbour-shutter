@@ -239,7 +239,7 @@ void CameraProxy::startViewFinder()
         //goto error;
         return;
     }
-    m_state = CapturingViewFinder;
+    setState(CapturingViewFinder);
 
     m_currentCamera->requestCompleted.connect(this, &CameraProxy::requestComplete);
 
@@ -316,7 +316,7 @@ void CameraProxy::stop()
     qDebug() << Q_FUNC_INFO;
     if (m_currentCamera) {
         qDebug() << "stopping";
-        m_state = Stopping;
+        setState(Stopping);
 
         m_currentCamera->stop();
 
@@ -338,7 +338,7 @@ void CameraProxy::stop()
         }
         m_freeBuffers.clear();
         m_doneQueue.clear();
-        m_state = Stopped;
+        setState(Stopped);
     }
 }
 
@@ -432,7 +432,7 @@ void CameraProxy::stillCapture(const QString &filename)
         //goto error;
         return;
     }
-    m_state = CapturingStill;
+    setState(CapturingStill);
 
     m_currentCamera->requestCompleted.connect(this, &CameraProxy::requestComplete);
 
@@ -602,4 +602,17 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
         request->addBuffer(m_stillStream, buffer);
         m_currentCamera->queueRequest(request);
     }
+}
+
+CameraProxy::CameraState CameraProxy::state() const
+{
+    return m_state;
+}
+
+void CameraProxy::setState(CameraState newState)
+{
+    if (m_state == newState)
+        return;
+    m_state = newState;
+    Q_EMIT stateChanged();
 }
