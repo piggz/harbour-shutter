@@ -558,7 +558,7 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
 {
     qDebug() << Q_FUNC_INFO << m_saveFileName << m_frame;
 
-    if (m_frame < 5) {
+    if (m_frame < 4) {
         qDebug() << "Skipping frame " << m_frame;
         m_frame++;
         if (buffer)
