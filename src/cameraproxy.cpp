@@ -190,26 +190,23 @@ void CameraProxy::startViewFinder()
 
     /* Allocate and map buffers. */
     m_viewFinderAllocator = new libcamera::FrameBufferAllocator(m_currentCamera);
-    for (libcamera::StreamConfiguration &config : *m_viewFinderConfig) {
-        libcamera::Stream *stream = config.stream();
 
-        ret = m_viewFinderAllocator->allocate(stream);
-        if (ret < 0) {
-            qWarning() << "Failed to allocate capture buffers";
-            //TODO got error;
-            return;
-        }
+    ret = m_viewFinderAllocator->allocate(m_viewFinderStream);
+    if (ret < 0) {
+        qWarning() << "Failed to allocate capture buffers";
+        //TODO got error;
+        return;
+    }
 
-        for (const std::unique_ptr<libcamera::FrameBuffer> &buffer : m_viewFinderAllocator->buffers(stream)) {
-            /* Map memory buffers and cache the mappings. */
-            std::unique_ptr<Image> image =
-                    Image::fromFrameBuffer(buffer.get(), Image::MapMode::ReadOnly);
-            assert(image != nullptr);
-            mappedBuffers_[buffer.get()] = std::move(image);
+    for (const std::unique_ptr<libcamera::FrameBuffer> &buffer : m_viewFinderAllocator->buffers(m_viewFinderStream)) {
+        /* Map memory buffers and cache the mappings. */
+        std::unique_ptr<Image> image =
+                Image::fromFrameBuffer(buffer.get(), Image::MapMode::ReadOnly);
+        assert(image != nullptr);
+        mappedBuffers_[buffer.get()] = std::move(image);
 
-            /* Store buffers on the free list. */
-            freeBuffers_[stream].enqueue(buffer.get());
-        }
+        /* Store buffers on the free list. */
+        freeBuffers_[m_viewFinderStream].enqueue(buffer.get());
     }
 
     requests_.clear();
