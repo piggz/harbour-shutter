@@ -80,6 +80,19 @@ PagePL {
         width: parent.width
         height: parent.height
         z:-5
+
+        Rectangle {
+            id: rectFlash
+            anchors.fill: parent
+            opacity: 0
+
+            NumberAnimation on opacity {
+                id: animFlash
+                from: 1.0
+                to: 0.0
+                duration: 200
+            }
+        }
     }
 
     /*
@@ -404,19 +417,6 @@ PagePL {
 
                 iconSource: shutterIcon()
                 onClicked: doShutter()
-            }
-
-            Rectangle {
-                id: rectFlash
-                anchors.fill: parent
-                opacity: 0
-
-                NumberAnimation on opacity {
-                    id: animFlash
-                    from: 1.0
-                    to: 0.0
-                    duration: 200
-                }
             }
 
             Column {
