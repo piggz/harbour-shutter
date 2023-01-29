@@ -25,8 +25,6 @@ CameraProxy::CameraProxy(QObject *parent)
     : QObject{parent}
 {
     qDebug() << Q_FUNC_INFO;
-    connect(this, &CameraProxy::stillSaveComplete,
-            this, &CameraProxy::renderComplete);
 }
 
 bool CameraProxy::event(QEvent *e)
@@ -136,6 +134,11 @@ void CameraProxy::startViewFinder()
     qDebug() << Q_FUNC_INFO;
     int ret;
 
+    if (m_state != Stopped) {
+        qWarning() << "Camera not stopped, not starting viewfinder";
+        return;
+    }
+
     libcamera::StreamConfiguration &vfConfig = m_viewFinderConfig->at(0);
 
     /* Use a format supported by the viewfinder if available. Default to JPEG*/
@@ -187,33 +190,30 @@ void CameraProxy::startViewFinder()
 
     /* Allocate and map buffers. */
     m_viewFinderAllocator = new libcamera::FrameBufferAllocator(m_currentCamera);
-    for (libcamera::StreamConfiguration &config : *m_viewFinderConfig) {
-        libcamera::Stream *stream = config.stream();
 
-        ret = m_viewFinderAllocator->allocate(stream);
-        if (ret < 0) {
-            qWarning() << "Failed to allocate capture buffers";
-            //TODO got error;
-            return;
-        }
-
-        for (const std::unique_ptr<libcamera::FrameBuffer> &buffer : m_viewFinderAllocator->buffers(stream)) {
-            /* Map memory buffers and cache the mappings. */
-            std::unique_ptr<Image> image =
-                    Image::fromFrameBuffer(buffer.get(), Image::MapMode::ReadOnly);
-            assert(image != nullptr);
-            mappedBuffers_[buffer.get()] = std::move(image);
-
-            /* Store buffers on the free list. */
-            freeBuffers_[stream].enqueue(buffer.get());
-        }
+    ret = m_viewFinderAllocator->allocate(m_viewFinderStream);
+    if (ret < 0) {
+        qWarning() << "Failed to allocate capture buffers";
+        //TODO got error;
+        return;
     }
 
-    requests_.clear();
+    for (const std::unique_ptr<libcamera::FrameBuffer> &buffer : m_viewFinderAllocator->buffers(m_viewFinderStream)) {
+        /* Map memory buffers and cache the mappings. */
+        std::unique_ptr<Image> image =
+                Image::fromFrameBuffer(buffer.get(), Image::MapMode::ReadOnly);
+        assert(image != nullptr);
+        m_mappedBuffers[buffer.get()] = std::move(image);
+
+        /* Store buffers on the free list. */
+        m_freeBuffers[m_viewFinderStream].enqueue(buffer.get());
+    }
+
+    m_requests.clear();
 
     /* Create requests and fill them with buffers from the viewfinder. */
-    while (!freeBuffers_[m_viewFinderStream].isEmpty()) {
-        libcamera::FrameBuffer *buffer = freeBuffers_[m_viewFinderStream].dequeue();
+    while (!m_freeBuffers[m_viewFinderStream].isEmpty()) {
+        libcamera::FrameBuffer *buffer = m_freeBuffers[m_viewFinderStream].dequeue();
 
         std::unique_ptr<libcamera::Request> request = m_currentCamera->createRequest();
         if (!request) {
@@ -230,7 +230,7 @@ void CameraProxy::startViewFinder()
             return;
         }
 
-        requests_.push_back(std::move(request));
+        m_requests.push_back(std::move(request));
     }
 
     ret = m_currentCamera->start();
@@ -239,12 +239,12 @@ void CameraProxy::startViewFinder()
         //goto error;
         return;
     }
-    m_state = CapturingViewFinder;
+    setState(CapturingViewFinder);
 
     m_currentCamera->requestCompleted.connect(this, &CameraProxy::requestComplete);
 
     /* Queue all requests. */
-    for (std::unique_ptr<libcamera::Request> &request : requests_) {
+    for (std::unique_ptr<libcamera::Request> &request : m_requests) {
         ret = m_currentCamera->queueRequest(request.get());
         if (ret < 0) {
             qWarning() << "Can't queue request";
@@ -268,7 +268,7 @@ void CameraProxy::requestComplete(libcamera::Request *request)
      */
     {
         QMutexLocker locker(&m_mutex);
-        doneQueue_.enqueue(request);
+        m_doneQueue.enqueue(request);
     }
 
     QCoreApplication::postEvent(this, new CaptureEvent);
@@ -315,8 +315,30 @@ void CameraProxy::stop()
 {
     qDebug() << Q_FUNC_INFO;
     if (m_currentCamera) {
+        qDebug() << "stopping";
+        setState(Stopping);
+
         m_currentCamera->stop();
-        m_state = Stopped;
+
+        m_currentCamera->requestCompleted.disconnect(this);
+
+        m_mappedBuffers.clear();
+        m_requests.clear();
+        m_freeQueue.clear();
+
+        if (m_viewFinderAllocator) {
+            qDebug() << "deleting vf allocator";
+            delete m_viewFinderAllocator;
+            m_viewFinderAllocator = nullptr;
+        }
+        if (m_stillAllocator) {
+            qDebug() << "deleting still allocator";
+            delete m_stillAllocator;
+            m_stillAllocator = nullptr;
+        }
+        m_freeBuffers.clear();
+        m_doneQueue.clear();
+        setState(Stopped);
     }
 }
 
@@ -374,17 +396,17 @@ void CameraProxy::stillCapture(const QString &filename)
         /* Map memory buffers and cache the mappings. */
         std::unique_ptr<Image> image = Image::fromFrameBuffer(buffer.get(), Image::MapMode::ReadOnly);
         assert(image != nullptr);
-        mappedBuffers_[buffer.get()] = std::move(image);
+        m_mappedBuffers[buffer.get()] = std::move(image);
 
         /* Store buffers on the free list. */
-        freeBuffers_[m_stillStream].enqueue(buffer.get());
+        m_freeBuffers[m_stillStream].enqueue(buffer.get());
     }
 
-    requests_.clear();
+    m_requests.clear();
 
     /* Create requests and fill them with buffers from the still stream. */
-    while (!freeBuffers_[m_stillStream].isEmpty()) {
-        libcamera::FrameBuffer *buffer = freeBuffers_[m_stillStream].dequeue();
+    while (!m_freeBuffers[m_stillStream].isEmpty()) {
+        libcamera::FrameBuffer *buffer = m_freeBuffers[m_stillStream].dequeue();
 
         std::unique_ptr<libcamera::Request> request = m_currentCamera->createRequest();
         if (!request) {
@@ -401,7 +423,7 @@ void CameraProxy::stillCapture(const QString &filename)
             return;
         }
 
-        requests_.push_back(std::move(request));
+        m_requests.push_back(std::move(request));
     }
 
     ret = m_currentCamera->start();
@@ -410,12 +432,12 @@ void CameraProxy::stillCapture(const QString &filename)
         //goto error;
         return;
     }
-    m_state = CapturingStill;
+    setState(CapturingStill);
 
     m_currentCamera->requestCompleted.connect(this, &CameraProxy::requestComplete);
 
     /* Queue all requests. */
-    for (std::unique_ptr<libcamera::Request> &request : requests_) {
+    for (std::unique_ptr<libcamera::Request> &request : m_requests) {
         ret = m_currentCamera->queueRequest(request.get());
         if (ret < 0) {
             qWarning() << "Can't queue request";
@@ -467,7 +489,7 @@ float CameraProxy::controlValue(Control c)
         return 0;
     }
     float v = 0;
-    for (std::unique_ptr<libcamera::Request> &request : requests_) {
+    for (std::unique_ptr<libcamera::Request> &request : m_requests) {
         auto controllist = request->controls();
         v = controllist.get(c).get<float>();
     }
@@ -501,10 +523,10 @@ void CameraProxy::processCapture()
     libcamera::Request *request;
     {
         QMutexLocker locker(&m_mutex);
-        if (doneQueue_.isEmpty())
+        if (m_doneQueue.isEmpty())
             return;
 
-        request = doneQueue_.dequeue();
+        request = m_doneQueue.dequeue();
     }
 
     /* Process buffers. */
@@ -516,35 +538,31 @@ void CameraProxy::processCapture()
         processStill(request->buffers().at(m_stillStream));
     }
 
+    if (m_state <= Stopping) {
+        return;
+    }
+
     request->reuse();
     QMutexLocker locker(&m_mutex);
-    freeQueue_.enqueue(request);
+    m_freeQueue.enqueue(request);
 }
 
 void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
 {
     //qDebug() << Q_FUNC_INFO;
 
-    m_viewFinder->renderImage(buffer, mappedBuffers_[buffer].get());
+    m_viewFinder->renderImage(buffer, m_mappedBuffers[buffer].get());
 }
 
 void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
 {
-    qDebug() << Q_FUNC_INFO << m_saveFileName;
+    qDebug() << Q_FUNC_INFO << m_saveFileName << m_frame;
 
-    libcamera::Request *request;
-    {
-        QMutexLocker locker(&m_mutex);
-        if (freeQueue_.isEmpty())
-            return;
-
-        request = freeQueue_.dequeue();
-    }
-
-    if (m_frame < 5) {
+    if (m_frame < 4) {
         qDebug() << "Skipping frame " << m_frame;
         m_frame++;
-        stillSaveComplete(buffer);
+        if (buffer)
+            renderComplete(buffer);
         return;
     }
 
@@ -554,10 +572,11 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
     }
 
     size_t size = buffer->metadata().planes()[0].bytesused;
-    file.write((const char*)mappedBuffers_[buffer].get()->data(0).data(), size);
+    file.write((const char*)m_mappedBuffers[buffer].get()->data(0).data(), size);
     file.close();
 
-    stillSaveComplete(buffer);
+    if (buffer)
+        renderComplete(buffer);
     stillCaptureFinished();
 }
 
@@ -566,10 +585,10 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
     libcamera::Request *request;
     {
         QMutexLocker locker(&m_mutex);
-        if (freeQueue_.isEmpty())
+        if (m_freeQueue.isEmpty())
             return;
 
-        request = freeQueue_.dequeue();
+        request = m_freeQueue.dequeue();
     }
 
     if (m_state == CapturingViewFinder) {
@@ -583,4 +602,17 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
         request->addBuffer(m_stillStream, buffer);
         m_currentCamera->queueRequest(request);
     }
+}
+
+CameraProxy::CameraState CameraProxy::state() const
+{
+    return m_state;
+}
+
+void CameraProxy::setState(CameraState newState)
+{
+    if (m_state == newState)
+        return;
+    m_state = newState;
+    Q_EMIT stateChanged();
 }
