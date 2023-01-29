@@ -27,8 +27,10 @@ class CameraProxy : public QObject
 public:
     explicit CameraProxy(QObject *parent = nullptr);
 
+    Q_PROPERTY(CameraState state READ state WRITE setState NOTIFY stateChanged)
     enum CameraState {
         Stopped = 0,
+        Stopping,
         CapturingStill,
         CapturingViewFinder
     };
@@ -40,6 +42,7 @@ public:
         ExposureTime = libcamera::controls::EXPOSURE_TIME
     };
 
+    Q_ENUM(CameraState)
     Q_ENUM(Control);
 
     bool event(QEvent *e) override;
@@ -52,6 +55,9 @@ public:
     Q_INVOKABLE void setResolution(const QSize &res);
 
     std::vector<libcamera::Size> supportedReoluions(QString format);
+
+    CameraState state() const;
+    void setState(CameraState newState);
 
 public Q_SLOTS:
     void renderComplete(libcamera::FrameBuffer *buffer);
@@ -74,6 +80,7 @@ Q_SIGNALS:
     void resolutionChanged();
     void stillSaveComplete(libcamera::FrameBuffer *buffer);
     void stillCaptureFinished();
+    void stateChanged();
 
 private:
     std::shared_ptr<libcamera::CameraManager> m_cameraManager;
@@ -83,18 +90,18 @@ private:
     QString m_currentCameraId;
     QMutex m_mutex;
 
-    std::map<libcamera::FrameBuffer *, std::unique_ptr<Image>> mappedBuffers_;
-    libcamera::FrameBufferAllocator *m_viewFinderAllocator;
-    libcamera::FrameBufferAllocator *m_stillAllocator;
+    std::map<libcamera::FrameBuffer *, std::unique_ptr<Image>> m_mappedBuffers;
+    libcamera::FrameBufferAllocator *m_viewFinderAllocator = nullptr;
+    libcamera::FrameBufferAllocator *m_stillAllocator = nullptr;
 
     // Capture state, buffers queue and statistics
     CameraState m_state = Stopped;
     libcamera::Stream *m_viewFinderStream;
     libcamera::Stream *m_stillStream;
-    std::map<const libcamera::Stream *, QQueue<libcamera::FrameBuffer *>> freeBuffers_;
-    QQueue<libcamera::Request *> doneQueue_;
-    QQueue<libcamera::Request *> freeQueue_;
-    std::vector<std::unique_ptr<libcamera::Request>> requests_;
+    std::map<const libcamera::Stream *, QQueue<libcamera::FrameBuffer *>> m_freeBuffers;
+    QQueue<libcamera::Request *> m_doneQueue;
+    QQueue<libcamera::Request *> m_freeQueue;
+    std::vector<std::unique_ptr<libcamera::Request>> m_requests;
 
 
     // Cached still and viewfinder modes

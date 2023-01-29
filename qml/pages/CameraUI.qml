@@ -50,27 +50,7 @@ PagePL {
         active: true
 
         onReadingChanged: {
-            console.log("Orientation:", reading.orientation, _orientation, controlsContainer.rotation, _rotationValues["ui"][page._orientation], _rotationValues["ui"][reading.orientation], controlsRotation);
-
-            if (reading.orientation >= OrientationReading.TopUp
-                    && reading.orientation <= OrientationReading.RightUp) {
-                _orientation = reading.orientation
-            }
-
-            controlsContainer.rotation = _rotationValues["ui"][reading.orientation]
-
-            switch (reading.orientation) {
-            case OrientationReading.TopUp:
-                _pictureRotation = 0; break
-            case OrientationReading.TopDown:
-                _pictureRotation = 180; break
-            case OrientationReading.LeftUp:
-                _pictureRotation = 270; break
-            case OrientationReading.RightUp:
-                _pictureRotation = 90; break
-            default:
-                // Keep device orientation at previous state
-            }
+            updateRotation(reading.orientation);
         }
     }
 
@@ -80,6 +60,19 @@ PagePL {
         width: parent.width
         height: parent.height
         z:-5
+
+        Rectangle {
+            id: rectFlash
+            anchors.fill: parent
+            opacity: 0
+
+            NumberAnimation on opacity {
+                id: animFlash
+                from: 1.0
+                to: 0.0
+                duration: 200
+            }
+        }
     }
 
     /*
@@ -310,30 +303,33 @@ PagePL {
 
         SettingsOverlay {
             id: settingsOverlay
-            rotation: controlsContainer.rotation
-            anchors.margins: 10
+            rotation: settings.rotationCorrection
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+
             //iconRotation: page.controlsRotation
             onRotationChanged: {
-                console.log("Control rotation:", page._orientation, rotation, width, height, page.width, page.height);
+                console.log("Control rotation:", page._orientation, settingsOverlay.rotation, width, height, page.width, page.height);
                 console.log(OrientationReading.TopUp, OrientationReading.TopDown, OrientationReading.LeftUp, OrientationReading.RightUp);
             }
 
-            width: page._orientation === OrientationReading.TopUp ? page.height : page.width
-            height: page._orientation === OrientationReading.TopUp ? page.width : page.height
+            width: rotation == 0 ? parent.width : parent.height
+            height: rotation == 0 ? parent.height : parent.width
 
         }
 
         Item {
             id: controlsContainer
-            anchors.centerIn: parent
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
 
             onRotationChanged: {
                 console.log("Control rotation:", page._orientation, rotation, width, height, page.width, page.height);
                 console.log(OrientationReading.TopUp, OrientationReading.TopDown, OrientationReading.LeftUp, OrientationReading.RightUp);
             }
 
-            width: page._orientation === OrientationReading.TopUp ? page.height : page.width
-            height: page._orientation === OrientationReading.TopUp ? page.width : page.height
+            width: rotation == 0 ? parent.width : parent.height
+            height: rotation == 0 ? parent.height : parent.width
 
             GridOverlay {
                 aspect: ratio(settings.getCameraModeValue("resolution", Qt.size(1280, 720)))
@@ -404,19 +400,6 @@ PagePL {
 
                 iconSource: shutterIcon()
                 onClicked: doShutter()
-            }
-
-            Rectangle {
-                id: rectFlash
-                anchors.fill: parent
-                opacity: 0
-
-                NumberAnimation on opacity {
-                    id: animFlash
-                    from: 1.0
-                    to: 0.0
-                    duration: 200
-                }
             }
 
             Column {
@@ -788,6 +771,10 @@ PagePL {
         }
     }
 
+    Component.onCompleted: {
+        updateRotation(orientationSensor.reading ? orientationSensor.reading.orientation : 0);
+    }
+
     function volUp() {
         if (settings.global.swapZoomControl) {
             zoomOut()
@@ -967,9 +954,9 @@ PagePL {
         animFlash.start();
 
         var filename = fsOperations.writableLocation(
-                "image",
-                settings.get("global", "storagePath", "")) + "/IMG_" + Qt.formatDateTime(
-                new Date(), "yyyyMMdd_hhmmss") + ".jpg";
+                    "image",
+                    settings.get("global", "storagePath", "")) + "/IMG_" + Qt.formatDateTime(
+                    new Date(), "yyyyMMdd_hhmmss") + ".jpg";
 
         cameraProxy.stillCapture(filename);
     }
@@ -1053,6 +1040,30 @@ PagePL {
             } else {
                 switchCamera(settings.enabledCameras[0])
             }
+        }
+    }
+
+    function updateRotation(orientation) {
+        console.log("Orientation:", orientation, _orientation, controlsContainer.rotation, _rotationValues["ui"][page._orientation], _rotationValues["ui"][orientation], controlsRotation);
+
+        if (orientation >= OrientationReading.TopUp
+                && orientation <= OrientationReading.RightUp) {
+            _orientation = orientation
+        }
+
+        controlsContainer.rotation = _rotationValues["ui"][orientation] + settings.rotationCorrection
+
+        switch (reading.orientation) {
+        case OrientationReading.TopUp:
+            _pictureRotation = 0; break
+        case OrientationReading.TopDown:
+            _pictureRotation = 180; break
+        case OrientationReading.LeftUp:
+            _pictureRotation = 270; break
+        case OrientationReading.RightUp:
+            _pictureRotation = 90; break
+        default:
+            // Keep device orientation at previous state
         }
     }
 }

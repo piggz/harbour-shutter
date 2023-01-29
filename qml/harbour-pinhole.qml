@@ -19,7 +19,8 @@ ApplicationWindowPL {
         property int cameraCount
         property variant enabledCameras: [] //Calculated on startup and when disabledCameras changes
         property variant disabledCameras: [] //Calculated on startup and when disabledCameras changes
-
+        property int rotationCorrection: 0
+        
         function getCameraValue(s, d) {
             return get(cameraId, s, d);
         }
@@ -68,10 +69,12 @@ ApplicationWindowPL {
             captureMode = get("global", "captureMode", "image");
             cameraName = get("global", "cameraName", "");
             cameraId = get("global", "cameraId", 0);
+            rotationCorrection = get("global", "rotationCorrection", 0);
 
             set("global", "cameraId", cameraId);
             set("global", "cameraName", cameraName);
             set("global", "captureMode", captureMode);
+            set("global", "rotationCorrection", rotationCorrection);
 
             cameraCount = modelCamera.rowCount;
         }

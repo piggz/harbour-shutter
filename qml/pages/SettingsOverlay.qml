@@ -7,7 +7,6 @@ import "../components/"
 import "../components/platform"
 
 Item {
-    anchors.fill: parent
     property int iconRotation: 0
     property bool panelOpen: panelFlash.expanded
                              || panelWhiteBalance.expanded
