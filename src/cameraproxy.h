@@ -79,7 +79,7 @@ Q_SIGNALS:
     void formatChanged();
     void resolutionChanged();
     void stillSaveComplete(libcamera::FrameBuffer *buffer);
-    void stillCaptureFinished();
+    void stillCaptureFinished(const QString &path);
     void stateChanged();
 
 private:
