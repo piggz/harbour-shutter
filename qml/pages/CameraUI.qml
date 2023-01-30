@@ -200,11 +200,7 @@ PagePL {
                 console.log("Camera: captured", photoPreview.source)
             }
             onImageSaved: {
-                console.log("Camera: image saved", path)
-                galleryModel.append({
-                                        "filePath": path,
-                                        "isVideo": false
-                                    })
+
             }
             onResolutionChanged: {
                 console.log("Image resolution changed:",
@@ -499,10 +495,10 @@ PagePL {
 
                 size: styler.themeItemSizeSmall
 
-                iconSource: "../pics/icon-m-image.svg"
+                iconSource: styler.customIconPrefix +"../pics/icon-m-image.svg"
 
                 onClicked: {
-                    camera.stop()
+                    cameraProxy.stop()
                     pageStack.push(Qt.resolvedUrl("GalleryUI.qml"), {
                                        "fileList": galleryModel
                                    })
@@ -511,7 +507,7 @@ PagePL {
 
             RoundButton {
                 id: btnCameraSwitch
-                iconSource: "../pics/icon-camera-switch.svg"
+                iconSource: styler.customIconPrefix + "../pics/icon-camera-switch.svg"
                 visible: settings.cameraCount > 1
                 iconRotation: page.controlsRotation
                 property string prevCamId
@@ -692,7 +688,7 @@ PagePL {
         onDepthChanged: {
             if (pageStack.depth === 1) {
                 console.log("Calling camera.start() due to pageStack change")
-                camera.start()
+                tmrStartViewfinder.start();
             }
         }
     }
@@ -704,6 +700,13 @@ PagePL {
             console.log("Still capture finished, starting viewfinder timer");
             cameraProxy.stop();
             tmrStartViewfinder.start();
+
+            console.log("Camera: image saved", path)
+            galleryModel.append({
+                                    "filePath": "file://" + path,
+                                    "isVideo": false
+                                })
+
         }
     }
 

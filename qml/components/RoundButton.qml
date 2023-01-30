@@ -29,7 +29,10 @@ Item {
             //icon.anchors.margins: styler.paddingMedium
             //icon.source: button.image
             //icon.fillMode: Image.PreserveAspectFit
-            onClicked: button.clicked()
+            onClicked: {
+                console.log("button clicked")
+                button.clicked()
+            }
             //onPressed: button.pressed()
             iconWidth: (parent.width / 4) * 3
             iconHeight: iconWidth

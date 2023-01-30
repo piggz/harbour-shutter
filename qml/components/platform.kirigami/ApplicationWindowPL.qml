@@ -19,7 +19,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import Qt.labs.settings 1.0
-import org.kde.kirigami 2.5 as Kirigami
+import org.kde.kirigami 2.14 as Kirigami
 import "."
 
 Kirigami.ApplicationWindow {
@@ -33,7 +33,7 @@ Kirigami.ApplicationWindow {
     visible: true
     pageStack.initialPage: initialPage
     pageStack.globalToolBar.style: Kirigami.ApplicationHeaderStyle.None
-
+    pageStack.columnView.columnResizeMode: Kirigami.ColumnView.SingleColumn
     pageStack.globalToolBar.showNavigationButtons: pages && pages.currentIndex > 0 ?
                                                        Kirigami.ApplicationHeaderStyle.ShowBackButton :
                                                        Kirigami.ApplicationHeaderStyle.NoNavigationButtons

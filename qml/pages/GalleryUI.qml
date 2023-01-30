@@ -1,7 +1,4 @@
 import QtQuick 2.5
-//import Sailfish.Share 1.0
-import QtMultimedia 5.6
-//import Nemo.Thumbnailer 1.0
 import uk.co.piggz.pinhole 1.0
 
 import "../components/"
@@ -14,11 +11,6 @@ PagePL {
 
                             })
     property alias showButtons: btnClose.visible
-
-    // The effective value will be restricted by ApplicationWindow.allowedOrientations
-    allowedOrientations: Orientation.All
-
-    backNavigation: false
 
     function isVideo(idx) {
         return fileList.get(idx).isVideo
@@ -47,16 +39,15 @@ PagePL {
 
     RoundButton {
         id: btnClose
-
         visible: true
-        icon.source: "image://styler/icon-m-close"
-        size: styler.itemSizeMedium
+        iconSource: styler.customIconPrefix + "../pics/icon-m-close.png"
+        size: styler.themeItemSizeSmall
 
         anchors {
             top: parent.top
-            topMargin: styler.paddingMedium
+            topMargin: styler.themePaddingMedium
             right: parent.right
-            rightMargin: styler.paddingMedium
+            rightMargin: styler.themePaddingMedium
         }
 
         onClicked: {
@@ -67,16 +58,15 @@ PagePL {
 
     RoundButton {
         id: btnAbout
-
         visible: showButtons
-        icon.source: "image://styler/icon-m-about"
-        size: styler.itemSizeMedium
+        iconSource: styler.customIconPrefix + "../pics/icon-m-about.png"
+        size: styler.themeItemSizeSmall
 
         anchors {
             top: parent.top
-            topMargin: styler.paddingMedium
+            topMargin: styler.themePaddingMedium
             left: parent.left
-            leftMargin: styler.paddingMedium
+            leftMargin: styler.themePaddingMedium
         }
 
         onClicked: {
@@ -89,26 +79,27 @@ PagePL {
         }
     }
 
+    /*
     RemorsePopup {
         id: remorse
     }
-
+*/
     Row {
         id: rowBottom
 
         visible: showButtons
-        spacing: styler.paddingMedium
+        spacing: styler.themePaddingMedium
         anchors {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
-            bottomMargin: styler.paddingMedium
+            bottomMargin: styler.themePaddingMedium
         }
 
         RoundButton {
             id: btnRemove
 
-            icon.source: "image://styler/icon-m-delete"
-            size: styler.itemSizeMedium
+            iconSource: styler.customIconPrefix + "../pics/icon-m-delete.png"
+            size: styler.themeItemSizeSmall
 
             function showRemorseItem() {
                 var deleteIndex = gallery.currentIndex
@@ -124,77 +115,25 @@ PagePL {
                 showRemorseItem()
             }
         }
-
-        ShareAction {
-            id: shareAction
-        }
-
         RoundButton {
             id: btnShare
-
-            icon.source: "image://styler/icon-m-share"
-            size: styler.itemSizeMedium
+            visible: gallery.canShare
+            iconSource: styler.customIconPrefix +  "../pics/icon-m-share.png"
+            size: styler.themeItemSizeSmall
 
             onClicked: {
                 var filePath = fileList.get(gallery.currentIndex).filePath
-                var mimeType = isVideo(gallery.currentIndex) ? "video/mp4" : "image/jpeg"
-                shareAction.resources = [filePath]
-                shareAction.mimeType = mimeType
-                shareAction.trigger()
+                var mimeType = "image/jpeg"
+                gallery.share.resources = [filePath]
+                gallery.share.mimeType = mimeType
+                gallery.share.trigger()
             }
         }
+
     }
 
-    SlideshowView {
+    SlideshowPL {
         id: gallery
-
-        clip: true
-        width: parent.width
-        height: parent.height
-        z: -1
-
         model: fileList
-        currentIndex: count - 1
-
-        delegate: Rectangle {
-            id: delegate
-            width: parent.width
-            height: parent.height
-            color: 'black'
-
-            Thumbnail {
-                id: thumbnail
-
-                sourceSize.width: parent.width
-                sourceSize.height: parent.height
-                anchors.fill: parent
-                fillMode: Thumbnail.PreserveAspectFit
-                source: filePath
-                mimeType: isVideo ? "video/" : "image/"
-                smooth: true
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        showButtons = !showButtons
-                    }
-                }
-            }
-
-            RoundButton {
-                id: btnPlay
-
-                visible: isVideo
-                anchors.centerIn: parent
-                icon.source: "image://styler/icon-m-play"
-                size: styler.itemSizeMedium
-
-                onClicked: {
-                    pageStack.push(Qt.resolvedUrl("VideoPlayer.qml"), {
-                                       "videoFile": filePath
-                                   }, PageStackAction.Immediate)
-                }
-            }
-        }
     }
 }
