@@ -12,5 +12,6 @@ QVariant Settings::get(const QString &group, const QString &setting, QVariant de
 
 void Settings::set(const QString &group, const QString &setting, QVariant value)
 {
-    return m_settings.setValue(group + "/" + setting, value);
+    m_settings.setValue(group + "/" + setting, value);
+    m_settings.sync();
 }
