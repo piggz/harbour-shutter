@@ -33,6 +33,7 @@
         <file alias="qml/components/platform/PagePL.qml">qml/components/platform.kirigami/PagePL.qml</file>
         <file alias="qml/components/platform/PopupPL.qml">qml/components/platform.kirigami/PopupPL.qml</file>
         <file alias="qml/components/platform/RemorsePopupPL.qml">qml/components/platform.kirigami/RemorsePopupPL.qml</file>
+        <file alias="qml/components/platform/SlideshowPL.qml">qml/components/platform.kirigami/SlideshowPL.qml</file>
         <file alias="qml/components/platform/SearchFieldPL.qml">qml/components/platform.kirigami/SearchFieldPL.qml</file>
         <file alias="qml/components/platform/SectionHeaderPL.qml">qml/components/platform.kirigami/SectionHeaderPL.qml</file>
         <file alias="qml/components/platform/SliderPL.qml">qml/components/platform.kirigami/SliderPL.qml</file>
@@ -152,5 +153,9 @@
         <file>qml/pics/icon-m-pixelformat.png</file>
         <file>qml/pics/icon-m-controls.svg</file>
         <file>qml/components/ControlSlider.qml</file>
+        <file>qml/pics/icon-m-about.png</file>
+        <file>qml/pics/icon-m-close.png</file>
+        <file>qml/pics/icon-m-delete.png</file>
+        <file>qml/pics/icon-m-share.png</file>
     </qresource>
 </RCC>

@@ -575,9 +575,11 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
     file.write((const char*)m_mappedBuffers[buffer].get()->data(0).data(), size);
     file.close();
 
-    if (buffer)
+    if (buffer) {
         renderComplete(buffer);
-    stillCaptureFinished();
+    }
+
+    Q_EMIT stillCaptureFinished(m_saveFileName);
 }
 
 void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)

@@ -22,7 +22,7 @@ import QtQuick.Layouts 1.2
 import org.kde.kirigami 2.7 as Kirigami
 import "."
 
-Kirigami.ScrollablePage {
+Kirigami.Page {
     id: page
     Kirigami.Theme.colorSet: Kirigami.Theme.Window
     Kirigami.Theme.backgroundColor: "black"
@@ -30,7 +30,6 @@ Kirigami.ScrollablePage {
     rightPadding: 0
 
     property string        acceptIconName: styler.iconForward
-    property alias         acceptText: mainAction.text
     property var           acceptCallback
     property bool          canNavigateForward: true
     property bool          currentPage: app.pages.currentItem === page
@@ -41,21 +40,6 @@ Kirigami.ScrollablePage {
     signal pageStatusActive
     signal pageStatusInactive
 
-    actions {
-        right: Kirigami.Action {
-            id: mainAction
-            enabled: page.canNavigateForward === true
-            icon.name: page.acceptIconName
-            visible: !page.hideAcceptButton && (page.isDialog || app.pages.hasAttached(page))
-            text: "" + (page.isDialog ? app.tr("Accept") : app.pages.nextPage().title)
-            onTriggered: {
-                if (acceptCallback) acceptCallback();
-                else app.pages.navigateForward();
-            }
-        }
-
-        contextualActions: page.pageMenu ? page.pageMenu.items : []
-    }
 
     onCurrentPageChanged: {
         if (page.currentPage) {

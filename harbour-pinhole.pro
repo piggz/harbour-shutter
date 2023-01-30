@@ -49,8 +49,10 @@ DISTFILES += \
     qml/components/ControlSlider.qml \
     qml/components/DockModes.qml \
     qml/components/DockedListView.qml \
+    qml/components/platform.kirigami/SlideshowPL.qml \
     qml/components/platform.qtcontrols/DockedPanelPL.qml \
     qml/components/platform.silica/DockedPanelPL.qml \
+    qml/components/platform.silica/SlideshowPL.qml \
     qml/pages/SettingsX.qml \
     qml/pics/icon-camera-switch.svg \
     qml/pics/icon-m-camera.svg \
