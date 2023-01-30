@@ -51,7 +51,7 @@ Item {
                 iconColor: styler.themePrimaryColor
                 iconRotation: iconRotation
                 iconSource: styler.customIconPrefix + "../pics/icon-m-pixelformat.png"
-                visible: modelFormats.rowCount > 1
+                visible: modelFormats.rowCount > 0
 
                 onClicked: {
                     panelFormats.show()
@@ -63,7 +63,7 @@ Item {
                 iconColor: styler.themePrimaryColor
                 iconRotation: iconRotation
                 iconSource: styler.customIconPrefix + "../pics/icon-m-resolution.png"
-                visible: modelResolution.rowCount > 1
+                visible: modelResolution.rowCount > 0
 
                 onClicked: {
                     panelResolution.show()
@@ -74,7 +74,7 @@ Item {
                 id: btnFocus
                 iconSource: focusIcon()
                 iconRotation: iconRotation
-                visible: modelFocus.rowCount > 1
+                visible: modelFocus.rowCount > 0
 
                 onClicked: {
                     panelFocus.show()
@@ -85,7 +85,7 @@ Item {
                 id: btnWhiteBalance
                 iconSource: whiteBalanceIcon()
                 iconRotation: iconRotation
-                visible: modelWhiteBalance.rowCount > 1
+                visible: modelWhiteBalance.rowCount > 0
 
                 onClicked: {
                     panelWhiteBalance.show()
@@ -95,7 +95,7 @@ Item {
                 id: btnFlash
                 iconSource: flashIcon()
                 iconRotation: iconRotation
-                visible: modelFlash.rowCount > 1
+                visible: modelFlash.rowCount > 0
 
                 onClicked: {
                     panelFlash.show()
@@ -107,7 +107,7 @@ Item {
                 iconColor: styler.themePrimaryColor
                 iconRotation: iconRotation
                 iconSource: isoIcon()
-                visible: modelIso.rowCount > 1
+                visible: modelIso.rowCount > 0
 
                 onClicked: {
                     panelIso.show()
@@ -120,7 +120,7 @@ Item {
                 iconColor: styler.themePrimaryColor
                 iconRotation: iconRotation
                 iconSource: styler.customIconPrefix + "../pics/icon-m-sd-card.svg"
-                visible: modelStorage.rowCount > 1
+                visible: modelStorage.rowCount > 0
 
                 onClicked: {
                     modelStorage.scan("/media/sdcard")
