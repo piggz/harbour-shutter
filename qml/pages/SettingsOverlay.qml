@@ -471,27 +471,27 @@ Item {
                         width: parent.width
                         spacing: 5
                         Repeater {
-                            model: QtMultimedia.availableCameras
+                            model: modelCamera
                             Rectangle {
-                                width: styler.itemSizeSmall
+                                width: styler.themeItemSizeSmall
                                 height: width
-                                color: (settings.enabledCameras.indexOf("[" + QtMultimedia.availableCameras[index].deviceId + "]") >=0) ? "green" : "red"
+                                color: (settings.disabledCameras.indexOf("[" + index + "]") >=0) ? "red" : "green"
                                 LabelPL  {
                                     anchors.centerIn: parent
-                                    text: QtMultimedia.availableCameras[index].deviceId
+                                    text: index
                                 }
                                 MouseArea {
                                     anchors.fill: parent
 
                                     onClicked: {
-                                        console.log("Clicked ", QtMultimedia.availableCameras[index].deviceId)
-                                        if (settings.global.disabledCameras.indexOf("[" + QtMultimedia.availableCameras[index].deviceId + "]") >=0) {
-                                            settings.global.disabledCameras = settings.global.disabledCameras.replace("[" + QtMultimedia.availableCameras[index].deviceId + "]", "")
+                                        console.log("Clicked ", index)
+                                        if (settings.disabledCameras.indexOf("[" + index + "]") >=0) {
+                                            settings.disabledCameras = settings.disabledCameras.replace("[" + index + "]", "")
                                         } else {
-                                            settings.global.disabledCameras += ("[" + QtMultimedia.availableCameras[index].deviceId + "]")
+                                            settings.disabledCameras += ("[" + index + "]")
                                         }
 
-                                        console.log(settings.global.disabledCameras)
+                                        console.log(settings.disabledCameras)
                                         settings.calculateEnabledCameras()
                                     }
                                 }

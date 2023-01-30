@@ -18,7 +18,7 @@ ApplicationWindowPL {
         property string captureMode
         property int cameraCount
         property variant enabledCameras: [] //Calculated on startup and when disabledCameras changes
-        property variant disabledCameras: [] //Calculated on startup and when disabledCameras changes
+        property string disabledCameras: ""
         property int rotationCorrection: 0
         
         function getCameraValue(s, d) {
@@ -58,10 +58,15 @@ ApplicationWindowPL {
         {
             settings.enabledCameras = []
             for (var i = 0; i < settings.cameraCount; ++i) {
-                if (settings.disabledCameras.indexOf("[" + modelCamera.get(i) + "]") == -1) {
-                    settings.enabledCameras.push(modelCamera.get(i))
+                if (settings.disabledCameras.indexOf("[" + i + "]") == -1) {
+                    settings.enabledCameras.push(i)
                 }
             }
+            console.log("Disabled Cameras:", settings.disabledCameras);
+            console.log("Enabled Cameras :", settings.enabledCameras);
+
+            settings.set("global", "disabledCameras", disabledCameras);
+            app.forceUpdate = !app.forceUpdate;
         }
 
         Component.onCompleted: {
@@ -69,12 +74,15 @@ ApplicationWindowPL {
             captureMode = get("global", "captureMode", "image");
             cameraName = get("global", "cameraName", "");
             cameraId = get("global", "cameraId", 0);
+            disabledCameras = get("global", "disabledCameras", "");
+
             rotationCorrection = get("global", "rotationCorrection", 0);
 
             set("global", "cameraId", cameraId);
             set("global", "cameraName", cameraName);
             set("global", "captureMode", captureMode);
             set("global", "rotationCorrection", rotationCorrection);
+            settings.set("global", "disabledCameras", disabledCameras);
 
             cameraCount = modelCamera.rowCount;
         }

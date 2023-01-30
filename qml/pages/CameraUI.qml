@@ -76,10 +76,6 @@ PagePL {
     }
 
     /*
-    DisplayBlanking {
-        preventBlanking: camera.videoRecorder.recorderState === CameraRecorder.RecordingState
-    }
-
     PositionSource {
         id: positionSource
 
@@ -194,70 +190,6 @@ PagePL {
 
         flash.mode: Camera.FlashOff
 
-        imageCapture {
-            onImageCaptured: {
-                photoPreview.source = preview // Show the preview in an Image
-                console.log("Camera: captured", photoPreview.source)
-            }
-            onImageSaved: {
-
-            }
-            onResolutionChanged: {
-                console.log("Image resolution changed:",
-                            camera.imageCapture.resolution)
-                camera.viewfinder.resolution = getNearestViewFinderResolution()
-            }
-        }
-
-        videoRecorder {
-            audioSampleRate: 48000
-            audioBitRate: settings.global.audioBitrate
-            audioChannels: 1
-            audioCodec: "audio/mpeg, mpegversion=(int)4"
-            frameRate: 30
-            videoCodec: "video/x-h264"
-            mediaContainer: "video/quicktime, variant=(string)iso"
-            videoEncodingMode: CameraRecorder.AverageBitRateEncoding
-            videoBitRate: settings.global.videoBitrate
-
-            onRecorderStateChanged: {
-                if (camera.videoRecorder.recorderState === CameraRecorder.StoppedState) {
-                    console.log("saved to: " + camera.videoRecorder.outputLocation)
-                }
-            }
-
-            onRecorderStatusChanged: {
-                if (camera.videoRecorder.recorderStatus === CameraRecorder.FinalizingStatus) {
-                    var path = camera.videoRecorder.outputLocation.toString()
-                    path = path.replace(/^(file:\/{2})/, "")
-                    galleryModel.append({
-                                            "filePath": path,
-                                            "isVideo": true
-                                        })
-                }
-            }
-
-            onResolutionChanged: {
-                console.log("Video resolution changed:",
-                            settings.resolution("video"))
-                camera.viewfinder.resolution = getNearestViewFinderResolution()
-            }
-        }
-
-        onLockStatusChanged: {
-            if (camera.lockStatus === Camera.Locked && _focusAndSnap
-                    && !_recordingVideo) {
-                camera.metaData.date = new Date()
-                camera.imageCapture.captureToLocation(
-                            fsOperations.writableLocation(
-                                "image",
-                                settings.global.storagePath) + "/IMG_" + Qt.formatDateTime(
-                                new Date(), "yyyyMMdd_hhmmss") + ".jpg")
-                animFlash.start()
-                _focusAndSnap = false
-            }
-        }
-
         onCameraStatusChanged: {
             console.log("Camera status:", cameraStatusStr())
 
@@ -285,10 +217,6 @@ PagePL {
 
                 lblResolution.forceUpdate = !lblResolution.forceUpdate
             }
-        }
-
-        onOrientationChanged: {
-            console.log("Orientation:", orientation);
         }
     }
 */
@@ -447,7 +375,7 @@ PagePL {
 
                     LabelPL {
                         id: lblCameraName
-                        text: qsTr("Camera: ") + modelCamera.get(settings.get("global", "cameraId", 0))
+                        text: qsTr("Camera: ") + modelCamera.get(settings.cameraId) + "(" + settings.cameraId +")"
                         color: styler.themePrimaryColor
                     }
 
@@ -508,7 +436,7 @@ PagePL {
             RoundButton {
                 id: btnCameraSwitch
                 iconSource: styler.customIconPrefix + "../pics/icon-camera-switch.svg"
-                visible: settings.cameraCount > 1
+                visible: (forceUpdate || !forceUpdate) ? settings.enabledCameras.length > 1 : false
                 iconRotation: page.controlsRotation
                 property string prevCamId
                 anchors {
@@ -661,9 +589,6 @@ PagePL {
             console.log("Camera: ", modelCamera.get(i) );
         }
 
-        settings.cameraName = modelCamera.get(settings.cameraId);
-        cameraProxy.setCameraIndex(settings.cameraName);
-
         app.forceUpdate = !app.forceUpdate;
         _completed = true
     }
@@ -736,8 +661,12 @@ PagePL {
             console.log("camera delayed start", settings.cameraId)
             _loadParameters = true
 
-            settings.set("global", "cameraCount", modelCamera.rowCount);
             settings.calculateEnabledCameras()
+
+            console.log(settings.enabledCameras, settings.enabledCameras.length);
+
+            settings.cameraName = modelCamera.get(settings.cameraId);
+            cameraProxy.setCameraIndex(settings.cameraName);
 
             var f = settings.getCameraModeValue("format", settingsOverlay.modelFormat.defaultFormat());
             settings.setCameraModeValue("format", f);
@@ -1006,13 +935,13 @@ PagePL {
 
     function switchCamera(camId) {
         console.log("Switching camera to", camId)
-        console.log("Setting temp resolution")
-        camera.imageCapture.setResolution(settings.strToSize("320x240"))
-        camera.stop()
-        _loadParameters = false
-        if (camId !== "") settings.global.cameraId = camId;
-        else if (parseInt(settings.global.cameraId) + 1 == settings.global.cameraCount) settings.global.cameraId = "0";
-        else settings.global.cameraId = parseInt(settings.global.cameraId) + 1;
+        cameraProxy.stop()
+
+        if (camId !== "") settings.cameraId = camId;
+        else if (parseInt(settings.cameraId) + 1 == settings.cameraCount) settings.cameraId = "0";
+        else settings.cameraId = parseInt(settings.global.cameraId) + 1;
+
+        console.log("switched to camera", settings.cameraId);
         tmrDelayedStart.start()
     }
 
@@ -1027,13 +956,13 @@ PagePL {
     }
 
     function switchToNextCamera() {
-        console.log("Switching no next camera from", settings.global.cameraId, settings.enabledCameras)
+        console.log("Switching no next camera from", settings.cameraId, settings.enabledCameras)
         if (settings.enabledCameras.length == 0) {
             switchCamera(0)
         }else if (settings.enabledCameras.length == 1) {
             switchCamera(settings.enabledCameras[0])
         } else {
-            var idx = settings.enabledCameras.indexOf(settings.global.cameraId);
+            var idx = settings.enabledCameras.indexOf(settings.cameraId);
             if (idx >= 0) {
                 idx++;
                 if (idx >= settings.enabledCameras.length) {
@@ -1056,7 +985,7 @@ PagePL {
 
         controlsContainer.rotation = _rotationValues["ui"][orientation] + settings.rotationCorrection
 
-        switch (reading.orientation) {
+        switch (orientation) {
         case OrientationReading.TopUp:
             _pictureRotation = 0; break
         case OrientationReading.TopDown:
