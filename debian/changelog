@@ -1,14 +1,20 @@
+harbour-pinhole (0.0.3-1) unstable; urgency=low
+
+  * Many fixes from upstream.
+
+ -- Rafael Diniz <rafael@riseup.net>  Tue, 31 Jan 2023 00:01:09 +0300
+
 harbour-pinhole (0.0.2-1) unstable; urgency=low
 
   * First working version.
 
- -- Rafael Diniz <rafael@riseup.net>  Tue, 30 Jan 2023 00:33:21 +0300
+ -- Rafael Diniz <rafael@riseup.net>  Mon, 30 Jan 2023 00:33:21 +0300
 
 harbour-pinhole (0.0.1-2) unstable; urgency=low
 
   * Fixes for pinhole crashes.
 
- -- Rafael Diniz <rafael@riseup.net>  Tue, 27 Jan 2023 01:01:09 +0300
+ -- Rafael Diniz <rafael@riseup.net>  Fri, 27 Jan 2023 01:01:09 +0300
 
 harbour-pinhole (0.0.1-1) unstable; urgency=low
 
