@@ -11,7 +11,6 @@ PagePL {
     id: page
 
     property alias camera: camera
-    property bool _cameraReload: false
     property bool _completed: false
     property bool _focusAndSnap: false
     property bool _loadParameters: true
@@ -677,16 +676,7 @@ PagePL {
             console.log(f, r);
             cameraProxy.setResolution(r);
 
-            _cameraReload = true
-        }
-    }
-    Timer {
-        id: reloadTimer
-        interval: 100
-        running: page._cameraReload
-                 && camera.cameraStatus === Camera.UnloadedStatus
-        onTriggered: {
-            page._cameraReload = false
+            applySettings();
         }
     }
 
@@ -771,20 +761,10 @@ PagePL {
         console.log("Applying settings in", settings.captureMode,
                     "mode for", settings.cameraName)
 
-        camera.imageProcessing.setColorFilter(settings.mode.effect)
-        camera.exposure.setExposureMode(settings.mode.exposure)
-        camera.flash.setFlashMode(settings.mode.flash)
-        camera.imageProcessing.setWhiteBalanceMode(settings.mode.whiteBalance)
-        setFocusMode(settings.mode.focus)
-
-        if (settings.mode.iso === 0) {
-            camera.exposure.setAutoIsoSensitivity()
-        } else {
-            camera.exposure.setManualIsoSensitivity(settings.mode.iso)
-        }
-
-        camera.imageCapture.setResolution(settings.resolution("image"))
-        camera.videoRecorder.resolution = settings.resolution("video")
+        cameraProxy.setControlValue(CameraProxy.Brightness, settings.getCameraModeValue("brightness"), 0);
+        cameraProxy.setControlValue(CameraProxy.Contrast, settings.getCameraModeValue("contrast"), 0);
+        cameraProxy.setControlValue(CameraProxy.Saturation, settings.getCameraModeValue("saturation"), 0);
+        cameraProxy.setControlValue(CameraProxy.AnalogueGain, settings.getCameraModeValue("analogueGain"), 0);
     }
 
     function setFocusMode(focus) {

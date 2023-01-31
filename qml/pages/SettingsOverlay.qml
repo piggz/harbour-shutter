@@ -277,10 +277,18 @@ Item {
             if (loadingComplete) {
                 if (visible) {
                     console.log("loading...")
-                    sldBrightness.value = settings.getCameraModeValue("brightness", 1);
+                    sldBrightness.value = settings.getCameraModeValue("brightness", 0);
+                    sldContrast.value = settings.getCameraModeValue("contrast", 0);
+                    sldSaturation.value = settings.getCameraModeValue("saturation", 0);
+                    sldAnalogueGain.value = settings.getCameraModeValue("analogueGain", 0);
+
                 } else {
                     console.log("saving...")
                     settings.setCameraModeValue("brightness", sldBrightness.value);
+                    settings.setCameraModeValue("contrast", sldContrast.value);
+                    settings.setCameraModeValue("saturation", sldSaturation.value);
+                    settings.setCameraModeValue("analogueGain", sldAnalogueGain.value);
+
                 }
             }
         }
