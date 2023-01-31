@@ -357,8 +357,8 @@ Item {
                     sldVideoBitrate.value = settings.get("global", "videoBitrate", 1280000);
                 } else {
                     console.log("saving...")
-                    settings.set("global", "audioBitrate", sldAudioBitrate.value);
-                    settings.set("global", "videoBitrate", sldVideoBitrate.value);
+                    settings.setGlobalValue("audioBitrate", sldAudioBitrate.value);
+                    settings.setGlobalValue("videoBitrate", sldVideoBitrate.value);
                 }
             }
         }
@@ -448,7 +448,7 @@ Item {
                         text: qsTr("Store GPS location to metadata")
 
                         onCheckedChanged: {
-                            settings.set("global", "locationMetadata", checked);
+                            settings.setGlobalValue("locationMetadata", checked);
                         }
                     }
 
@@ -460,7 +460,7 @@ Item {
                         text: qsTr("Display manual controls")
 
                         onCheckedChanged: {
-                            settings.set("global", "showManualControls", checked);
+                            settings.setGlobalValue("showManualControls", checked);
                         }
                     }
 

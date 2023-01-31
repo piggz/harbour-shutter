@@ -83,25 +83,32 @@ ApplicationWindowPL {
             console.log("Disabled Cameras:", settings.disabledCameras);
             console.log("Enabled Cameras :", settings.enabledCameras);
 
-            settings.set("global", "disabledCameras", disabledCameras);
+            setGlobalValue("disabledCameras", disabledCameras);
             app.forceUpdate = !app.forceUpdate;
+        }
+
+        function loadGlobalSettings() {
+            captureMode = getGlobalValue("captureMode", "image");
+            cameraName = getGlobalValue("cameraName", "");
+            cameraId = getGlobalValue("cameraId", 0);
+            disabledCameras = getGlobalValue("disabledCameras", "");
+            gridMode = getGlobalValue("gridMode", "none");
+            rotationCorrection = getGlobalValue("rotationCorrection", 0);
+        }
+
+        function saveGlobalSettings() {
+            setGlobalValue("captureMode", captureMode);
+            setGlobalValue("cameraName", cameraName);
+            setGlobalValue("cameraId", cameraId);
+            setGlobalValue("disabledCameras", disabledCameras);
+            setGlobalValue("gridMode", gridMode);
+            setGlobalValue("rotationCorrection", rotationCorrection);
         }
 
         Component.onCompleted: {
             console.log("Setting up default settings");
-            captureMode = get("global", "captureMode", "image");
-            cameraName = get("global", "cameraName", "");
-            cameraId = get("global", "cameraId", 0);
-            disabledCameras = get("global", "disabledCameras", "");
-            gridMode = getGlobalValue("gridMode", "none");
-
-            rotationCorrection = get("global", "rotationCorrection", 0);
-
-            set("global", "cameraId", cameraId);
-            set("global", "cameraName", cameraName);
-            set("global", "captureMode", captureMode);
-            set("global", "rotationCorrection", rotationCorrection);
-            settings.set("global", "disabledCameras", disabledCameras);
+            loadGlobalSettings();
+            saveGlobalSettings();
 
             cameraCount = modelCamera.rowCount;
         }
