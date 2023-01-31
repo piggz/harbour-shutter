@@ -155,13 +155,14 @@ Item {
     DockedListView {
         id: panelFormats
         model: modelFormats
-        selectedItem: settings.getCameraModeValue("format", modelFormats.defaultFormat())
+        selectedItem: (forceUpdate || !forceUpdate) ? settings.getCameraModeValue("format", modelFormats.defaultFormat()) : modelFormats.defaultFormat()
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
 
         onClicked: {
             console.log("Format:", value);
+            settings.setCameraModeValue("format", value);
             cameraProxy.setStillFormat(value);
             hide()
         }

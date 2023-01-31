@@ -888,9 +888,17 @@ PagePL {
         var filename = fsOperations.writableLocation(
                     "image",
                     settings.get("global", "storagePath", "")) + "/IMG_" + Qt.formatDateTime(
-                    new Date(), "yyyyMMdd_hhmmss") + ".jpg";
+                    new Date(), "yyyyMMdd_hhmmss") + "." + fileExtension();
 
         cameraProxy.stillCapture(filename);
+    }
+
+    function fileExtension() {
+        var f = settings.getCameraModeValue("format", settingsOverlay.modelFormat.defaultFormat())
+        if (f == "MJPEG") {
+            f = "JPG";
+        }
+        return f.toLowerCase();
     }
 
     function zoomIn() {

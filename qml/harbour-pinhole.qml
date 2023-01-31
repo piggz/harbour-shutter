@@ -30,6 +30,7 @@ ApplicationWindowPL {
                 return;
             }
             set(cameraId, s, v);
+            forceUpdate = !forceUpdate;
         }
 
         function setGlobalValue(s, v) {
@@ -38,6 +39,7 @@ ApplicationWindowPL {
             }
             settings[s] = v;
             set("global", s, v);
+            forceUpdate = !forceUpdate;
         }
 
         function getGlobalValue(s, d) {
@@ -48,9 +50,12 @@ ApplicationWindowPL {
         function getCameraModeValue(s, d) {
             return get(cameraId + "_" + captureMode, s, d);
         }
+
         function setCameraModeValue(s, v) {
             set(cameraId + "_" + captureMode, s, v);
+            forceUpdate = !forceUpdate;
         }
+
         function strToSize(siz) {
             var w = parseInt(siz.substring(0, siz.indexOf("x")))
             var h = parseInt(siz.substring(siz.indexOf("x") + 1))
