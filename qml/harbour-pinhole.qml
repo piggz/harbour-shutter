@@ -20,13 +20,31 @@ ApplicationWindowPL {
         property variant enabledCameras: [] //Calculated on startup and when disabledCameras changes
         property string disabledCameras: ""
         property int rotationCorrection: 0
+        property string gridMode: "none"
         
         function getCameraValue(s, d) {
             return get(cameraId, s, d);
         }
         function setCameraValue(s, v) {
+            if (!loadingComplete) {
+                return;
+            }
             set(cameraId, s, v);
         }
+
+        function setGlobalValue(s, v) {
+            if (!loadingComplete) {
+                return;
+            }
+            settings[s] = v;
+            set("global", s, v);
+        }
+
+        function getGlobalValue(s, d) {
+            settings[s] = get("global", s, d);
+            return settings[s];
+        }
+
         function getCameraModeValue(s, d) {
             return get(cameraId + "_" + captureMode, s, d);
         }
@@ -75,6 +93,7 @@ ApplicationWindowPL {
             cameraName = get("global", "cameraName", "");
             cameraId = get("global", "cameraId", 0);
             disabledCameras = get("global", "disabledCameras", "");
+            gridMode = getGlobalValue("gridMode", "none");
 
             rotationCorrection = get("global", "rotationCorrection", 0);
 

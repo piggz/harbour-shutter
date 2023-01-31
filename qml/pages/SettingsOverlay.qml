@@ -399,20 +399,21 @@ Item {
                         property var values: ["none", "thirds", "ambience"]
 
                         function findIndex(id) {
-                            for (var i = 0; i < grids.length; i++) {
-                                if (grids[i]["id"] === id) {
+                            for (var i = 0; i < values.length; i++) {
+                                if (values[i] === id) {
                                     return i
                                 }
                             }
                             return 0
                         }
 
-                        currentIndex: findIndex(settings.get("global", "gridMode", "none"))
+                        currentIndex: findIndex(settings.gridMode)
                         onValueChanged: {
                             var index = gridSwitch.currentIndex;
-                            settings.set("global", "gridMode", gridSwitch.values[index]);
+                            settings.setGlobalValue("gridMode", gridSwitch.values[index]);
                         }
                     }
+
                     SliderPL {
                         id: sldVideoBitrate
                         label: qsTr("Video Bitrate")
