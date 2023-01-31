@@ -165,11 +165,6 @@ PagePL {
         cameraState: page._completed
                      && !page._cameraReload ? Camera.ActiveState : Camera.UnloadedState
 
-        imageProcessing.colorFilter: CameraImageProcessing.ColorFilterNone
-        imageProcessing.denoisingLevel: 1
-        imageProcessing.contrast: 1
-        imageProcessing.sharpeningLevel: 1
-
         // Write Orientation to metadata
         metaData.orientation:  camera.position === Camera.FrontFace ? (720 + camera.orientation - _pictureRotation) % 360 : (720 + camera.orientation + _pictureRotation) % 360
         metaData.cameraManufacturer: CameraManufacturer === "" ? null : CameraManufacturer
@@ -182,40 +177,6 @@ PagePL {
         metaData.gpsLongitude: settings.global.locationMetadata && positionSource.position.longitudeValid ? positionSource.position.coordinate.longitude : null
         metaData.gpsAltitude: settings.global.locationMetadata && positionSource.position.altitudeValid ? positionSource.position.coordinate.altitude : null
 
-        exposure {
-            //exposureCompensation: -1.0
-            exposureMode: Camera.ExposureAuto
-        }
-
-        flash.mode: Camera.FlashOff
-
-        onCameraStatusChanged: {
-            console.log("Camera status:", cameraStatusStr())
-
-            if (cameraStatus === Camera.StartingStatus) {
-                settingsOverlay.setCamera(camera)
-            }
-
-            if (cameraStatus === Camera.ActiveStatus && _loadParameters) {
-                if (zoomSlider.maximumValue != camera.maximumDigitalZoom) {
-                    zoomSlider.maximumValue = camera.maximumDigitalZoom
-                }
-
-                if (settings.global.captureMode === "video") {
-                    camera.captureMode = Camera.CaptureVideo
-                    btnModeSwitch._hilighted2 = true
-                } else {
-                    camera.captureMode = Camera.CaptureStillImage
-                    btnModeSwitch._hilighted2 = false
-                }
-
-                settingsOverlay.setMode(settings.global.captureMode)
-
-                camera.viewfinder.resolution = getNearestViewFinderResolution()
-                applySettings()
-
-                lblResolution.forceUpdate = !lblResolution.forceUpdate
-            }
         }
     }
 */

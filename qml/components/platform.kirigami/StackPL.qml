@@ -31,11 +31,6 @@ Item {
     property bool _locked: false
 
     Connections {
-        target: app
-        onInfoActiveChanged: stack.processCurrentIndex()
-    }
-
-    Connections {
         target: ps
         onCurrentIndexChanged: stack.processCurrentIndex()
         onCurrentItemChanged: stack.processCurrentItem()
