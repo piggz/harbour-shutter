@@ -13,7 +13,6 @@ ApplicationWindowPL {
 
     Settings {
         id: settings
-        property string cameraName
         property int cameraId: 0
         property string captureMode
         property int cameraCount
@@ -94,7 +93,6 @@ ApplicationWindowPL {
 
         function loadGlobalSettings() {
             captureMode = getGlobalValue("captureMode", "image");
-            cameraName = getGlobalValue("cameraName", "");
             cameraId = getGlobalValue("cameraId", 0);
             disabledCameras = getGlobalValue("disabledCameras", "");
             gridMode = getGlobalValue("gridMode", "none");
@@ -103,7 +101,6 @@ ApplicationWindowPL {
 
         function saveGlobalSettings() {
             setGlobalValue("captureMode", captureMode);
-            setGlobalValue("cameraName", cameraName);
             setGlobalValue("cameraId", cameraId);
             setGlobalValue("disabledCameras", disabledCameras);
             setGlobalValue("gridMode", gridMode);

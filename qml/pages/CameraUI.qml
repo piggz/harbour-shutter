@@ -663,8 +663,7 @@ PagePL {
 
             console.log(settings.enabledCameras, settings.enabledCameras.length);
 
-            settings.cameraName = modelCamera.get(settings.cameraId);
-            cameraProxy.setCameraIndex(settings.cameraName);
+            cameraProxy.setCameraIndex(modelCamera.get(settings.cameraId));
 
             var f = settings.getCameraModeValue("format", settingsOverlay.modelFormat.defaultFormat());
             settings.setCameraModeValue("format", f);
@@ -759,7 +758,7 @@ PagePL {
 
     function applySettings() {
         console.log("Applying settings in", settings.captureMode,
-                    "mode for", settings.cameraName)
+                    "mode for", modelCamera.get(settings.cameraId))
 
         cameraProxy.setControlValue(CameraProxy.Brightness, settings.getCameraModeValue("brightness"), 0);
         cameraProxy.setControlValue(CameraProxy.Contrast, settings.getCameraModeValue("contrast"), 0);
