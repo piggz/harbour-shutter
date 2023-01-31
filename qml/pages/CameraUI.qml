@@ -552,19 +552,19 @@ PagePL {
         _completed = true
     }
 
-    /*TODO
     Connections {
         target: app
 
-        onActiveFocusChanged: {
-            if (!app.activeFocus) {
-                camera.stop()
+        onActiveChanged: {
+            console.log(app.active);
+            if (!app.active) {
+                cameraProxy.stop();
             } else {
                 if (pageStack.depth === 1)
-                    camera.start()
+                    cameraProxy.startViewFinder();
             }
         }
-    }*/
+    }
 
     Connections {
         target: pageStack
