@@ -161,7 +161,6 @@ Item {
                 || iconRotation === 270) ? parent.height : parent.width / 2
 
         onClicked: {
-            console.log("Format:", value);
             settings.setCameraModeValue("format", value);
             cameraProxy.setStillFormat(value);
             hide()
@@ -171,16 +170,15 @@ Item {
     DockedListView {
         id: panelResolution
         model: sortedModelResolution
-        selectedItem: settings.getCameraModeValue("resolution", modelResolution.defaultResolution(settings.captureMode))
+        selectedItem: (forceUpdate || !forceUpdate) ?  settings.getCameraModeValue("resolution", modelResolution.defaultResolution(settings.captureMode)) : modelResolution.defaultResolution(settings.captureModel)
         rotation: iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
 
         onClicked: {
             settings.setCameraModeValue("resolution", value);
-            hide();
-            console.log("selected resolution", value, settings.getCameraModeValue("resolution"));
             cameraProxy.setResolution(value);
+            hide();
         }
     }
 

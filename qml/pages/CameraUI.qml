@@ -380,7 +380,6 @@ PagePL {
                     }
 
                     LabelPL {
-                        property bool forceUpdate: false
                         id: lblResolution
                         color: styler.themePrimaryColor
                         text: (forceUpdate
