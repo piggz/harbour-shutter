@@ -19,7 +19,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.2
-import org.kde.kirigami 2.4 as Kirigami
+import org.kde.kirigami 2.14 as Kirigami
 
 Item {
     id: item
@@ -58,6 +58,7 @@ Item {
         anchors.rightMargin: styler.themePaddingMedium
         anchors.top: parent.top
         font.pixelSize: styler.themeFontSizeMedium
+        popup.z: 10000
         property bool initialized: false
         onCurrentIndexChanged: {
             if (initialized && currentIndex != item.currentIndex)
