@@ -32,7 +32,9 @@ public:
         Stopped = 0,
         Stopping,
         CapturingStill,
-        CapturingViewFinder
+        CapturingViewFinder,
+        ConfiguringStill,
+        ConfiguringViewFinder
     };
     enum Control {
         Brightness = libcamera::controls::BRIGHTNESS,

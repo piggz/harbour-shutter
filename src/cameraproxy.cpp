@@ -134,10 +134,11 @@ void CameraProxy::startViewFinder()
     qDebug() << Q_FUNC_INFO;
     int ret;
 
-    if (m_state != Stopped) {
+    if (m_state != Stopped || !m_viewFinderConfig) {
         qWarning() << "Camera not stopped, not starting viewfinder";
         return;
     }
+    setState(ConfiguringViewFinder);
 
     libcamera::StreamConfiguration &vfConfig = m_viewFinderConfig->at(0);
 
@@ -346,6 +347,8 @@ void CameraProxy::stillCapture(const QString &filename)
 {
     qDebug() << Q_FUNC_INFO;
     stop();
+
+    setState(ConfiguringStill);
 
     m_saveFileName = filename;
 
