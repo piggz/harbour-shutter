@@ -125,7 +125,7 @@ ApplicationWindowPL {
     DockModes { id: dockModes }
 
     initialPage: CameraUI {
-            id: cameraUI
+        id: cameraUI
     }
 
     Component.onCompleted: {
@@ -133,13 +133,12 @@ ApplicationWindowPL {
         loadingComplete = true;
     }
 
-    /*
-    onApplicationActiveChanged: {
-        if (Qt.application.state == Qt.ApplicationActive) {
-            cameraUI.camera.start();
+    onRunningChanged: {
+        if (!app.active) {
+            cameraProxy.stop();
         } else {
-            cameraUI.camera.stop();
+            if (pageStack.depth === 1)
+                cameraProxy.startViewFinder();
         }
     }
-*/
 }

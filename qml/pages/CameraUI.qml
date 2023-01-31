@@ -553,20 +553,6 @@ PagePL {
     }
 
     Connections {
-        target: app
-
-        onActiveChanged: {
-            console.log(app.active);
-            if (!app.active) {
-                cameraProxy.stop();
-            } else {
-                if (pageStack.depth === 1)
-                    cameraProxy.startViewFinder();
-            }
-        }
-    }
-
-    Connections {
         target: pageStack
 
         onDepthChanged: {

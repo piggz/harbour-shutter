@@ -43,7 +43,7 @@ Kirigami.ApplicationWindow {
     property var    initialPage
     property string menuPageUrl
     property var    pages: StackPL { }
-    property bool   running: visible || keepAliveBackground
+    property bool   running: active || keepAliveBackground
     property int    screenHeight: height
     property bool   screenLarge: false
     property int    screenWidth: width
