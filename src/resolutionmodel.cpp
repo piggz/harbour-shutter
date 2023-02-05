@@ -45,7 +45,7 @@ void ResolutionModel::setCameraProxy(std::shared_ptr<CameraProxy> cameraproxy)
     connect(m_cameraProxy.get(), &CameraProxy::formatChanged, this, &ResolutionModel::populateResolutions);
 }
 
-ResolutionModel::ResolutionModel()
+ResolutionModel::ResolutionModel(QObject *parent) : QAbstractListModel(parent)
 {
     m_cameraProxy.reset();
 }

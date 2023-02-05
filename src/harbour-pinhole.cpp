@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
     formatModel.setCameraProxy(cameraProxy);
     rootContext->setContextProperty("modelFormats", &formatModel);
 
-    ResolutionModel resolutionModel;
+    ResolutionModel resolutionModel(app);
     resolutionModel.setCameraProxy(cameraProxy);
 
     QSortFilterProxyModel sortedResolutionModel;

@@ -35,7 +35,7 @@ public:
         ResolutionMpx
     };
 
-    ResolutionModel();
+    explicit ResolutionModel(QObject *parent = nullptr);
 
     virtual QHash<int, QByteArray> roleNames() const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
