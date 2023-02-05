@@ -27,6 +27,13 @@ CameraProxy::CameraProxy(QObject *parent)
     qDebug() << Q_FUNC_INFO;
 }
 
+CameraProxy::~CameraProxy()
+{
+    qDebug() << Q_FUNC_INFO;
+    m_currentCamera->stop();
+    m_cameraManager.reset();
+}
+
 bool CameraProxy::event(QEvent *e)
 {
     //qDebug() << Q_FUNC_INFO;

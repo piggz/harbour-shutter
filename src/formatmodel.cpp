@@ -21,7 +21,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 FormatModel::FormatModel(QObject *parent)
     : QAbstractListModel{parent}
 {
+}
 
+FormatModel::~FormatModel()
+{
+    m_cameraProxy.reset();
 }
 
 QHash<int, QByteArray> FormatModel::roleNames() const
@@ -53,11 +57,11 @@ QVariant FormatModel::data(const QModelIndex &index, int role) const
     return v;
 }
 
-void FormatModel::setCameraProxy(CameraProxy *cameraproxy)
+void FormatModel::setCameraProxy(std::shared_ptr<CameraProxy> cameraproxy)
 {
     qDebug() << Q_FUNC_INFO;
 
-    m_cameraProxy.reset(cameraproxy);
+    m_cameraProxy = cameraproxy;
 
     connect(m_cameraProxy.get(), &CameraProxy::cameraChanged, this, &FormatModel::populateFormats);
 }
@@ -80,7 +84,9 @@ void FormatModel::populateFormats()
     beginResetModel();
     m_formats.clear();
 
-    m_formats = m_cameraProxy->supportedFormats();
+    if (m_cameraProxy) {
+        m_formats = m_cameraProxy->supportedFormats();
+    }
     endResetModel();
     Q_EMIT rowCountChanged();
 

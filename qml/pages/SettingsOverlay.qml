@@ -14,7 +14,6 @@ Item {
                              || panelResolution.expanded
                              || panelStorage.expanded || panelGeneral.expanded
 
-    property alias modelFormat: modelFormats
 
     Item {
         id: buttonPanel
@@ -511,10 +510,6 @@ Item {
         }
     }
 
-    FormatModel {
-        id: modelFormats
-    }
-
     EffectsModel {
         id: modelEffects
     }
@@ -540,8 +535,6 @@ Item {
     }
 
     function setCameraProxy(cam) {
-        modelFormats.setCameraProxy(cameraProxy);
-        modelResolution.setCameraProxy(cameraProxy);
 /*
         modelExposure.setCamera(cam)
         modelEffects.setCamera(cam)

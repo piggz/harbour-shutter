@@ -72,23 +72,18 @@ int main(int argc, char *argv[])
     qmlRegisterType<EffectsModel>("uk.co.piggz.pinhole", 1, 0, "EffectsModel");
     qmlRegisterType<ExposureModel>("uk.co.piggz.pinhole", 1, 0, "ExposureModel");
     qmlRegisterType<IsoModel>("uk.co.piggz.pinhole", 1, 0, "IsoModel");
-    qmlRegisterType<ResolutionModel>("uk.co.piggz.pinhole", 1, 0, "ResolutionModel");
     qmlRegisterType<WbModel>("uk.co.piggz.pinhole", 1, 0, "WhiteBalanceModel");
     qmlRegisterType<FocusModel>("uk.co.piggz.pinhole", 1, 0, "FocusModel");
     qmlRegisterType<FlashModel>("uk.co.piggz.pinhole", 1, 0, "FlashModel");
     qmlRegisterType<ExifModel>("uk.co.piggz.pinhole", 1, 0, "ExifModel");
     qmlRegisterType<MetadataModel>("uk.co.piggz.pinhole", 1, 0, "MetadataModel");
-    qmlRegisterType<FormatModel>("uk.co.piggz.pinhole", 1, 0, "FormatModel");
+    qmlRegisterUncreatableType<FormatModel>("uk.co.piggz.pinhole", 1, 0, "FormatModel", "Not to be created within QML");
+    qmlRegisterUncreatableType<ResolutionModel>("uk.co.piggz.pinhole", 1, 0, "ResolutionModel", "Not to be created within QML");
     qmlRegisterType<ViewFinderItem>("uk.co.piggz.pinhole", 1, 0, "ViewFinderItem");
     qmlRegisterType<ViewFinder2D>("uk.co.piggz.pinhole", 1, 0, "ViewFinder2D");
     qmlRegisterType<Settings>("uk.co.piggz.pinhole", 1, 0, "Settings");
     qmlRegisterType<CameraProxy>("uk.co.piggz.pinhole", 1, 0, "CameraProxy");
 
-    ResolutionModel resolutionModel;
-    QSortFilterProxyModel sortedResolutionModel;
-    sortedResolutionModel.setSourceModel(&resolutionModel);
-    sortedResolutionModel.setSortRole(ResolutionModel::ResolutionMpx);
-    sortedResolutionModel.sort(0, Qt::DescendingOrder);
 
 #ifdef IS_SAILFISH_OS
 
@@ -114,19 +109,31 @@ int main(int argc, char *argv[])
     ResourceHandler handler;
     handler.acquire();
 
-    rootContext->setContextProperty("modelCamera", &cameraModel);
-    rootContext->setContextProperty("modelResolution", &resolutionModel);
-    rootContext->setContextProperty("sortedModelResolution", &sortedResolutionModel);
-
     StorageModel storageModel;
     rootContext->setContextProperty("modelStorage", &storageModel);
 
     FSOperations fsOperations;
     rootContext->setContextProperty("fsOperations", &fsOperations);
 
-    CameraProxy cameraProxy;
-    cameraProxy.setCameraManager(cm);
-    rootContext->setContextProperty("cameraProxy", &cameraProxy);
+    std::shared_ptr<CameraProxy> cameraProxy = std::make_shared<CameraProxy>();
+    cameraProxy->setCameraManager(cm);
+    rootContext->setContextProperty("cameraProxy", cameraProxy.get());
+
+    FormatModel formatModel;
+    formatModel.setCameraProxy(cameraProxy);
+    rootContext->setContextProperty("modelFormats", &formatModel);
+
+    ResolutionModel resolutionModel;
+    resolutionModel.setCameraProxy(cameraProxy);
+
+    QSortFilterProxyModel sortedResolutionModel;
+    sortedResolutionModel.setSourceModel(&resolutionModel);
+    sortedResolutionModel.setSortRole(ResolutionModel::ResolutionMpx);
+    sortedResolutionModel.sort(0, Qt::DescendingOrder);
+    rootContext->setContextProperty("modelResolutions", &resolutionModel);
+    rootContext->setContextProperty("modelCamera", &cameraModel);
+    rootContext->setContextProperty("modelResolution", &resolutionModel);
+    rootContext->setContextProperty("sortedModelResolution", &sortedResolutionModel);
 
 #ifdef MER_EDITION_SAILFISH
     DeviceInfo deviceInfo;

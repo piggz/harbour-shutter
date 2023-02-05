@@ -612,7 +612,7 @@ PagePL {
 
             cameraProxy.setCameraIndex(modelCamera.get(settings.cameraId));
 
-            var f = settings.getCameraModeValue("format", settingsOverlay.modelFormat.defaultFormat());
+            var f = settings.getCameraModeValue("format", modelFormats.defaultFormat());
             settings.setCameraModeValue("format", f);
             cameraProxy.setStillFormat(f);
 

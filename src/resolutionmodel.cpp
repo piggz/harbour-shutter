@@ -35,11 +35,11 @@ QSize ResolutionModel::sizeToRatio(const QSize &siz) const
     return siz / gcd;
 }
 
-void ResolutionModel::setCameraProxy(CameraProxy *cameraproxy)
+void ResolutionModel::setCameraProxy(std::shared_ptr<CameraProxy> cameraproxy)
 {
     qDebug() << Q_FUNC_INFO;
 
-    m_cameraProxy.reset(cameraproxy);
+    m_cameraProxy = cameraproxy;
     setMode("image");
 
     connect(m_cameraProxy.get(), &CameraProxy::formatChanged, this, &ResolutionModel::populateResolutions);
@@ -47,6 +47,7 @@ void ResolutionModel::setCameraProxy(CameraProxy *cameraproxy)
 
 ResolutionModel::ResolutionModel()
 {
+    m_cameraProxy.reset();
 }
 
 QHash<int, QByteArray> ResolutionModel::roleNames() const

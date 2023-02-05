@@ -42,7 +42,7 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
 
     Q_INVOKABLE QSize sizeToRatio(const QSize &siz) const;
-    Q_INVOKABLE void setCameraProxy(CameraProxy *cameraproxy);
+    void setCameraProxy(std::shared_ptr<CameraProxy> cameraproxy);
     Q_INVOKABLE void setMode(const QString &mode);
     Q_INVOKABLE QSize defaultResolution(const QString &mode);
     Q_INVOKABLE bool isValidResolution(const QSize &resolution, const QString &mode);

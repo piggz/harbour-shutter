@@ -9,6 +9,8 @@ class FormatModel : public QAbstractListModel
     Q_OBJECT
 public:
     explicit FormatModel(QObject *parent = nullptr);
+    ~FormatModel();
+
     Q_PROPERTY(int rowCount READ rowCount NOTIFY rowCountChanged)
 
     enum FormatRoles {
@@ -20,7 +22,7 @@ public:
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
 
-    Q_INVOKABLE void setCameraProxy(CameraProxy *cameraproxy);
+    void setCameraProxy(std::shared_ptr<CameraProxy> cameraProxy);
     Q_INVOKABLE QString defaultFormat() const;
 
 private:

@@ -26,6 +26,7 @@ class CameraProxy : public QObject
     Q_OBJECT
 public:
     explicit CameraProxy(QObject *parent = nullptr);
+    ~CameraProxy();
 
     Q_PROPERTY(CameraState state READ state WRITE setState NOTIFY stateChanged)
     enum CameraState {
