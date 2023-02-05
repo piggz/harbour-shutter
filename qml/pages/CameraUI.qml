@@ -819,7 +819,7 @@ PagePL {
     }
 
     function fileExtension() {
-        var f = settings.getCameraModeValue("format", settingsOverlay.modelFormat.defaultFormat())
+        var f = settings.getCameraModeValue("format", modelFormats.defaultFormat())
         if (f == "MJPEG") {
             f = "JPG";
         }
