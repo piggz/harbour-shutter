@@ -10,7 +10,7 @@ Storage::Storage(const QString &name, const QString &path) :
     qDebug() << "Storage:" << name << path;
 }
 
-StorageModel::StorageModel()
+StorageModel::StorageModel(QObject *parent) : QAbstractListModel(parent)
 {
     scan();
 }

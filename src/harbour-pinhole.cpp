@@ -106,20 +106,20 @@ int main(int argc, char *argv[])
         return -2;
     }
 
-    ResourceHandler handler;
+    ResourceHandler handler(app);
     handler.acquire();
 
-    StorageModel storageModel;
+    StorageModel storageModel(app);
     rootContext->setContextProperty("modelStorage", &storageModel);
 
-    FSOperations fsOperations;
+    FSOperations fsOperations(app);
     rootContext->setContextProperty("fsOperations", &fsOperations);
 
     std::shared_ptr<CameraProxy> cameraProxy = std::make_shared<CameraProxy>();
     cameraProxy->setCameraManager(cm);
     rootContext->setContextProperty("cameraProxy", cameraProxy.get());
 
-    FormatModel formatModel;
+    FormatModel formatModel(app);
     formatModel.setCameraProxy(cameraProxy);
     rootContext->setContextProperty("modelFormats", &formatModel);
 

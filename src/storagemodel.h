@@ -26,7 +26,7 @@ public:
         StoragePath
     };
 
-    StorageModel();
+    explicit StorageModel(QObject *parent = nullptr);
     virtual QHash<int, QByteArray> roleNames() const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
