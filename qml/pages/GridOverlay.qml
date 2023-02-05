@@ -33,36 +33,26 @@ Item {
 
         delegate: Item {
             width: parent.width
-            height: 5
+            height: 2
 
             Rectangle {
                 id: left
                 width: parent.width / 2
-                height: 5
+                height: 2
                 y: root.height * modelData
 
                 color: "#88ffffff"
             }
 
-            //OpacityRampEffect {
-            //    sourceItem: left
-            //    direction: OpacityRamp.RightToLeft
-            //}
-
             Rectangle {
                 id: right
                 width: parent.width / 2
-                height: 5
+                height: 2
                 y: root.height * modelData
                 x: root.width / 2
 
                 color: "#88ffffff"
             }
-
-            //OpacityRampEffect {
-            //    sourceItem: right
-            //    direction: OpacityRamp.LeftToRight
-            //}
         }
     }
 
@@ -70,37 +60,27 @@ Item {
         model: verticalLines(settings.gridMode)
 
         delegate: Item {
-            width: 5
+            width: 2
             height: parent.height
 
             Rectangle {
                 id: up
-                width: 5
+                width: 2
                 height: parent.height / 2
                 x: root.width * modelData
 
                 color: "#88ffffff"
             }
 
-            //OpacityRampEffect {
-            //    sourceItem: up
-            //    direction: OpacityRamp.BottomToTop
-            //}
-
             Rectangle {
                 id: bottom
-                width: 5
+                width: 2
                 height: parent.height / 2
                 x: root.width * modelData
                 y: up.height
 
                 color: "#88ffffff"
             }
-
-            //OpacityRampEffect {
-            //    sourceItem: bottom
-            //    direction: OpacityRamp.TopToBottom
-            //}
         }
     }
 }
