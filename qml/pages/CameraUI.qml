@@ -485,6 +485,7 @@ PagePL {
         }
     }
 
+ /*
     Rectangle {
         id: focusCircle
         height: (camera.lockStatus === Camera.Locked) ? styler.themeItemSizeSmall : styler.themeItemSizeMedium
@@ -536,7 +537,7 @@ PagePL {
             y: -focusCircle.height / 2
         }
     }
-
+*/
     function startup() {
         console.log("Orientations:", OrientationReading.TopUp, OrientationReading.TopDown, OrientationReading.LeftUp, OrientationReading.RightUp)
         console.log("Orientation: ", _orientation, _pictureRotation, controlsRotation);

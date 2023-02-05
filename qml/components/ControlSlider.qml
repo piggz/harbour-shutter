@@ -10,9 +10,9 @@ SliderPL {
 
     label: title
     width: parent.width
-    visible: (forceUpdate || !forceUpdate) ? cameraProxy.controlExists(control) : false
-    minimumValue: (forceUpdate || !forceUpdate) ? cameraProxy.controlMin(control) : 0
-    maximumValue: (forceUpdate || !forceUpdate) ? cameraProxy.controlMax(control) : 0
+    visible: (forceUpdate || !forceUpdate) && cameraProxy ? cameraProxy.controlExists(control) : false
+    minimumValue: (forceUpdate || !forceUpdate) && cameraProxy ? cameraProxy.controlMin(control) : 0
+    maximumValue: (forceUpdate || !forceUpdate) && cameraProxy ? cameraProxy.controlMax(control) : 0
 
     Text {
         text: sldControl.value.toFixed(2)
@@ -21,6 +21,8 @@ SliderPL {
     }
 
     onValueChanged: {
-        cameraProxy.setControlValue(control, value);
+        if (cameraProxy) {
+            cameraProxy.setControlValue(control, value);
+        }
     }
 }
