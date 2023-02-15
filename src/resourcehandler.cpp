@@ -13,7 +13,7 @@ ResourceHandler::ResourceHandler(QObject *parent) :
     QObject(parent)
 {
 
-    m_handle = dlopen ((sizeof(void*) == 8) ? "/usr/lib64/libresource-glib.so.0" : "/usr/lib/libresource-glib.so.0", RTLD_LAZY);
+    m_handle = dlopen ("libresource-glib.so.0", RTLD_LAZY);
 
     if (m_handle) {
         create_set = (resource_set_t *(*)(const char *, uint32_t, uint32_t, uint32_t, resource_callback_t,
