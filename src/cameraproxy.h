@@ -38,6 +38,7 @@ public:
         ConfiguringViewFinder
     };
     enum Control {
+        AeEnable = libcamera::controls::AE_ENABLE,
         Brightness = libcamera::controls::BRIGHTNESS,
         Saturation = libcamera::controls::SATURATION,
         AnalogueGain = libcamera::controls::ANALOGUE_GAIN,
@@ -45,22 +46,43 @@ public:
         ExposureTime = libcamera::controls::EXPOSURE_TIME
     };
 
+    enum ControlType {
+        ControlTypeNone = libcamera::ControlTypeNone,
+        ControlTypeBool = libcamera::ControlTypeBool,
+        ControlTypeByte = libcamera::ControlTypeByte,
+        ControlTypeInteger32 = libcamera::ControlTypeInteger32,
+        ControlTypeInteger64 = libcamera::ControlTypeInteger64,
+        ControlTypeFloat = libcamera::ControlTypeFloat,
+        ControlTypeString = libcamera::ControlTypeString,
+        ControlTypeRectangle = libcamera::ControlTypeRectangle,
+        ControlTypeSize = libcamera::ControlTypeSize
+    };
     Q_ENUM(CameraState)
     Q_ENUM(Control);
+    Q_ENUM(ControlType)
 
     bool event(QEvent *e) override;
 
     void setCameraManager(std::shared_ptr<libcamera::CameraManager> cm);
 
-    Q_INVOKABLE QStringList supportedFormats();
+    Q_INVOKABLE QStringList supportedFormats() const;
     Q_INVOKABLE void setStillFormat(const QString &format);
-    Q_INVOKABLE QString currentStillFormat();
+    Q_INVOKABLE QString currentStillFormat() const;
     Q_INVOKABLE void setResolution(const QSize &res);
 
-    std::vector<libcamera::Size> supportedReoluions(QString format);
+    std::vector<libcamera::Size> supportedResoluions(QString format);
+    libcamera::ControlInfoMap supportedControls() const;
 
     CameraState state() const;
     void setState(CameraState newState);
+
+    //Controls
+    bool controlExists(CameraProxy::Control c);
+    float controlMin(CameraProxy::Control c);
+    float controlMax(CameraProxy::Control c);
+    float controlValue(CameraProxy::Control c);
+    Q_INVOKABLE void setControlValue(CameraProxy::Control c, ControlType type, QVariant val);
+    Q_INVOKABLE void removeControlValue(CameraProxy::Control c);
 
 public Q_SLOTS:
     void renderComplete(libcamera::FrameBuffer *buffer);
@@ -69,13 +91,6 @@ public Q_SLOTS:
     void startViewFinder();
     void stop();
     void stillCapture(const QString &filename);
-
-    //Controls
-    bool controlExists(Control c);
-    float controlMin(Control c);
-    float controlMax(Control c);
-    float controlValue(Control c);
-    void setControlValue(Control c, float val);
 
 Q_SIGNALS:
     void cameraChanged();
@@ -126,7 +141,7 @@ private:
     void requestComplete(libcamera::Request *request);
     void cacheFormats();
 
-    std::unordered_map<Control, float> m_controlValues;
+    std::unordered_map<Control, libcamera::ControlValue> m_controlValues;
 };
 
 class CaptureEvent : public QEvent

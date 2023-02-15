@@ -146,7 +146,7 @@ void ResolutionModel::populateResolutions()
     beginResetModel();
     m_resolutions.clear();
 
-    std::vector<libcamera::Size> res = m_cameraProxy->supportedReoluions(m_cameraProxy->currentStillFormat());
+    std::vector<libcamera::Size> res = m_cameraProxy->supportedResoluions(m_cameraProxy->currentStillFormat());
     for (const libcamera::Size s : res) {
         m_resolutions.push_back(std::make_pair<QString, QSize>(QString("%1x%2").arg(s.width).arg(s.height), QSize(s.width, s.height)));
     }

@@ -708,10 +708,6 @@ PagePL {
         console.log("Applying settings in", settings.captureMode,
                     "mode for", modelCamera.get(settings.cameraId))
 
-        cameraProxy.setControlValue(CameraProxy.Brightness, settings.getCameraModeValue("brightness"), 0);
-        cameraProxy.setControlValue(CameraProxy.Contrast, settings.getCameraModeValue("contrast"), 0);
-        cameraProxy.setControlValue(CameraProxy.Saturation, settings.getCameraModeValue("saturation"), 0);
-        cameraProxy.setControlValue(CameraProxy.AnalogueGain, settings.getCameraModeValue("analogueGain"), 0);
     }
 
     function setFocusMode(focus) {

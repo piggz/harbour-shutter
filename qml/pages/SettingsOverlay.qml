@@ -262,86 +262,16 @@ Item {
         }
     }
 
-    DockedPanelPL {
+    DockedControlListView {
         id: panelControls
-        modal: true
+        model: modelControls
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
+        rotation: iconRotation
         height: parent.height
         z: 99
         dock: dockModes.left
         clip: true
-
-        onVisibleChanged: {
-            if (loadingComplete) {
-                if (visible) {
-                    console.log("loading...")
-                    sldBrightness.value = settings.getCameraModeValue("brightness", 0);
-                    sldContrast.value = settings.getCameraModeValue("contrast", 0);
-                    sldSaturation.value = settings.getCameraModeValue("saturation", 0);
-                    sldAnalogueGain.value = settings.getCameraModeValue("analogueGain", 0);
-
-                } else {
-                    console.log("saving...")
-                    settings.setCameraModeValue("brightness", sldBrightness.value);
-                    settings.setCameraModeValue("contrast", sldContrast.value);
-                    settings.setCameraModeValue("saturation", sldSaturation.value);
-                    settings.setCameraModeValue("analogueGain", sldAnalogueGain.value);
-
-                }
-            }
-        }
-
-        Rectangle {
-            anchors.fill: parent
-            color: "black"
-            opacity: 0.7
-
-            Flickable {
-                anchors.fill: parent
-                anchors.margins: styler.themePaddingMedium
-                contentHeight: colControls.height
-
-                Column {
-                    id: colControls
-                    width: parent.width
-                    height: childrenRect.height
-                    spacing: styler.themePaddingMedium
-
-                    ControlSlider {
-                        id: sldBrightness
-                        title: qsTr("Brightness")
-                        control: CameraProxy.Brightness;
-                    }
-
-                    ControlSlider {
-                        id: sldContrast
-                        title: qsTr("Contrast")
-                        control: CameraProxy.Contrast;
-                    }
-
-                    ControlSlider {
-                        id: sldSaturation
-                        title: qsTr("Saturation")
-                        control: CameraProxy.Saturation;
-                    }
-
-                    ControlSlider {
-                        id: sldAnalogueGain
-                        title: qsTr("Gain")
-                        control: CameraProxy.AnalogueGain;
-                    }
-
-                    /*
-                    ControlSlider {
-                        id: sldExposure
-                        title: qsTr("Exposure")
-                        control: CameraProxy.ExposureTime;
-                    }*/
-
-                }
-            }
-        }
     }
 
     DockedPanelPL {
@@ -424,6 +354,7 @@ Item {
                         id: sldVideoBitrate
                         label: qsTr("Video Bitrate")
                         width: parent.width
+                        height: styler.themeItemSizeLarge
                         minimumValue: 6400000
                         maximumValue: 32000000
                         stepSize: 800000
@@ -437,6 +368,7 @@ Item {
                         id: sldAudioBitrate
                         label: qsTr("Audio Bitrate")
                         width: parent.width
+                        height: styler.themeItemSizeLarge
                         minimumValue: 64000
                         maximumValue: 320000
                         stepSize: 8-000
@@ -552,35 +484,35 @@ Item {
         var flashIcon = ""
         switch (settings.getCameraModeValue("flash", 0)) {
         case Camera.FlashAuto:
-            flashIcon = "../pics/icon-camera-flash-automatic"
+            flashIcon = "../pics/icon-camera-flash-automatic.png"
             break
         case Camera.FlashOn:
-            flashIcon = "../pics/icon-camera-flash-on"
+            flashIcon = "../pics/icon-camera-flash-on.png"
             break
         case Camera.FlashOff:
-            flashIcon = "../pics/icon-camera-flash-off"
+            flashIcon = "../pics/icon-camera-flash-off.png"
             break
         case Camera.FlashRedEyeReduction:
-            flashIcon = "../pics/icon-camera-flash-redeye"
+            flashIcon = "../pics/icon-camera-flash-redeye.png"
             break
         default:
-            flashIcon = "../pics/icon-camera-flash-on"
+            flashIcon = "../pics/icon-camera-flash-on.png"
             break
         }
-        return flashIcon
+        return styler.customIconPrefix + flashIcon
     }
 
     function focusIcon() {
         var focusIcon = ""
         switch (settings.getCameraModeValue("focus", 0)) {
         case Camera.FocusAuto:
-            focusIcon = "../pics/icon-camera-focus-auto"
+            focusIcon = "../pics/icon-camera-focus-auto.png"
             break
         case Camera.FocusManual:
             focusIcon = "../pics/icon-camera-focus-manual.png"
             break
         case Camera.FocusMacro:
-            focusIcon = "../pics/icon-camera-focus-macro"
+            focusIcon = "../pics/icon-camera-focus-macro.png"
             break
         case Camera.FocusHyperfocal:
             focusIcon = "../pics/icon-camera-focus-hyperfocal.png"
@@ -589,10 +521,10 @@ Item {
             focusIcon = "../pics/icon-camera-focus-continuous.png"
             break
         case Camera.FocusInfinity:
-            focusIcon = "../pics/icon-camera-focus-infinity"
+            focusIcon = "../pics/icon-camera-focus-infinity.png"
             break
         default:
-            focusIcon = "../pics/icon-camera-focus"
+            focusIcon = "../pics/icon-camera-focus.png"
             break
         }
         return styler.customIconPrefix + focusIcon
@@ -602,31 +534,31 @@ Item {
         var wbIcon = ""
         switch (settings.getCameraModeValue("whiteBalance", 0)) {
         case CameraImageProcessing.WhiteBalanceAuto:
-            wbIcon = "../pics/icon-camera-wb-automatic"
+            wbIcon = "../pics/icon-camera-wb-automatic.png"
             break
         case CameraImageProcessing.WhiteBalanceSunlight:
-            wbIcon = "../pics/icon-camera-wb-sunny"
+            wbIcon = "../pics/icon-camera-wb-sunny.png"
             break
         case CameraImageProcessing.WhiteBalanceCloudy:
-            wbIcon = "../pics/icon-camera-wb-cloudy"
+            wbIcon = "../pics/icon-camera-wb-cloudy.png"
             break
         case CameraImageProcessing.WhiteBalanceShade:
-            wbIcon = "../pics/icon-camera-wb-shade"
+            wbIcon = "../pics/icon-camera-wb-shade.png"
             break
         case CameraImageProcessing.WhiteBalanceTungsten:
-            wbIcon = "../pics/icon-camera-wb-tungsten"
+            wbIcon = "../pics/icon-camera-wb-tungsten.png"
             break
         case CameraImageProcessing.WhiteBalanceFluorescent:
-            wbIcon = "../pics/icon-camera-wb-fluorecent"
+            wbIcon = "../pics/icon-camera-wb-fluorecent.png"
             break
         case CameraImageProcessing.WhiteBalanceSunset:
-            wbIcon = "../pics/icon-camera-wb-sunset"
+            wbIcon = "../pics/icon-camera-wb-sunset.png"
             break
         case CameraImageProcessing.WhiteBalanceFlash:
-            wbIcon = "../pics/icon-camera-wb-default" //TODO need icon
+            wbIcon = "../pics/icon-camera-wb-default.png" //TODO need icon
             break
         default:
-            wbIcon = "../pics/icon-camera-wb-default"
+            wbIcon = "../pics/icon-camera-wb-default.png"
             break
         }
         return styler.customIconPrefix + wbIcon

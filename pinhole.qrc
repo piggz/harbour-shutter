@@ -157,5 +157,6 @@
         <file>qml/pics/icon-m-close.png</file>
         <file>qml/pics/icon-m-delete.png</file>
         <file>qml/pics/icon-m-share.png</file>
+        <file>qml/components/DockedControlListView.qml</file>
     </qresource>
 </RCC>

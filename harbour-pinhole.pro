@@ -23,6 +23,7 @@ PKGCONFIG += libcamera
 SOURCES += \
     src/cameramodel.cpp \
     src/cameraproxy.cpp \
+    src/controlmodel.cpp \
     src/effectsmodel.cpp \
     src/exifmodel.cpp \
     src/exposuremodel.cpp \
@@ -48,6 +49,7 @@ DISTFILES += \
     README.md \
     qml/components/ControlSlider.qml \
     qml/components/DockModes.qml \
+    qml/components/DockedControlListView.qml \
     qml/components/DockedListView.qml \
     qml/components/platform.kirigami/SlideshowPL.qml \
     qml/components/platform.qtcontrols/DockedPanelPL.qml \
@@ -140,6 +142,7 @@ TRANSLATIONS +=
 HEADERS += \
     src/cameramodel.h \
     src/cameraproxy.h \
+    src/controlmodel.h \
     src/effectsmodel.h \
     src/exifmodel.h \
     src/exposuremodel.h \

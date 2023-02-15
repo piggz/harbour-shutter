@@ -1,3 +1,4 @@
+#include "src/controlmodel.h"
 #ifdef QT_QML_DEBUG
 #include <QtQuick>
 #endif
@@ -79,6 +80,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<MetadataModel>("uk.co.piggz.pinhole", 1, 0, "MetadataModel");
     qmlRegisterUncreatableType<FormatModel>("uk.co.piggz.pinhole", 1, 0, "FormatModel", "Not to be created within QML");
     qmlRegisterUncreatableType<ResolutionModel>("uk.co.piggz.pinhole", 1, 0, "ResolutionModel", "Not to be created within QML");
+    qmlRegisterUncreatableType<ControlModel>("uk.co.piggz.pinhole", 1, 0, "ControlModel", "Not to be created within QML");
     qmlRegisterType<ViewFinderItem>("uk.co.piggz.pinhole", 1, 0, "ViewFinderItem");
     qmlRegisterType<ViewFinder2D>("uk.co.piggz.pinhole", 1, 0, "ViewFinder2D");
     qmlRegisterType<Settings>("uk.co.piggz.pinhole", 1, 0, "Settings");
@@ -125,6 +127,10 @@ int main(int argc, char *argv[])
 
     ResolutionModel resolutionModel(app);
     resolutionModel.setCameraProxy(cameraProxy);
+
+    ControlModel controlModel(app);
+    controlModel.setCameraProxy(cameraProxy);
+    rootContext->setContextProperty("modelControls", &controlModel);
 
     QSortFilterProxyModel sortedResolutionModel;
     sortedResolutionModel.setSourceModel(&resolutionModel);

@@ -51,7 +51,7 @@ void CameraProxy::setCameraManager(std::shared_ptr<libcamera::CameraManager> cm)
     m_cameraManager = cm;
 }
 
-QStringList CameraProxy::supportedFormats()
+QStringList CameraProxy::supportedFormats() const
 {
     qDebug() << Q_FUNC_INFO;
 
@@ -70,7 +70,7 @@ void CameraProxy::setStillFormat(const QString &format)
     formatChanged();
 }
 
-QString CameraProxy::currentStillFormat()
+QString CameraProxy::currentStillFormat() const
 {
     qDebug() << Q_FUNC_INFO;
 
@@ -84,11 +84,19 @@ void CameraProxy::setResolution(const QSize &res)
     resolutionChanged();
 }
 
-std::vector<libcamera::Size> CameraProxy::supportedReoluions(QString format)
+std::vector<libcamera::Size> CameraProxy::supportedResoluions(QString format)
 {
     return m_stillFormats[libcamera::PixelFormat::fromString(format.toStdString())];
 }
-\
+
+libcamera::ControlInfoMap CameraProxy::supportedControls() const
+{
+    if (m_currentCamera) {
+        return m_currentCamera->controls();
+    }
+    return libcamera::ControlInfoMap();
+}
+
 void CameraProxy::setViewFinder(ViewFinder2D *vf)
 {
     qDebug() << Q_FUNC_INFO << vf;
@@ -131,7 +139,7 @@ void CameraProxy::setCameraIndex(QString id)
             }
         }
 
-        cameraChanged();
+        Q_EMIT cameraChanged();
         startViewFinder();
     }
 }
@@ -457,7 +465,7 @@ void CameraProxy::stillCapture(const QString &filename)
     }
 }
 
-bool CameraProxy::controlExists(Control c)
+bool CameraProxy::controlExists(CameraProxy::Control c)
 {
     qDebug() << Q_FUNC_INFO << c;
     if (m_currentCamera && m_currentCamera->controls().size() > 0) {
@@ -467,33 +475,51 @@ bool CameraProxy::controlExists(Control c)
     return false;
 }
 
-float CameraProxy::controlMin(Control c)
+float CameraProxy::controlMin(CameraProxy::Control c)
 {
     if (!controlExists(c)) {
         return 0;
     }
     auto control = m_currentCamera->controls().find(c);
 
-    if (control != m_currentCamera->controls().end()) {
-        return control->second.min().get<float>();
+    if (control == m_currentCamera->controls().end()) {
+        return 0;
     }
+    switch(control->first->type()) {
+    case libcamera::ControlTypeFloat:
+            return control->second.min().get<float>();
+    case libcamera::ControlTypeInteger32:
+            return control->second.min().get<int32_t>();
+    case libcamera::ControlTypeInteger64:
+            return control->second.min().get<int64_t>();
+    }
+
     return 0;
 }
 
-float CameraProxy::controlMax(Control c)
+float CameraProxy::controlMax(CameraProxy::Control c)
 {
     if (!controlExists(c)) {
         return 0;
     }
     auto control = m_currentCamera->controls().find(c);
 
-    if (control != m_currentCamera->controls().end()) {
-        return control->second.max().get<float>();
+    if (control == m_currentCamera->controls().end()) {
+        return 0;
     }
+    switch(control->first->type()) {
+    case libcamera::ControlTypeFloat:
+            return control->second.max().get<float>();
+    case libcamera::ControlTypeInteger32:
+            return control->second.max().get<int32_t>();
+    case libcamera::ControlTypeInteger64:
+            return control->second.max().get<int64_t>();
+    }
+
     return 0;
 }
 
-float CameraProxy::controlValue(Control c)
+float CameraProxy::controlValue(CameraProxy::Control c)
 {
     if (!controlExists(c)) {
         return 0;
@@ -508,14 +534,37 @@ float CameraProxy::controlValue(Control c)
     return v;
 }
 
-void CameraProxy::setControlValue(Control c, float val)
+void CameraProxy::setControlValue(CameraProxy::Control c, ControlType type, QVariant val)
 {
-    qDebug() << Q_FUNC_INFO << c << val << controlMin(c) << controlMax(c);
-    if (controlExists(c) && val <= controlMax(c) && val >= controlMin(c)) {
-        m_controlValues[c] = val;
+    qDebug() << Q_FUNC_INFO << c << type << val << controlMin(c) << controlMax(c);
+
+    libcamera::ControlValue v;
+    if (controlExists(c)) {
+        if (type == ControlTypeFloat && val <= controlMax(c) && val >= controlMin(c)) {
+            qDebug() << "Setting float value";
+            v.set<float>(val.toFloat());
+            m_controlValues[c] = v;
+        } else if (type == ControlTypeInteger32 && val <= controlMax(c) && val >= controlMin(c)) {
+            qDebug() << "Setting int32 value";
+            v.set<int32_t>(val.toInt());
+            m_controlValues[c] = v;
+        } else if (type == ControlTypeInteger64 && val <= controlMax(c) && val >= controlMin(c)) {
+            qDebug() << "Setting int64 value";
+            v.set<int64_t>(val.toInt());
+            m_controlValues[c] = v;
+        } else if (type == ControlTypeBool && val.canConvert<bool>()) {
+            qDebug() << "Setting bool value";
+            v.set<bool>(val.toBool());
+            m_controlValues[c] = v;
+        }
     } else {
-        qWarning() << "Value" << val << "is out of range for" << c;
+        qWarning() << "Control " <<  c << " doesnt exist";
     }
+}
+
+void CameraProxy::removeControlValue(Control c)
+{
+    m_controlValues.erase(c);
 }
 
 void CameraProxy::processCapture()
@@ -606,7 +655,9 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
     if (m_state == CapturingViewFinder) {
         request->addBuffer(m_viewFinderStream, buffer);
         for(auto c : m_controlValues) {
-            request->controls().set(c.first, c.second);
+            if (c.first) {
+                request->controls().set(c.first, c.second);
+            }
         }
         m_currentCamera->queueRequest(request);
     }
