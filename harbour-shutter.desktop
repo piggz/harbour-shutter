@@ -1,9 +1,9 @@
 [Desktop Entry]
 Type=Application
 X-Nemo-Application-Type=silica-qt5
-Icon=harbour-pinhole
-Exec=harbour-pinhole
-Name=Pinhole
+Icon=harbour-shutter
+Exec=harbour-shutter
+Name=Shutter
 # translation example:
 # your app name in German locale (de)
 #
@@ -15,4 +15,4 @@ Name[ru]=Улучшенная камера
 [X-Sailjail]
 Permissions=Audio;Location;RemovableMedia;Pictures;Videos
 OrganizationName=uk.co.piggz
-ApplicationName=AdvancedCamera
+ApplicationName=Shutter Camera

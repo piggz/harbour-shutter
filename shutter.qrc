@@ -46,7 +46,7 @@
         <file alias="qml/components/platform/ToolItemPL.qml">qml/components/platform.kirigami/ToolItemPL.qml</file>
         <file alias="qml/components/platform/ValueButtonPL.qml">qml/components/platform.kirigami/ValueButtonPL.qml</file>
         <file>qml/cover/CoverPage.qml</file>
-        <file>qml/harbour-pinhole.qml</file>
+        <file>qml/harbour-shutter.qml</file>
         <file>qml/components/TruncationModes.qml</file>
         <file>qml/pages/AboutImage.qml</file>
         <file>qml/pages/AboutVideo.qml</file>

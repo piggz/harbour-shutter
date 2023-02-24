@@ -11,7 +11,7 @@
 %define __provides_exclude_from ^%{_datadir}/.*$
 %endif
 
-Name:       harbour-pinhole
+Name:       harbour-shutter
 
 # >> macros
 # << macros
@@ -20,12 +20,12 @@ Name:       harbour-pinhole
 %{!?qtc_qmake5:%define qtc_qmake5 %qmake5}
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
-Summary:    Pinhole
+Summary:    Shutter Camera
 Version:    0.0.1
 Release:    1
 Group:      Qt/Qt
 License:    GPLv2
-URL:        http://github.com/piggz/harbour-pinhole
+URL:        http://github.com/piggz/harbour-shutter
 Source0:    %{name}-%{version}.tar.bz2
 Requires:   sailfishsilica-qt5 >= 0.10.9
 BuildRequires:  pkgconfig(sailfishapp) >= 1.0.2
@@ -40,26 +40,26 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  pkgconfig(libcamera)
 
 %description
-Pinhole is a camera application built ontop of libcamera.
+Shutter is a camera application built ontop of libcamera.
 
 %if "%{?vendor}" == "chum"
-PackageName: Pinhole
+PackageName: Shutter
 Type: desktop-application
 DeveloperName: Adam Pigg
 Categories:
  - Media
  - Video
 Custom:
-  Repo: https://github.com/piggz/harbour-pinhole
+  Repo: https://github.com/piggz/harbour-shutter
 Icon: https://raw.githubusercontent.com/piggz/harbour-advanced-camera/master/harbour-advanced-camera.svg
 Screenshots:
  - https://github.com/piggz/harbour-advanced-camera/raw/master/screenshots/screenshot4.png
  - https://github.com/piggz/harbour-advanced-camera/raw/master/screenshots/screenshot5.png
  - https://github.com/piggz/harbour-advanced-camera/raw/master/screenshots/screenshot6.png
 Url:
-  Homepage: https://github.com/piggz/harbour-pinhole
-  Help: https://github.com/piggz/harbour-pinhole/discussions
-  Bugtracker: https://github.com/piggz/harbour-pinhole/issues
+  Homepage: https://github.com/piggz/harbour-shutter
+  Help: https://github.com/piggz/harbour-shutter/discussions
+  Bugtracker: https://github.com/piggz/harbour-shutter/issues
   Donation: https://www.paypal.me/piggz
 %endif
 

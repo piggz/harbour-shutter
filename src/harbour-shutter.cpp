@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 
     app->setOrganizationDomain("piggz.co.uk");
     app->setOrganizationName("uk.co.piggz"); // needed for Sailjail
-    app->setApplicationName("pinhole");
+    app->setApplicationName("shutter");
 
     std::shared_ptr<libcamera::CameraManager> cm = std::make_shared<libcamera::CameraManager>();
 
@@ -70,21 +70,21 @@ int main(int argc, char *argv[])
 
     CameraModel cameraModel(0, cm);
 
-    qmlRegisterType<EffectsModel>("uk.co.piggz.pinhole", 1, 0, "EffectsModel");
-    qmlRegisterType<ExposureModel>("uk.co.piggz.pinhole", 1, 0, "ExposureModel");
-    qmlRegisterType<IsoModel>("uk.co.piggz.pinhole", 1, 0, "IsoModel");
-    qmlRegisterType<WbModel>("uk.co.piggz.pinhole", 1, 0, "WhiteBalanceModel");
-    qmlRegisterType<FocusModel>("uk.co.piggz.pinhole", 1, 0, "FocusModel");
-    qmlRegisterType<FlashModel>("uk.co.piggz.pinhole", 1, 0, "FlashModel");
-    qmlRegisterType<ExifModel>("uk.co.piggz.pinhole", 1, 0, "ExifModel");
-    qmlRegisterType<MetadataModel>("uk.co.piggz.pinhole", 1, 0, "MetadataModel");
-    qmlRegisterUncreatableType<FormatModel>("uk.co.piggz.pinhole", 1, 0, "FormatModel", "Not to be created within QML");
-    qmlRegisterUncreatableType<ResolutionModel>("uk.co.piggz.pinhole", 1, 0, "ResolutionModel", "Not to be created within QML");
-    qmlRegisterUncreatableType<ControlModel>("uk.co.piggz.pinhole", 1, 0, "ControlModel", "Not to be created within QML");
-    qmlRegisterType<ViewFinderItem>("uk.co.piggz.pinhole", 1, 0, "ViewFinderItem");
-    qmlRegisterType<ViewFinder2D>("uk.co.piggz.pinhole", 1, 0, "ViewFinder2D");
-    qmlRegisterType<Settings>("uk.co.piggz.pinhole", 1, 0, "Settings");
-    qmlRegisterType<CameraProxy>("uk.co.piggz.pinhole", 1, 0, "CameraProxy");
+    qmlRegisterType<EffectsModel>("uk.co.piggz.shutter", 1, 0, "EffectsModel");
+    qmlRegisterType<ExposureModel>("uk.co.piggz.shutter", 1, 0, "ExposureModel");
+    qmlRegisterType<IsoModel>("uk.co.piggz.shutter", 1, 0, "IsoModel");
+    qmlRegisterType<WbModel>("uk.co.piggz.shutter", 1, 0, "WhiteBalanceModel");
+    qmlRegisterType<FocusModel>("uk.co.piggz.shutter", 1, 0, "FocusModel");
+    qmlRegisterType<FlashModel>("uk.co.piggz.shutter", 1, 0, "FlashModel");
+    qmlRegisterType<ExifModel>("uk.co.piggz.shutter", 1, 0, "ExifModel");
+    qmlRegisterType<MetadataModel>("uk.co.piggz.shutter", 1, 0, "MetadataModel");
+    qmlRegisterUncreatableType<FormatModel>("uk.co.piggz.shutter", 1, 0, "FormatModel", "Not to be created within QML");
+    qmlRegisterUncreatableType<ResolutionModel>("uk.co.piggz.shutter", 1, 0, "ResolutionModel", "Not to be created within QML");
+    qmlRegisterUncreatableType<ControlModel>("uk.co.piggz.shutter", 1, 0, "ControlModel", "Not to be created within QML");
+    qmlRegisterType<ViewFinderItem>("uk.co.piggz.shutter", 1, 0, "ViewFinderItem");
+    qmlRegisterType<ViewFinder2D>("uk.co.piggz.shutter", 1, 0, "ViewFinder2D");
+    qmlRegisterType<Settings>("uk.co.piggz.shutter", 1, 0, "Settings");
+    qmlRegisterType<CameraProxy>("uk.co.piggz.shutter", 1, 0, "CameraProxy");
 
 
 #ifdef IS_SAILFISH_OS
@@ -154,10 +154,10 @@ int main(int argc, char *argv[])
     QObject::connect(view, &QQuickView::focusObjectChanged, &handler,
                      &ResourceHandler::handleFocusChange);
 
-    view->setSource(SailfishApp::pathTo("qml/harbour-pinhole.qml"));
+    view->setSource(SailfishApp::pathTo("qml/harbour-shutter.qml"));
     view->show();
 #else
-    engine.load(QUrl("qrc:/qml/harbour-pinhole.qml"));
+    engine.load(QUrl("qrc:/qml/harbour-shutter.qml"));
 #endif
 
     return app->exec();

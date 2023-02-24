@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.0
 import QtMultimedia 5.4
-import uk.co.piggz.pinhole 1.0
+import uk.co.piggz.shutter 1.0
 
 import "../components/"
 import "../components/platform"

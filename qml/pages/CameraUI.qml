@@ -3,7 +3,7 @@ import QtMultimedia 5.6
 //import QtPositioning 5.2
 import QtSensors 5.0
 import QtQuick.Layouts 1.1
-import uk.co.piggz.pinhole 1.0
+import uk.co.piggz.shutter 1.0
 import "../components/"
 import "../components/platform/"
 

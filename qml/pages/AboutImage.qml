@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import QtMultimedia 5.6
-import uk.co.piggz.harbour_advanced_camera 1.0
+import uk.co.piggz.shutter 1.0
 
 import "../components/"
 import "../components/platform"
