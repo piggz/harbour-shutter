@@ -20,9 +20,9 @@ QString FSOperations::writableLocation(const QString &type, const QString &baseD
 {
     QString dir;
     if (type == "image") {
-        dir = baseDir + "/Pictures/Pinhole";
+        dir = baseDir + "/Pictures/Shutter";
     } else if (type == "video") {
-        dir = baseDir + "/Videos/Pinhole";
+        dir = baseDir + "/Videos/Shutter";
     } else {
         return QString();
     }
