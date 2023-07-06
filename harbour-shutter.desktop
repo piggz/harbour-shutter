@@ -15,4 +15,5 @@ Name[ru]=Улучшенная камера
 [X-Sailjail]
 Permissions=Audio;Location;RemovableMedia;Pictures;Videos
 OrganizationName=uk.co.piggz
-ApplicationName=Shutter Camera
+ApplicationName=ShutterCamera
+Sanboxing=Disabled
