@@ -304,7 +304,7 @@ const std::map<libcamera::PixelFormat, SHPixelFormatInfo> pixelFormatInfo{
 		.pixelsPerGroup = 2,
 		.planes = {{ { 4, 1 }, { 0, 0 }, { 0, 0 } }},
 	} },
-    { libcamera::formats::AVUY8888, {
+/*    { libcamera::formats::AVUY8888, {
 		.name = "AVUY8888",
         .format = libcamera::formats::AVUY8888,
         .v4l2Formats = { SHV4L2PixelFormat(V4L2_PIX_FMT_YUVA32), },
@@ -313,7 +313,7 @@ const std::map<libcamera::PixelFormat, SHPixelFormatInfo> pixelFormatInfo{
 		.packed = false,
 		.pixelsPerGroup = 1,
 		.planes = {{ { 4, 1 }, { 0, 0 }, { 0, 0 } }},
-	} },
+    } },
     { libcamera::formats::XVUY8888, {
 		.name = "XVUY8888",
         .format = libcamera::formats::XVUY8888,
@@ -323,7 +323,7 @@ const std::map<libcamera::PixelFormat, SHPixelFormatInfo> pixelFormatInfo{
 		.packed = false,
 		.pixelsPerGroup = 1,
 		.planes = {{ { 4, 1 }, { 0, 0 }, { 0, 0 } }},
-	} },
+    } },*/
 
 	/* YUV planar formats. */
     { libcamera::formats::NV12, {
@@ -711,7 +711,7 @@ const std::map<libcamera::PixelFormat, SHPixelFormatInfo> pixelFormatInfo{
 		.pixelsPerGroup = 2,
 		.planes = {{ { 3, 1 }, { 0, 0 }, { 0, 0 } }},
 	} },
-    { libcamera::formats::SBGGR14, {
+ /*   { libcamera::formats::SBGGR14, {
 		.name = "SBGGR14",
         .format = libcamera::formats::SBGGR14,
         .v4l2Formats = { SHV4L2PixelFormat(V4L2_PIX_FMT_SBGGR14), },
@@ -720,7 +720,7 @@ const std::map<libcamera::PixelFormat, SHPixelFormatInfo> pixelFormatInfo{
 		.packed = false,
 		.pixelsPerGroup = 2,
 		.planes = {{ { 4, 1 }, { 0, 0 }, { 0, 0 } }},
-	} },
+    } },
     { libcamera::formats::SGBRG14, {
 		.name = "SGBRG14",
         .format = libcamera::formats::SGBRG14,
@@ -730,7 +730,7 @@ const std::map<libcamera::PixelFormat, SHPixelFormatInfo> pixelFormatInfo{
 		.packed = false,
 		.pixelsPerGroup = 2,
 		.planes = {{ { 4, 1 }, { 0, 0 }, { 0, 0 } }},
-	} },
+    } },
     { libcamera::formats::SGRBG14, {
 		.name = "SGRBG14",
         .format = libcamera::formats::SGRBG14,
@@ -740,7 +740,7 @@ const std::map<libcamera::PixelFormat, SHPixelFormatInfo> pixelFormatInfo{
 		.packed = false,
 		.pixelsPerGroup = 2,
 		.planes = {{ { 4, 1 }, { 0, 0 }, { 0, 0 } }},
-	} },
+    } },
     { libcamera::formats::SRGGB14, {
 		.name = "SRGGB14",
         .format = libcamera::formats::SRGGB14,
@@ -750,7 +750,7 @@ const std::map<libcamera::PixelFormat, SHPixelFormatInfo> pixelFormatInfo{
 		.packed = false,
 		.pixelsPerGroup = 2,
 		.planes = {{ { 4, 1 }, { 0, 0 }, { 0, 0 } }},
-	} },
+    } },*/
     { libcamera::formats::SBGGR14_CSI2P, {
 		.name = "SBGGR14_CSI2P",
         .format = libcamera::formats::SBGGR14_CSI2P,
