@@ -40,6 +40,7 @@ BuildRequires:  desktop-file-utils
 BuildRequires:  pkgconfig(libcamera)
 BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  libexif-devel
+BuildRequires:  kernel-headers
 
 %description
 Shutter is a camera application built ontop of libcamera.
