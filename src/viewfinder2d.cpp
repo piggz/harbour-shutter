@@ -14,7 +14,7 @@
 #include <QtDebug>
 
 #include "image.h"
-
+#include <string.h>
 #include "format_converter.h"
 
 static const QMap<libcamera::PixelFormat, QImage::Format> nativeFormats

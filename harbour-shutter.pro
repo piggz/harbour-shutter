@@ -18,7 +18,10 @@ CONFIG += no_keywords
 CONFIG += c++1z
 
 QT += quick multimedia
-PKGCONFIG += libcamera
+PKGCONFIG += libcamera libexif
+
+INCLUDEPATH += /usr/local/include/libcamera
+LIBS += -L/usr/local/lib
 
 SOURCES += \
     src/cameramodel.cpp \
@@ -32,6 +35,10 @@ SOURCES += \
     src/harbour-shutter.cpp \
     src/image.cpp \
     src/isomodel.cpp \
+    src/libcamera/encoder_libjpeg.cpp \
+    src/libcamera/exif.cpp \
+    src/libcamera/internal/formats.cpp \
+    src/libcamera/internal/v4l2_pixelformat.cpp \
     src/metadatamodel.cpp \
     src/resolutionmodel.cpp \
     src/settings.cpp \
@@ -150,6 +157,10 @@ HEADERS += \
     src/formatmodel.h \
     src/image.h \
     src/isomodel.h \
+    src/libcamera/encoder_libjpeg.h \
+    src/libcamera/exif.h \
+    src/libcamera/internal/formats.h \
+    src/libcamera/internal/v4l2_pixelformat.h \
     src/metadatamodel.h \
     src/resolutionmodel.h \
     src/settings.h \
@@ -164,7 +175,7 @@ HEADERS += \
     src/resourcehandler.h \
     src/storagemodel.h
 
-LIBS += -ldl
+LIBS += -ldl -ljpeg
 
 RESOURCES += \
     shutter.qrc
