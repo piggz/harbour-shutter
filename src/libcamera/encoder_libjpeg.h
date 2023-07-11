@@ -19,7 +19,7 @@ public:
 	~EncoderLibJpeg();
 
     int configure(const libcamera::StreamConfiguration &cfg);
-    bool encode(const std::vector<libcamera::Span<uint8_t>> &planes,
+    bool encode(const unsigned char *src,
            std::string outFileName,
 		   libcamera::Span<const uint8_t> exifData,
 		   unsigned int quality);

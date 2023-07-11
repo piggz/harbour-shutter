@@ -640,13 +640,7 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
     EncoderLibJpeg jpeg;
     jpeg.configure(m_stillConfig->at(0));
 
-    std::vector<libcamera::Span<uint8_t>> planes;
-    const SHPixelFormatInfo &formatYUYV = SHPixelFormatInfo::info(libcamera::formats::YUYV);
-    //size_t yPlaneSize = formatYUYV.planeSize(targetSize, 0);
-    //size_t uvPlaneSize = formatYUYV.planeSize(targetSize, 1);
-    planes.push_back({ m_mappedBuffers[buffer].get()->data(0).data(), 1920});
-
-    bool ok = jpeg.encode(planes, QString(m_saveFileName + ".jpg").toStdString(), exif.data(), 90);
+    bool ok = jpeg.encode(m_mappedBuffers[buffer].get()->data(0).data(), QString(m_saveFileName + ".jpg").toStdString(), exif.data(), 90);
     if (!ok) {
        qDebug() << "Unable to save jpeg file";
     }

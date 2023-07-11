@@ -190,13 +190,15 @@ int EncoderLibJpeg::encode(Camera3RequestDescriptor::StreamBuffer *buffer,
 		      exifData, quality);
 }
 */
-bool EncoderLibJpeg::encode(const std::vector<Span<uint8_t>> &src,
+bool EncoderLibJpeg::encode(const unsigned char *src,
                std::string outFileName,
                Span<const uint8_t> exifData,
 			   unsigned int quality)
 {
-    //unsigned char *destination = dest.data();
     unsigned long size = 0;;
+    int width=compress_.image_width;
+    int height=compress_.image_height;
+    JSAMPROW jrow[1];
 
 	/*
 	 * The jpeg_mem_dest will reallocate if the required size is not
@@ -231,11 +233,27 @@ bool EncoderLibJpeg::encode(const std::vector<Span<uint8_t>> &src,
 
 //	ASSERT(src.size() == SHPixelFormatInfo_->numPlanes());
 
+    unsigned char *buf = new unsigned char[width * 3];
+    while (compress_.next_scanline < height) {
+        for (int i = 0; i < compress_.image_width; i += 2) {
+            buf[i*3] = src[i*2];
+            buf[i*3+1] = src[i*2+1];
+            buf[i*3+2] = src[i*2+3];
+            buf[i*3+3] = src[i*2+2];
+            buf[i*3+4] = src[i*2+1];
+            buf[i*3+5] = src[i*2+3];
+        }
+        jrow[0] = buf;
+        src += width * 2;
+        jpeg_write_scanlines(&compress_, jrow, 1);
+    }
+
+    /*
 	if (nv_)
 		compressNV(src);
 	else
 		compressRGB(src);
-
+*/
 	jpeg_finish_compress(&compress_);
 
     return true;
