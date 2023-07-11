@@ -644,7 +644,7 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
     const SHPixelFormatInfo &formatYUYV = SHPixelFormatInfo::info(libcamera::formats::YUYV);
     //size_t yPlaneSize = formatYUYV.planeSize(targetSize, 0);
     //size_t uvPlaneSize = formatYUYV.planeSize(targetSize, 1);
-    planes.push_back({ m_mappedBuffers[buffer].get()->data(0).data(), 3000});
+    planes.push_back({ m_mappedBuffers[buffer].get()->data(0).data(), 1920});
 
     bool ok = jpeg.encode(planes, QString(m_saveFileName + ".jpg").toStdString(), exif.data(), 90);
     if (!ok) {
