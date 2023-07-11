@@ -74,10 +74,10 @@ const std::map<SHV4L2PixelFormat, SHV4L2PixelFormat::Info> vpf2pf{
         { libcamera::formats::UYVY, "UYVY 4:2:2" } },
     { SHV4L2PixelFormat(V4L2_PIX_FMT_VYUY),
         { libcamera::formats::VYUY, "VYUY 4:2:2" } },
-    { SHV4L2PixelFormat(V4L2_PIX_FMT_YUVA32),
+    /*{ SHV4L2PixelFormat(V4L2_PIX_FMT_YUVA32),
         { libcamera::formats::AVUY8888, "32-bit YUVA 8-8-8-8" } },
     { SHV4L2PixelFormat(V4L2_PIX_FMT_YUVX32),
-        { libcamera::formats::XVUY8888, "32-bit YUVX 8-8-8-8" } },
+        { libcamera::formats::XVUY8888, "32-bit YUVX 8-8-8-8" } },*/
 
     /* YUV planar libcamera::formats. */
     { SHV4L2PixelFormat(V4L2_PIX_FMT_NV16),
@@ -170,14 +170,14 @@ const std::map<SHV4L2PixelFormat, SHV4L2PixelFormat::Info> vpf2pf{
         { libcamera::formats::SGRBG12_CSI2P, "12-bit Bayer GRGR/BGBG Packed" } },
     { SHV4L2PixelFormat(V4L2_PIX_FMT_SRGGB12P),
         { libcamera::formats::SRGGB12_CSI2P, "12-bit Bayer RGRG/GBGB Packed" } },
-    { SHV4L2PixelFormat(V4L2_PIX_FMT_SBGGR14),
+    /*{ SHV4L2PixelFormat(V4L2_PIX_FMT_SBGGR14),
         { libcamera::formats::SBGGR14, "14-bit Bayer BGBG/GRGR" } },
     { SHV4L2PixelFormat(V4L2_PIX_FMT_SGBRG14),
         { libcamera::formats::SGBRG14, "14-bit Bayer GBGB/RGRG" } },
     { SHV4L2PixelFormat(V4L2_PIX_FMT_SGRBG14),
         { libcamera::formats::SGRBG14, "14-bit Bayer GRGR/BGBG" } },
     { SHV4L2PixelFormat(V4L2_PIX_FMT_SRGGB14),
-        { libcamera::formats::SRGGB14, "14-bit Bayer RGRG/GBGB" } },
+        { libcamera::formats::SRGGB14, "14-bit Bayer RGRG/GBGB" } },*/
     { SHV4L2PixelFormat(V4L2_PIX_FMT_SBGGR14P),
         { libcamera::formats::SBGGR14_CSI2P, "14-bit Bayer BGBG/GRGR Packed" } },
     { SHV4L2PixelFormat(V4L2_PIX_FMT_SGBRG14P),
