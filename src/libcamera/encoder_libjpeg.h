@@ -9,6 +9,7 @@
 
 #include <vector>
 #include "internal/formats.h"
+#include "src/format_converter.h"
 #include <libcamera/stream.h>
 #include <jpeglib.h>
 
@@ -19,6 +20,7 @@ public:
 	~EncoderLibJpeg();
 
     int configure(const libcamera::StreamConfiguration &cfg);
+    bool encode(const libcamera::StreamConfiguration &cfg, libcamera::FrameBuffer *buffer, class Image *image, std::string outFileName);
     bool encode(const unsigned char *src,
            std::string outFileName,
 		   libcamera::Span<const uint8_t> exifData,
@@ -32,6 +34,9 @@ private:
 	struct jpeg_error_mgr jerr_;
 
     const SHPixelFormatInfo *pixelFormatInfo_;
+    libcamera::PixelFormat pixelFormat_;
+    FormatConverter converter_;
+    libcamera::FrameBuffer *buffer_;
 
 	bool nv_;
 	bool nvSwap_;

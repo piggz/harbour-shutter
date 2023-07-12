@@ -638,9 +638,9 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
 
     Exif exif;
     EncoderLibJpeg jpeg;
-    jpeg.configure(m_stillConfig->at(0));
+    //jpeg.configure(m_stillConfig->at(0));
 
-    bool ok = jpeg.encode(m_mappedBuffers[buffer].get()->data(0).data(), QString(m_saveFileName + ".jpg").toStdString(), exif.data(), 90);
+    bool ok = jpeg.encode(m_stillConfig->at(0), buffer, m_mappedBuffers[buffer].get(), QString(m_saveFileName + ".jpg").toStdString());
     if (!ok) {
        qDebug() << "Unable to save jpeg file";
     }
