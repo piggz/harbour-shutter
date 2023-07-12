@@ -15,6 +15,7 @@
 #include <libcamera/formats.h>
 
 #include "image.h"
+#include "qdebug.h"
 
 #define RGBSHIFT		8
 #ifndef MAX
@@ -33,6 +34,8 @@
 int FormatConverter::configure(const libcamera::PixelFormat &format,
 			       const QSize &size, unsigned int stride)
 {
+    qDebug() << Q_FUNC_INFO << QString::fromStdString(format.toString());
+
 	switch (format) {
 	case libcamera::formats::NV12:
 		formatFamily_ = YUVSemiPlanar;
@@ -183,6 +186,7 @@ int FormatConverter::configure(const libcamera::PixelFormat &format,
 
 void FormatConverter::convert(const Image *src, size_t size, QImage *dst)
 {
+    qDebug() << Q_FUNC_INFO << formatFamily_;
 	switch (formatFamily_) {
 	case MJPEG:
 		dst->loadFromData(src->data(0).data(), size, "JPEG");

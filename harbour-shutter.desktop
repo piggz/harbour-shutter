@@ -16,4 +16,4 @@ Name[ru]=Улучшенная камера
 Permissions=Audio;Location;RemovableMedia;Pictures;Videos
 OrganizationName=uk.co.piggz
 ApplicationName=ShutterCamera
-Sanboxing=Disabled
+Sandboxing=Disabled

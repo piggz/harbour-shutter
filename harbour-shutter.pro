@@ -20,6 +20,8 @@ CONFIG += c++1z
 QT += quick multimedia
 PKGCONFIG += libcamera
 
+INCLUDEPATH += /usr/local/include/libcamera
+
 SOURCES += \
     src/cameramodel.cpp \
     src/cameraproxy.cpp \
@@ -32,6 +34,7 @@ SOURCES += \
     src/harbour-shutter.cpp \
     src/image.cpp \
     src/isomodel.cpp \
+    src/encoder_jpeg.cpp \
     src/metadatamodel.cpp \
     src/resolutionmodel.cpp \
     src/settings.cpp \
@@ -150,6 +153,7 @@ HEADERS += \
     src/formatmodel.h \
     src/image.h \
     src/isomodel.h \
+    src/encoder_jpeg.h \
     src/metadatamodel.h \
     src/resolutionmodel.h \
     src/settings.h \
