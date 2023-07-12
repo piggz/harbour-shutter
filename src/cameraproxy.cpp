@@ -1,8 +1,7 @@
 #include "cameraproxy.h"
 #include <QDebug>
 #include <QCoreApplication>
-#include "libcamera/encoder_libjpeg.h"
-#include "libcamera/exif.h"
+#include "encoder_jpeg.h"
 
 QDebug operator<< (QDebug d, const libcamera::Size &sz) {
     d << "Size:" << sz.width << "x" << sz.height;
@@ -636,15 +635,12 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
     file.write((const char*)m_mappedBuffers[buffer].get()->data(0).data(), size);
     file.close();
 
-    Exif exif;
-    EncoderLibJpeg jpeg;
-    //jpeg.configure(m_stillConfig->at(0));
-
+    EncoderJpeg jpeg;
     bool ok = jpeg.encode(m_stillConfig->at(0), buffer, m_mappedBuffers[buffer].get(), QString(m_saveFileName + ".jpg").toStdString());
     if (!ok) {
        qDebug() << "Unable to save jpeg file";
     }
-
+    qDebug() << "Saved JPEG as " << QString(m_saveFileName + ".jpg");
 
     if (buffer) {
         renderComplete(buffer);

@@ -35,10 +35,7 @@ SOURCES += \
     src/harbour-shutter.cpp \
     src/image.cpp \
     src/isomodel.cpp \
-    src/libcamera/encoder_libjpeg.cpp \
-    src/libcamera/exif.cpp \
-    src/libcamera/internal/formats.cpp \
-    src/libcamera/internal/v4l2_pixelformat.cpp \
+    src/encoder_jpeg.cpp \
     src/metadatamodel.cpp \
     src/resolutionmodel.cpp \
     src/settings.cpp \
@@ -157,10 +154,7 @@ HEADERS += \
     src/formatmodel.h \
     src/image.h \
     src/isomodel.h \
-    src/libcamera/encoder_libjpeg.h \
-    src/libcamera/exif.h \
-    src/libcamera/internal/formats.h \
-    src/libcamera/internal/v4l2_pixelformat.h \
+    src/encoder_jpeg.h \
     src/metadatamodel.h \
     src/resolutionmodel.h \
     src/settings.h \

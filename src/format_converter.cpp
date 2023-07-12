@@ -34,6 +34,8 @@
 int FormatConverter::configure(const libcamera::PixelFormat &format,
 			       const QSize &size, unsigned int stride)
 {
+    qDebug() << Q_FUNC_INFO << QString::fromStdString(format.toString());
+
 	switch (format) {
 	case libcamera::formats::NV12:
 		formatFamily_ = YUVSemiPlanar;
