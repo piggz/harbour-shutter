@@ -114,6 +114,7 @@ private:
 
     // Capture state, buffers queue and statistics
     CameraState m_state = Stopped;
+
     libcamera::Stream *m_viewFinderStream;
     libcamera::Stream *m_stillStream;
     std::map<const libcamera::Stream *, QQueue<libcamera::FrameBuffer *>> m_freeBuffers;
@@ -126,8 +127,12 @@ private:
     std::map<libcamera::PixelFormat, std::vector<libcamera::Size>> m_viewFinderFormats;
     std::map<libcamera::PixelFormat, std::vector<libcamera::Size>> m_stillFormats;
 
+    bool m_multiStreamEnabled = false;
+    std::unique_ptr<libcamera::CameraConfiguration> m_multiConfig;
     std::unique_ptr<libcamera::CameraConfiguration> m_viewFinderConfig;
     std::unique_ptr<libcamera::CameraConfiguration> m_stillConfig;
+    libcamera::StreamConfiguration *m_vfStreamConfig = nullptr;
+    libcamera::StreamConfiguration *m_stillStreamConfig = nullptr;
 
     QString m_currentStillFormat;
     QSize m_currentStillResolution;
