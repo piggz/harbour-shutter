@@ -559,7 +559,7 @@ PagePL {
         onDepthChanged: {
             if (pageStack.depth === 1) {
                 console.log("Calling camera.start() due to pageStack change")
-                tmrStartViewfinder.start();
+                startViewfinder();
             }
         }
     }
@@ -570,7 +570,7 @@ PagePL {
         onStillCaptureFinished: {
             console.log("Still capture finished, starting viewfinder timer");
             cameraProxy.stop();
-            tmrStartViewfinder.start();
+            startViewfinder();
 
             console.log("Camera: image saved", path)
             galleryModel.append({
@@ -583,7 +583,7 @@ PagePL {
 
     Timer {
         id: tmrStartViewfinder
-        interval: 200
+        interval: 500
         onTriggered: {
             console.log("Still capture finished, starting viewfinder");
             cameraProxy.startViewFinder();
@@ -641,6 +641,10 @@ PagePL {
 
     Component.onCompleted: {
         updateRotation(orientationSensor.reading ? orientationSensor.reading.orientation : 0);
+    }
+
+    function startViewfinder() {
+        tmrStartViewfinder.start();
     }
 
     function volUp() {

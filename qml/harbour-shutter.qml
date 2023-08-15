@@ -137,8 +137,9 @@ ApplicationWindowPL {
         if (!app.active) {
             cameraProxy.stop();
         } else {
-            if (pageStack.depth === 1)
-                cameraProxy.startViewFinder();
+            if (pageStack.depth === 1){
+                cameraUI.startViewfinder();
+            }
         }
     }
 }
