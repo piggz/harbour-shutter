@@ -186,7 +186,6 @@ int FormatConverter::configure(const libcamera::PixelFormat &format,
 
 void FormatConverter::convert(const Image *src, size_t size, QImage *dst)
 {
-    qDebug() << Q_FUNC_INFO << formatFamily_;
 	switch (formatFamily_) {
 	case MJPEG:
 		dst->loadFromData(src->data(0).data(), size, "JPEG");
