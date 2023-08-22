@@ -17,7 +17,7 @@ CONFIG += sailfishapp
 CONFIG += no_keywords
 CONFIG += c++1z
 
-QT += quick multimedia
+QT += quick multimedia multimedia-private
 PKGCONFIG += libcamera
 
 INCLUDEPATH += /usr/local/include/libcamera

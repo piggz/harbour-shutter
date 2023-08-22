@@ -7,12 +7,12 @@
 #include <QMutex>
 #include <QSize>
 #include <QPixmap>
+#include <QVideoFrame>
 
 #include <libcamera/formats.h>
 #include <libcamera/framebuffer.h>
 #include <libcamera/pixel_format.h>
 
-#include "format_converter.h"
 #include "viewfinder.h"
 
 
@@ -39,19 +39,18 @@ protected:
     virtual void paint(QPainter *) override;
 
 private:
-    FormatConverter converter_;
-
-    libcamera::PixelFormat format_;
-    QSize size_;
+    libcamera::PixelFormat m_format;
+    QSize m_size;
 
     /* Camera stopped icon */
-    QSizeF vfSize_;
-    QPixmap pixmap_;
+    QSizeF m_vfSize;
+    QPixmap m_pixmap;
 
     /* Buffer and render image */
-    libcamera::FrameBuffer *buffer_;
-    QImage image_;
-    QMutex mutex_; /* Prevent concurrent access to image_ */
+    libcamera::FrameBuffer *m_buffer;
+    QImage m_image;
+    QVideoFrame m_frame;
+    QMutex m_mutex; /* Prevent concurrent access to image_ */
 
 };
 
