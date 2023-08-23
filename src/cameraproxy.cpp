@@ -81,9 +81,11 @@ QString CameraProxy::currentStillFormat() const
 void CameraProxy::setResolution(const QSize &res)
 {
     qDebug() << Q_FUNC_INFO << res;
-    m_currentStillResolution = res;
-    m_stillStreamConfig->size = libcamera::Size(res.width(), res.height());
+    m_currentStillResolution = libcamera::Size(res.width(), res.height());
 
+    if (m_stillStreamConfig) {
+        m_stillStreamConfig->size = libcamera::Size(res.width(), res.height());
+    }
     stop();
     startViewFinder();
     resolutionChanged();
@@ -286,7 +288,7 @@ void CameraProxy::startViewFinder()
     }
 
     //Configure the viewfinder at a lower resulution for speed
-    m_vfStreamConfig->size = bestViewfinderResolution(m_vfStreamConfig->pixelFormat, m_stillStreamConfig->size);
+    m_vfStreamConfig->size = bestViewfinderResolution(m_vfStreamConfig->pixelFormat, m_currentStillResolution);
 
     libcamera::CameraConfiguration::Status validation = m_config->validate();
 

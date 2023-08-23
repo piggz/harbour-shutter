@@ -132,7 +132,7 @@ private:
     libcamera::StreamConfiguration *m_stillStreamConfig = nullptr;
 
     QString m_currentStillFormat;
-    QSize m_currentStillResolution;
+    libcamera::Size m_currentStillResolution;
     QString m_saveFileName;
     int m_frame = 0;
 
