@@ -13,7 +13,9 @@
 #include <QPainter>
 #include <QtDebug>
 #include <QVideoFrame>
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 #include "private/qvideoframe_p.h"
+#endif
 
 #include "image.h"
 #include <string.h>
@@ -57,28 +59,40 @@ unsigned int stride)
 void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *image)
 {
     size_t size1 = buffer->metadata().planes()[0].bytesused;
-    size_t size2 = buffer->metadata().planes()[1].bytesused;
+    size_t totalSize = 0;
+
+    for (int plane = 0; plane < buffer->metadata().planes().size(); ++plane) {
+        totalSize += buffer->metadata().planes()[plane].bytesused;
+    }
+
+    //qDebug() << "Frame size " << totalSize << "Planes " <<  buffer->metadata().planes().size();
 
     {
         QMutexLocker locker(&m_mutex);
-
         QSize sz(m_size.width(), m_size.height());
 
         //Configure the frame if required
-        if ((m_frame.width() != sz.width() || m_frame.height() != sz.height())) {
-            m_frame = QVideoFrame(size1 + size2, sz, size1 / m_size.height(), QVideoFrame::Format_NV12);
-        }
+        //if ((m_frame.width() != sz.width() || m_frame.height() != sz.height())) {
+            m_frame = QVideoFrame(totalSize, sz, size1 / m_size.height(), QVideoFrame::Format_YUYV);
+        //}
 
         //Copy data into the frame
         if (m_frame.map(QAbstractVideoBuffer::WriteOnly)) {
-            memcpy(m_frame.bits(), image->data(0).data(), buffer->metadata().planes()[0].bytesused);
-            memcpy(m_frame.bits() + buffer->metadata().planes()[0].bytesused, image->data(1).data(), buffer->metadata().planes()[1].bytesused);
+            size_t curOffset = 0;
+            for (int plane = 0; plane < buffer->metadata().planes().size(); ++plane) {
+                memcpy(m_frame.bits() + curOffset, image->data(plane).data(), buffer->metadata().planes()[plane].bytesused);
+                curOffset += buffer->metadata().planes()[plane].bytesused;
+            }
             m_frame.unmap();
         } else {
             qDebug() << "Unable to map video frame writeonly";
         }
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
         m_image= qt_imageFromVideoFrame(m_frame);
+#else
+        m_image = m_frame.image();
+#endif
     }
     update();
 
@@ -102,8 +116,11 @@ void ViewFinder2D::stop()
 void ViewFinder2D::paint(QPainter *painter)
 {
     /* If we have an image, draw it. */
+    int w = height() * ((float)m_image.rect().width() / (float)m_image.rect().height());
+    int offset = (width() - w) / 2;
+
     if (!m_image.isNull()) {
-        painter->drawImage(QRectF(QPointF(0,0), QSizeF(width(), height())), m_image, m_image.rect());
+        painter->drawImage(QRectF(QPointF(offset,0), QSizeF(w, height())), m_image, m_image.rect());
         return;
     }
 
