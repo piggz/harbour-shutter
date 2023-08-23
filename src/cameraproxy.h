@@ -109,8 +109,7 @@ private:
     QMutex m_mutex;
 
     std::map<libcamera::FrameBuffer *, std::unique_ptr<Image>> m_mappedBuffers;
-    libcamera::FrameBufferAllocator *m_viewFinderAllocator = nullptr;
-    libcamera::FrameBufferAllocator *m_stillAllocator = nullptr;
+    libcamera::FrameBufferAllocator *m_allocator = nullptr;
 
     // Capture state, buffers queue and statistics
     CameraState m_state = Stopped;
@@ -127,10 +126,8 @@ private:
     std::map<libcamera::PixelFormat, std::vector<libcamera::Size>> m_viewFinderFormats;
     std::map<libcamera::PixelFormat, std::vector<libcamera::Size>> m_stillFormats;
 
-    bool m_multiStreamEnabled = false;
-    std::unique_ptr<libcamera::CameraConfiguration> m_multiConfig;
-    std::unique_ptr<libcamera::CameraConfiguration> m_viewFinderConfig;
-    std::unique_ptr<libcamera::CameraConfiguration> m_stillConfig;
+    std::unique_ptr<libcamera::CameraConfiguration> m_config;
+
     libcamera::StreamConfiguration *m_vfStreamConfig = nullptr;
     libcamera::StreamConfiguration *m_stillStreamConfig = nullptr;
 
@@ -139,12 +136,15 @@ private:
     QString m_saveFileName;
     int m_frame = 0;
 
+    bool buildConfiguration( std::initializer_list<libcamera::StreamRole> roles);
     void processCapture();
     void processViewfinder(libcamera::FrameBuffer *buffer);
     void processStill(libcamera::FrameBuffer *buffer);
 
     void requestComplete(libcamera::Request *request);
-    void cacheFormats();
+    void cacheFormats(libcamera::StreamRole role);
+
+    libcamera::Size bestViewfinderResolution(libcamera::PixelFormat format, libcamera::Size stillSize);
 
     std::unordered_map<Control, libcamera::ControlValue> m_controlValues;
 };
