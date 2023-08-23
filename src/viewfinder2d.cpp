@@ -20,18 +20,19 @@
 #include "image.h"
 #include <string.h>
 
-static const QMap<libcamera::PixelFormat, QImage::Format> nativeFormats
+static const QMap<libcamera::PixelFormat, QVideoFrame::PixelFormat> nativeFormats
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)
-    { libcamera::formats::ABGR8888, QImage::Format_RGBX8888 },
-    { libcamera::formats::XBGR8888, QImage::Format_RGBX8888 },
-#endif
-    { libcamera::formats::ARGB8888, QImage::Format_RGB32 },
-    { libcamera::formats::XRGB8888, QImage::Format_RGB32 },
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-    { libcamera::formats::RGB888, QImage::Format_BGR888 },
-#endif
-    { libcamera::formats::BGR888, QImage::Format_RGB888 },
+    { libcamera::formats::MJPEG, QVideoFrame::Format_Jpeg },
+    { libcamera::formats::ABGR8888, QVideoFrame::Format_BGR32 },
+    { libcamera::formats::ARGB8888, QVideoFrame::Format_ARGB32 },
+    { libcamera::formats::XRGB8888, QVideoFrame::Format_RGB32 },
+    { libcamera::formats::RGB888, QVideoFrame::Format_RGB24 },
+    { libcamera::formats::BGR888, QVideoFrame::Format_BGR24 },
+    { libcamera::formats::YUYV, QVideoFrame::Format_YUYV },
+    { libcamera::formats::YUV444, QVideoFrame::Format_YUV444 },
+    { libcamera::formats::UYVY, QVideoFrame::Format_UYVY },
+    { libcamera::formats::NV12, QVideoFrame::Format_NV12 },
+    { libcamera::formats::NV21, QVideoFrame::Format_NV21 },
 };
 
 ViewFinder2D::ViewFinder2D()
@@ -46,12 +47,17 @@ const QList<libcamera::PixelFormat> &ViewFinder2D::nativeFormats() const
 }
 
 int ViewFinder2D::setFormat(const libcamera::PixelFormat &format, const QSize &size,
-                            [[maybe_unused]] const libcamera::ColorSpace &colorSpace,
-unsigned int stride)
+                            [[maybe_unused]] const libcamera::ColorSpace &colorSpace, unsigned int stride)
 {
     m_image = QImage();
     m_format = format;
     m_size = size;
+
+    auto match = ::nativeFormats.find(m_format);
+    if (match != ::nativeFormats.end()) {
+        m_qvFormat = match.value();
+        qDebug() << "Setting vf pixel format to " << m_qvFormat;
+    }
 
     return 0;
 }
@@ -72,9 +78,9 @@ void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *imag
         QSize sz(m_size.width(), m_size.height());
 
         //Configure the frame if required
-        //if ((m_frame.width() != sz.width() || m_frame.height() != sz.height())) {
-            m_frame = QVideoFrame(totalSize, sz, size1 / m_size.height(), QVideoFrame::Format_YUYV);
-        //}
+        if ((m_frame.width() != sz.width() || m_frame.height() != sz.height())) {
+            m_frame = QVideoFrame(totalSize, sz, size1 / m_size.height(), m_qvFormat);
+        }
 
         //Copy data into the frame
         if (m_frame.map(QAbstractVideoBuffer::WriteOnly)) {

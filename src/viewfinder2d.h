@@ -40,6 +40,7 @@ protected:
 
 private:
     libcamera::PixelFormat m_format;
+    QVideoFrame::PixelFormat m_qvFormat;
     QSize m_size;
 
     /* Camera stopped icon */

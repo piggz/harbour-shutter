@@ -272,13 +272,12 @@ void CameraProxy::startViewFinder()
     for (auto const &f : m_viewFinderFormats) {
         qDebug() << f.first.toString().c_str();
     }
-    /* Use a format supported by the viewfinder if available. Default to JPEG*/
-    m_vfStreamConfig->pixelFormat = libcamera::PixelFormat::fromString("YUYV");
+    // Use a format supported by the viewfinder if available. Default to JPEG
+    //if supported by the hardware as that is first on the list
     for (const libcamera::PixelFormat &format : m_viewFinder->nativeFormats()) {
         qDebug() << "Checking if format is supported " << format.toString().c_str();
 
         auto match = m_viewFinderFormats.find(format);
-
         if (match != m_viewFinderFormats.end()) {
             m_vfStreamConfig->pixelFormat = format;
             qDebug() << "Setting vf pixel format to " << format.toString().c_str();
