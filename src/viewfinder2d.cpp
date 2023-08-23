@@ -78,7 +78,7 @@ void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *imag
         QSize sz(m_size.width(), m_size.height());
 
         //Configure the frame if required
-        if ((m_frame.width() != sz.width() || m_frame.height() != sz.height())) {
+        if ((m_frame.width() != sz.width() || m_frame.height() != sz.height()) || m_qvFormat == QVideoFrame::Format_Jpeg) {
             m_frame = QVideoFrame(totalSize, sz, size1 / m_size.height(), m_qvFormat);
         }
 
