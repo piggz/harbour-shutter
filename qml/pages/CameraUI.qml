@@ -624,6 +624,8 @@ PagePL {
             cameraProxy.setResolution(r);
 
             applySettings();
+
+            startViewfinder();
         }
     }
 
