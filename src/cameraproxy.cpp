@@ -37,7 +37,7 @@ CameraProxy::~CameraProxy()
 
 bool CameraProxy::event(QEvent *e)
 {
-    //qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO;
     if (e->type() == CaptureEvent::type()) {
         processCapture();
         return true;
@@ -68,6 +68,11 @@ void CameraProxy::setStillFormat(const QString &format)
     qDebug() << Q_FUNC_INFO;
 
     m_currentStillFormat = format;
+    if (m_stillStreamConfig) {
+        m_stillStreamConfig->pixelFormat = libcamera::PixelFormat::fromString(format.toStdString());
+    }
+    stop();
+    startViewFinder();
     formatChanged();
 }
 
@@ -160,6 +165,8 @@ bool CameraProxy::buildConfiguration(std::initializer_list<libcamera::StreamRole
     if (multiConfig) {
         m_vfStreamConfig = &m_config->at(0);
         m_stillStreamConfig = &m_config->at(1);
+        m_viewFinderStream = m_vfStreamConfig->stream();
+        m_stillStream = m_stillStreamConfig->stream();
     } else {
         if (roles.begin()[0] == libcamera::StreamRole::Viewfinder) {
             m_vfStreamConfig = &m_config->at(0);
@@ -245,7 +252,7 @@ libcamera::Size CameraProxy::bestViewfinderResolution(libcamera::PixelFormat for
     if (bestSize.isNull()) {
         bestSize = backupSize;
     }
-    end:
+end:
     qDebug() << "Picked " << bestSize.toString().c_str();
 
     return bestSize;
@@ -310,7 +317,10 @@ void CameraProxy::startViewFinder()
     }
 
     /* Store stream allocation. */
-    m_viewFinderStream = m_vfStreamConfig->stream();
+    //m_viewFinderStream = m_vfStreamConfig->stream();
+    //if (m_config->size() == 2) {
+    //    m_stillStream = m_stillStreamConfig->stream();
+    //}
 
     /*
          * Configure the viewfinder. If no color space is reported, default to
@@ -332,6 +342,7 @@ void CameraProxy::startViewFinder()
 
     for (libcamera::StreamConfiguration &config : *m_config) {
         libcamera::Stream *stream = config.stream();
+        qDebug() << "Allocating buffer for stream " << stream->configuration().toString().c_str();
 
         ret = m_allocator->allocate(stream);
         if (ret < 0) {
@@ -340,9 +351,9 @@ void CameraProxy::startViewFinder()
         }
 
         for (const std::unique_ptr<libcamera::FrameBuffer> &buffer : m_allocator->buffers(stream)) {
+            qDebug() << "Mapping buffer";
             /* Map memory buffers and cache the mappings. */
-            std::unique_ptr<Image> image =
-                    Image::fromFrameBuffer(buffer.get(), Image::MapMode::ReadOnly);
+            std::unique_ptr<Image> image = Image::fromFrameBuffer(buffer.get(), Image::MapMode::ReadOnly);
             assert(image != nullptr);
             m_mappedBuffers[buffer.get()] = std::move(image);
 
@@ -393,7 +404,7 @@ void CameraProxy::startViewFinder()
 
 void CameraProxy::requestComplete(libcamera::Request *request)
 {
-    //qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO;
 
     if (request->status() == libcamera::Request::RequestCancelled)
         return;
@@ -440,14 +451,14 @@ void CameraProxy::stop()
 
 void CameraProxy::stillCapture(const QString &filename)
 {
-#if 0
     qDebug() << Q_FUNC_INFO;
 
-    setState(ConfiguringStill);
+    //setState(CapturingStill);
     m_saveFileName = filename;
-    int ret;
+    //int ret;
     m_frame = 0;
-
+    m_captureStill = true;
+#if 0
     stop();
 
     /* Use a format supported by the viewfinder if available. Default to JPEG*/
@@ -652,7 +663,7 @@ void CameraProxy::removeControlValue(Control c)
 
 void CameraProxy::processCapture()
 {
-    //qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO;
     if (m_state == Stopped) {
         qDebug() << "dont process event if camera stopped";
         return;
@@ -672,17 +683,17 @@ void CameraProxy::processCapture()
     }
 
     /* Process buffers. */
-    if (m_state == CapturingViewFinder && request->buffers().count(m_viewFinderStream)) {
+    if (request->buffers().count(m_viewFinderStream)) {
         processViewfinder(request->buffers().at(m_viewFinderStream));
     }
 
-    if (m_state == CapturingStill && request->buffers().count(m_stillStream)) {
+    if (request->buffers().count(m_stillStream)) {
         processStill(request->buffers().at(m_stillStream));
     }
 
-    if (m_state <= Stopping) {
-        return;
-    }
+    //if (m_state <= Stopping) {
+    //    return;
+    //}
 
     request->reuse();
     QMutexLocker locker(&m_mutex);
@@ -691,7 +702,7 @@ void CameraProxy::processCapture()
 
 void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
 {
-    //qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO;
 
     m_viewFinder->renderImage(buffer, m_mappedBuffers[buffer].get());
 }
@@ -700,8 +711,7 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
 {
     qDebug() << Q_FUNC_INFO << m_saveFileName << m_frame;
 
-    return;
-    if (m_frame < 4) {
+    if (m_config->size() == 1 && m_frame < 4) {
         qDebug() << "Skipping frame " << m_frame;
         m_frame++;
         if (buffer)
@@ -714,10 +724,11 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
         return;
     }
 
-    //size_t size = buffer->metadata().planes()[0].bytesused;
-    //file.write((const char*)m_mappedBuffers[buffer].get()->data(0).data(), size);
+    size_t size = buffer->metadata().planes()[0].bytesused;
+    file.write((const char*)m_mappedBuffers[buffer].get()->data(0).data(), size);
     file.close();
 
+    /*
     EncoderJpeg jpeg;
     bool ok = jpeg.encode(m_config->at(1), buffer, m_mappedBuffers[buffer].get(), QString(m_saveFileName + ".jpg").toStdString());
     if (!ok) {
@@ -725,37 +736,64 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
     }
     qDebug() << "Saved JPEG as " << QString(m_saveFileName + ".jpg");
 
-    if (buffer) {
-        renderComplete(buffer);
+    {
+        QMutexLocker locker(&m_mutex);
+        m_freeBuffers[m_stillStream].enqueue(buffer);
     }
+*/
+    //if (buffer) {
+    //    renderComplete(buffer);
+    //}
 
     Q_EMIT stillCaptureFinished(m_saveFileName);
 }
 
 void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
 {
+    qDebug() << Q_FUNC_INFO << m_state << m_viewFinderStream << m_stillStream;
     libcamera::Request *request;
     {
         QMutexLocker locker(&m_mutex);
-        if (m_freeQueue.isEmpty())
+        if (m_freeQueue.isEmpty()) {
+            qDebug() << "Free queue empty";
             return;
+        }
 
         request = m_freeQueue.dequeue();
     }
 
-    if (m_state == CapturingViewFinder) {
-        request->addBuffer(m_viewFinderStream, buffer);
-        for(auto c : m_controlValues) {
-            if (c.first) {
-                request->controls().set(c.first, c.second);
+    //if (m_state == CapturingViewFinder) {
+    request->addBuffer(m_viewFinderStream, buffer);
+    for(auto c : m_controlValues) {
+        if (c.first) {
+            request->controls().set(c.first, c.second);
+        }
+    }
+    //}
+
+
+    if (m_captureStill) {
+        qDebug() << "Submitting request for still image " << m_stillStream->configuration().toString().c_str();
+
+        libcamera::FrameBuffer *stillBuffer = nullptr;
+
+        {
+            QMutexLocker locker(&m_mutex);
+            if (!m_freeBuffers[m_stillStream].isEmpty()) {
+                stillBuffer = m_freeBuffers[m_stillStream].dequeue();
             }
         }
-        m_currentCamera->queueRequest(request);
+
+        if (stillBuffer) {
+            //request->addBuffer(m_stillStream, stillBuffer);
+            m_captureStill = false;
+        } else {
+            qWarning() << "No free buffer available for Still capture";
+        }
     }
-    if (m_state == CapturingStill && m_frame < 5) {
-        request->addBuffer(m_stillStream, buffer);
-        m_currentCamera->queueRequest(request);
-    }
+
+    qDebug() << "Queueing reqest " << request->toString().c_str();
+    m_currentCamera->queueRequest(request);
 }
 
 CameraProxy::CameraState CameraProxy::state() const
@@ -765,8 +803,7 @@ CameraProxy::CameraState CameraProxy::state() const
 
 void CameraProxy::setState(CameraState newState)
 {
-    if (m_state == newState)
-        return;
+    qDebug() << Q_FUNC_INFO << newState;
     m_state = newState;
     Q_EMIT stateChanged();
 }

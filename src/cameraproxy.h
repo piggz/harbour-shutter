@@ -135,6 +135,7 @@ private:
     libcamera::Size m_currentStillResolution;
     QString m_saveFileName;
     int m_frame = 0;
+    bool m_captureStill = false;
 
     bool buildConfiguration( std::initializer_list<libcamera::StreamRole> roles);
     void processCapture();
