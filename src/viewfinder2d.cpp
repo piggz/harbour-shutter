@@ -102,9 +102,9 @@ void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *imag
     }
     update();
 
-    if (buffer)
-        renderComplete(buffer);
-
+    if (buffer) {
+        Q_EMIT renderComplete(buffer);
+    }
 }
 
 void ViewFinder2D::stop()
@@ -112,7 +112,7 @@ void ViewFinder2D::stop()
     m_image = QImage();
 
     if (m_buffer) {
-        renderComplete(m_buffer);
+        Q_EMIT renderComplete(m_buffer);
         m_buffer = nullptr;
     }
 

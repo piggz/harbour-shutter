@@ -16,7 +16,7 @@ QDebug operator<< (QDebug d, const std::vector<libcamera::Size> &vs) {
 }
 
 QDebug operator<< (QDebug d, const std::map<libcamera::PixelFormat, std::vector<libcamera::Size> > &fm) {
-    for(auto pf : fm) {
+    for(const auto &pf : fm) {
         d << "Format:" << QString::fromStdString(pf.first.toString()) << pf.second;
     }
     return d;
@@ -57,7 +57,7 @@ QStringList CameraProxy::supportedFormats() const
     qDebug() << Q_FUNC_INFO;
 
     QStringList f;
-    for(auto pf : m_stillFormats) {
+    for(const auto &pf : m_stillFormats) {
         f << QString::fromStdString(pf.first.toString());
     }
     return f;
@@ -73,7 +73,7 @@ void CameraProxy::setStillFormat(const QString &format)
     }
     stop();
     startViewFinder();
-    formatChanged();
+    Q_EMIT formatChanged();
 }
 
 QString CameraProxy::currentStillFormat() const
@@ -93,7 +93,7 @@ void CameraProxy::setResolution(const QSize &res)
     }
     stop();
     startViewFinder();
-    resolutionChanged();
+    Q_EMIT resolutionChanged();
 }
 
 std::vector<libcamera::Size> CameraProxy::supportedResoluions(QString format)
@@ -138,9 +138,9 @@ void CameraProxy::setCameraIndex(QString id)
         qDebug() << "Controls:";
         auto controls = m_currentCamera->controls();
 
-        for(auto control: controls) {
+        for(const auto &control: controls) {
             qDebug() << "Control:" << control.first->id() << control.first->type() << QString::fromStdString(control.first->name()) <<  QString::fromStdString(control.second.toString());
-            for (auto val : control.second.values()) {
+            for (const auto &val : control.second.values()) {
                 qDebug() << "Value: " << QString::fromStdString(val.toString());
             }
         }
@@ -764,7 +764,7 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
 
     //if (m_state == CapturingViewFinder) {
     request->addBuffer(m_viewFinderStream, buffer);
-    for(auto c : m_controlValues) {
+    for(const auto &c : m_controlValues) {
         if (c.first) {
             request->controls().set(c.first, c.second);
         }
