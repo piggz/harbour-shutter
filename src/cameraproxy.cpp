@@ -132,8 +132,6 @@ void CameraProxy::setCameraIndex(QString id)
         cacheFormats(libcamera::StreamRole::Viewfinder);
         cacheFormats(libcamera::StreamRole::StillCapture);
 
-        //buildConfiguration({libcamera::StreamRole::Viewfinder, libcamera::StreamRole::StillCapture});
-
         //Print controls
         qDebug() << "Controls:";
         auto controls = m_currentCamera->controls();
@@ -175,8 +173,11 @@ bool CameraProxy::buildConfiguration(std::initializer_list<libcamera::StreamRole
         m_viewFinderStream = m_vfStreamConfig->stream();
         m_stillStream = m_stillStreamConfig->stream();
     } else {
-        m_singleStream = true;
-        if (roles.begin()[0] == libcamera::StreamRole::Viewfinder) {
+        if (roles.size() == 2) {
+            m_singleStream = true;
+            qDebug() << "Device can only handle a single stream";
+        }
+         if (roles.begin()[0] == libcamera::StreamRole::Viewfinder) {
             m_vfStreamConfig = &m_config->at(0);
             m_stillStreamConfig = nullptr;
             m_viewFinderStream = m_vfStreamConfig->stream();
@@ -624,6 +625,20 @@ void CameraProxy::removeControlValue(Control c)
     m_controlValues.erase(c);
 }
 
+CameraProxy::CameraState CameraProxy::state() const
+{
+    return m_state;
+}
+
+void CameraProxy::setState(CameraState newState)
+{
+    qDebug() << Q_FUNC_INFO << newState;
+    m_state = newState;
+    Q_EMIT stateChanged();
+}
+
+//==================== Request / event handling ===========================
+
 void CameraProxy::requestComplete(libcamera::Request *request)
 {
     //qDebug() << Q_FUNC_INFO;
@@ -745,21 +760,25 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
         request = m_freeQueue.dequeue();
     }
 
-#if 0
     if (m_state == CapturingViewFinder) {
         request->addBuffer(m_viewFinderStream, buffer);
-        for(const auto &c : m_controlValues) {
+        for(auto c : m_controlValues) {
             if (c.first) {
                 request->controls().set(c.first, c.second);
             }
         }
+        m_currentCamera->queueRequest(request);
     }
 
-    if ((m_captureStill || m_singleStream) && m_stillStream) {
+    if (m_singleStream) {
+        if ( m_state == CapturingStill && m_frame < 5) {
+            request->addBuffer(m_stillStream, buffer);
+            m_currentCamera->queueRequest(request);
+        }
+    } else if (m_captureStill) {
         qDebug() << "Submitting request for still image " << m_stillStream->configuration().toString().c_str();
 
         libcamera::FrameBuffer *stillBuffer = nullptr;
-
         {
             QMutexLocker locker(&m_mutex);
             if (!m_freeBuffers[m_stillStream].isEmpty()) {
@@ -774,30 +793,4 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
             qWarning() << "No free buffer available for Still capture";
         }
     }
-#endif
-    if (m_state == CapturingViewFinder) {
-        request->addBuffer(m_viewFinderStream, buffer);
-        for(auto c : m_controlValues) {
-            if (c.first) {
-                request->controls().set(c.first, c.second);
-            }
-        }
-        m_currentCamera->queueRequest(request);
-    }
-    if (m_state == CapturingStill && m_frame < 5) {
-        request->addBuffer(m_stillStream, buffer);
-        m_currentCamera->queueRequest(request);
-    }
-}
-
-CameraProxy::CameraState CameraProxy::state() const
-{
-    return m_state;
-}
-
-void CameraProxy::setState(CameraState newState)
-{
-    qDebug() << Q_FUNC_INFO << newState;
-    m_state = newState;
-    Q_EMIT stateChanged();
 }
