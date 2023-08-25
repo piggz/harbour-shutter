@@ -136,6 +136,7 @@ private:
     QString m_saveFileName;
     int m_frame = 0;
     bool m_captureStill = false;
+    bool m_singleStream = false;
 
     bool buildConfiguration( std::initializer_list<libcamera::StreamRole> roles);
     void processCapture();
