@@ -49,6 +49,8 @@ const QList<libcamera::PixelFormat> &ViewFinder2D::nativeFormats() const
 int ViewFinder2D::setFormat(const libcamera::PixelFormat &format, const QSize &size,
                             [[maybe_unused]] const libcamera::ColorSpace &colorSpace, unsigned int stride)
 {
+    qDebug() << "Setting vf pixel format to " << m_qvFormat << size;
+
     m_image = QImage();
     m_format = format;
     m_size = size;
@@ -67,11 +69,11 @@ void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *imag
     size_t size1 = buffer->metadata().planes()[0].bytesused;
     size_t totalSize = 0;
 
-    for (int plane = 0; plane < buffer->metadata().planes().size(); ++plane) {
+    for (uint plane = 0; plane < buffer->metadata().planes().size(); ++plane) {
         totalSize += buffer->metadata().planes()[plane].bytesused;
     }
 
-    //qDebug() << "Frame size " << totalSize << "Planes " <<  buffer->metadata().planes().size();
+    qDebug() << "Frame size " << totalSize << "Planes " <<  buffer->metadata().planes().size();
 
     {
         QMutexLocker locker(&m_mutex);
@@ -85,7 +87,7 @@ void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *imag
         //Copy data into the frame
         if (m_frame.map(QAbstractVideoBuffer::WriteOnly)) {
             size_t curOffset = 0;
-            for (int plane = 0; plane < buffer->metadata().planes().size(); ++plane) {
+            for (uint plane = 0; plane < buffer->metadata().planes().size(); ++plane) {
                 memcpy(m_frame.bits() + curOffset, image->data(plane).data(), buffer->metadata().planes()[plane].bytesused);
                 curOffset += buffer->metadata().planes()[plane].bytesused;
             }

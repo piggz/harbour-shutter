@@ -161,11 +161,6 @@ bool CameraProxy::buildConfiguration(std::initializer_list<libcamera::StreamRole
     bool multiConfig = m_config->size() == 2;
 
     qDebug() << "Configuring camera....";
-    int ret = m_currentCamera->configure(m_config.get());
-    if (ret < 0) {
-        qInfo() << "Failed to configure camera";
-        return false;
-    }
 
     if (multiConfig) {
         m_vfStreamConfig = &m_config->at(0);
@@ -320,6 +315,12 @@ void CameraProxy::startViewFinder()
     if (validation == libcamera::CameraConfiguration::Adjusted) {
         qInfo() << "Stream configuration adjusted to "
                 << m_vfStreamConfig->toString().c_str();
+    }
+
+    ret = m_currentCamera->configure(m_config.get());
+    if (ret < 0) {
+        qInfo() << "Failed to configure camera";
+        return;
     }
 
     // Configure the viewfinder. If no color space is reported, default to sYCC.
