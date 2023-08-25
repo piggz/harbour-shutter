@@ -161,6 +161,10 @@ bool CameraProxy::buildConfiguration(std::initializer_list<libcamera::StreamRole
     bool multiConfig = m_config->size() == 2;
 
     qDebug() << "Configuring camera....";
+    if (m_currentCamera->configure(m_config.get()) < 0) {
+        qInfo() << "Failed to configure camera";
+        return false;
+    }
 
     if (multiConfig) {
         m_vfStreamConfig = &m_config->at(0);
@@ -188,6 +192,7 @@ bool CameraProxy::buildConfiguration(std::initializer_list<libcamera::StreamRole
     /* Allocate and map buffers. */
     m_allocator = new libcamera::FrameBufferAllocator(m_currentCamera);
 
+    qDebug() << "Streams: " << m_viewFinderStream << m_stillStream;
     return true;
 }
 
@@ -276,13 +281,12 @@ void CameraProxy::startViewFinder()
     qDebug() << Q_FUNC_INFO << m_vfStreamConfig;
     int ret;
 
-    buildConfiguration({libcamera::StreamRole::Viewfinder, libcamera::StreamRole::StillCapture});
-
-    if ( !m_vfStreamConfig || (m_state != Stopped)) {
-        qWarning() << "Camera not stopped, not starting viewfinder";
-        return;
+    if (m_state != Stopped) {
+        stop();
     }
     setState(ConfiguringViewFinder);
+
+    buildConfiguration({libcamera::StreamRole::Viewfinder, libcamera::StreamRole::StillCapture});
 
     qDebug() << "View finder formats: ";
     for (auto const &f : m_viewFinderFormats) {
@@ -357,6 +361,10 @@ void CameraProxy::startViewFinder()
 
     m_requests.clear();
 
+    qDebug() << m_viewFinderStream;
+    for (const auto &s : m_freeBuffers) {
+        qDebug() << s.first->configuration().toString().c_str();
+    }
     /* Create requests and fill them with buffers from the viewfinder. */
     while (!m_freeBuffers[m_viewFinderStream].isEmpty()) {
         qDebug() << "Creating requests...";
@@ -413,12 +421,8 @@ void CameraProxy::stop()
         m_requests.clear();
         m_freeQueue.clear();
 
-
-        if (m_allocator) {
-            qDebug() << "deleting vf allocator";
-            delete m_allocator;
-            m_allocator = nullptr;
-        }
+        delete m_allocator;
+        m_allocator = nullptr;
 
         m_freeBuffers.clear();
         m_doneQueue.clear();
