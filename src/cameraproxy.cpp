@@ -162,6 +162,13 @@ bool CameraProxy::buildConfiguration(std::initializer_list<libcamera::StreamRole
     }
     bool multiConfig = m_config->size() == 2;
 
+    qDebug() << "Configuring camera....";
+    int ret = m_currentCamera->configure(m_config.get());
+    if (ret < 0) {
+        qInfo() << "Failed to configure camera";
+        return false;
+    }
+
     if (multiConfig) {
         m_vfStreamConfig = &m_config->at(0);
         m_stillStreamConfig = &m_config->at(1);
@@ -171,19 +178,18 @@ bool CameraProxy::buildConfiguration(std::initializer_list<libcamera::StreamRole
         if (roles.begin()[0] == libcamera::StreamRole::Viewfinder) {
             m_vfStreamConfig = &m_config->at(0);
             m_stillStreamConfig = nullptr;
+            m_viewFinderStream = m_vfStreamConfig->stream();
+            m_stillStream = nullptr;
         } else {
             m_vfStreamConfig = nullptr;
-            m_stillStreamConfig = &m_config->at(0);;
+            m_stillStreamConfig = &m_config->at(0);
+            m_stillStream = m_stillStreamConfig->stream();
+            m_viewFinderStream = nullptr;
         }
     }
 
-    qDebug() << "Configuring camera....";
-    int ret = m_currentCamera->configure(m_config.get());
-    if (ret < 0) {
-        qInfo() << "Failed to configure camera";
-        return false;
-    }
     return true;
+
 }
 
 void CameraProxy::cacheFormats(libcamera::StreamRole role)
@@ -281,6 +287,7 @@ void CameraProxy::startViewFinder()
     for (auto const &f : m_viewFinderFormats) {
         qDebug() << f.first.toString().c_str();
     }
+
     // Use a format supported by the viewfinder if available. Default to JPEG
     //if supported by the hardware as that is first on the list
     for (const libcamera::PixelFormat &format : m_viewFinder->nativeFormats()) {
@@ -309,23 +316,7 @@ void CameraProxy::startViewFinder()
                 << m_vfStreamConfig->toString().c_str();
     }
 
-    qDebug() << "Configuring camera....";
-    ret = m_currentCamera->configure(m_config.get());
-    if (ret < 0) {
-        qInfo() << "Failed to configure camera";
-        return;
-    }
-
-    /* Store stream allocation. */
-    //m_viewFinderStream = m_vfStreamConfig->stream();
-    //if (m_config->size() == 2) {
-    //    m_stillStream = m_stillStreamConfig->stream();
-    //}
-
-    /*
-         * Configure the viewfinder. If no color space is reported, default to
-         * sYCC.
-         */
+     // Configure the viewfinder. If no color space is reported, default to sYCC.
     ret = m_viewFinder->setFormat(m_vfStreamConfig->pixelFormat,
                                   QSize(m_vfStreamConfig->size.width, m_vfStreamConfig->size.height),
                                   m_vfStreamConfig->colorSpace.value_or(libcamera::ColorSpace::Sycc),
@@ -335,10 +326,8 @@ void CameraProxy::startViewFinder()
         return;
     }
 
-
     /* Allocate and map buffers. */
     m_allocator = new libcamera::FrameBufferAllocator(m_currentCamera);
-    m_requests.clear();
 
     for (libcamera::StreamConfiguration &config : *m_config) {
         libcamera::Stream *stream = config.stream();
@@ -362,8 +351,11 @@ void CameraProxy::startViewFinder()
         }
     }
 
+    m_requests.clear();
+
     /* Create requests and fill them with buffers from the viewfinder. */
     while (!m_freeBuffers[m_viewFinderStream].isEmpty()) {
+        qDebug() << "Creating requests...";
         libcamera::FrameBuffer *buffer = m_freeBuffers[m_viewFinderStream].dequeue();
 
         std::unique_ptr<libcamera::Request> request = m_currentCamera->createRequest();
