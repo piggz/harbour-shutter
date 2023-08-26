@@ -462,6 +462,12 @@ void CameraProxy::stillCapture(const QString &filename)
                     << m_stillStreamConfig->toString().c_str();
         }
 
+        ret = m_currentCamera->configure(m_config.get());
+        if (ret < 0) {
+            qInfo() << "Failed to configure camera";
+            return;
+        }
+
         ret = m_allocator->allocate(m_stillStream);
         if (ret < 0) {
             qWarning() << "Failed to allocate still capture buffers";
@@ -666,7 +672,7 @@ void CameraProxy::requestComplete(libcamera::Request *request)
 
 void CameraProxy::processCapture()
 {
-    qDebug() << Q_FUNC_INFO;
+    //qDebug() << Q_FUNC_INFO;
     if (m_state == Stopped) {
         qDebug() << "dont process event if camera stopped";
         return;
@@ -753,7 +759,7 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
 
 void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
 {
-    qDebug() << Q_FUNC_INFO << m_state << m_viewFinderStream << m_stillStream;
+    //qDebug() << Q_FUNC_INFO << m_state << m_viewFinderStream << m_stillStream;
     libcamera::Request *request;
     {
         QMutexLocker locker(&m_mutex);

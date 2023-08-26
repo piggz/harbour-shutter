@@ -73,7 +73,7 @@ void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *imag
         totalSize += buffer->metadata().planes()[plane].bytesused;
     }
 
-    qDebug() << "Frame size " << totalSize << "Planes " <<  buffer->metadata().planes().size();
+    //qDebug() << "Frame size " << totalSize << "Planes " <<  buffer->metadata().planes().size();
 
     {
         QMutexLocker locker(&m_mutex);
