@@ -728,10 +728,6 @@ void CameraProxy::processCapture()
         processViewfinder(request->buffers().at(m_viewFinderStream));
     }
 
-    if (request->buffers().count(m_stillStream)) {
-        processStill(request->buffers().at(m_stillStream));
-    }
-
     if (m_state <= Stopping) {
         return;
     }
@@ -829,11 +825,15 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
             }
         }
 
-        if (stillBuffer) {
-            request->addBuffer(m_stillStream, stillBuffer);
-            m_captureStill = false;
-        } else {
+        if (!stillBuffer)
             qWarning() << "No free buffer available for Still capture";
+            return;
         }
+
+        request->addBuffer(m_stillStream, stillBuffer);
+        if (request->buffers().count(m_stillStream)) {
+            processStill(request->buffers().at(m_stillStream));
+        }
+        m_captureStill = false;
     }
 }
