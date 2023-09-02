@@ -1,10 +1,3 @@
-/* SPDX-License-Identifier: LGPL-2.1-or-later */
-/*
- * Copyright (C) 2020, Google Inc.
- *
- * encoder_libjpeg.cpp - JPEG encoding using libjpeg native API
- */
-
 #include "encoder_jpeg.h"
 
 #include <fcntl.h>

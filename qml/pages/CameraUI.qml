@@ -585,7 +585,6 @@ PagePL {
         id: tmrStartViewfinder
         interval: 500
         onTriggered: {
-            console.log("Still capture finished, starting viewfinder");
             cameraProxy.startViewFinder();
         }
     }

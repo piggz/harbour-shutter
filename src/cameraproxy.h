@@ -139,6 +139,8 @@ private:
     bool m_singleStream = false;
 
     bool buildConfiguration( std::initializer_list<libcamera::StreamRole> roles);
+    bool configureCamera();
+
     void processCapture();
     void processViewfinder(libcamera::FrameBuffer *buffer);
     void processStill(libcamera::FrameBuffer *buffer);
