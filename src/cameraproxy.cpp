@@ -825,7 +825,7 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
             }
         }
 
-        if (!stillBuffer)
+        if (!stillBuffer) {
             qWarning() << "No free buffer available for Still capture";
             return;
         }
