@@ -35,7 +35,12 @@ EncoderJpeg::EncoderJpeg()
 bool EncoderJpeg::encode(const libcamera::StreamConfiguration &cfg, libcamera::FrameBuffer *buffer, Image *image, std::string outFileName)
 {
     qDebug() << Q_FUNC_INFO;
-    size_t size = buffer->metadata().planes()[0].bytesused;
+
+    size_t size = 0;
+    for (uint plane = 0; plane < buffer->metadata().planes().size(); ++plane) {
+        size += buffer->metadata().planes()[plane].bytesused;
+    }
+
     QSize qs = QSize(cfg.size.width, cfg.size.height);
     QImage image_;
 

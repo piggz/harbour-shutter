@@ -194,7 +194,7 @@ bool CameraProxy::buildConfiguration(std::initializer_list<libcamera::StreamRole
             m_singleStream = true;
             qDebug() << "Device can only handle a single stream";
         }
-         if (roles.begin()[0] == libcamera::StreamRole::Viewfinder) {
+        if (roles.begin()[0] == libcamera::StreamRole::Viewfinder) {
             m_vfStreamConfig = &m_config->at(0);
             m_stillStreamConfig = nullptr;
             m_viewFinderStream = m_vfStreamConfig->stream();
@@ -466,7 +466,6 @@ void CameraProxy::stillCapture(const QString &filename)
 {
     qDebug() << Q_FUNC_INFO;
 
-    setState(CapturingStill);
     m_saveFileName = filename;
 
     if (!m_singleStream) {
@@ -765,10 +764,14 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
         return;
     }
 
-    size_t size = buffer->metadata().planes()[0].bytesused;
-    file.write((const char*)m_mappedBuffers[buffer].get()->data(0).data(), size);
+    size_t totalSize = 0;
+    for (uint plane = 0; plane < buffer->metadata().planes().size(); ++plane) {
+        totalSize += buffer->metadata().planes()[plane].bytesused;
+    }
+
+    file.write((const char*)m_mappedBuffers[buffer].get()->data(0).data(), totalSize);
     file.close();
-/*
+
     EncoderJpeg jpeg;
     bool ok = jpeg.encode(m_config->at(1), buffer, m_mappedBuffers[buffer].get(), QString(m_saveFileName + ".jpg").toStdString());
     if (!ok) {
@@ -781,7 +784,7 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
         QMutexLocker locker(&m_mutex);
         m_freeBuffers[m_stillStream].enqueue(buffer);
     }
-*/
+
     if (buffer) {
         renderComplete(buffer);
     }
@@ -791,7 +794,7 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
 
 void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
 {
-    //qDebug() << Q_FUNC_INFO << m_state << m_viewFinderStream << m_stillStream;
+    qDebug() << Q_FUNC_INFO << m_state << m_viewFinderStream << m_stillStream;
     libcamera::Request *request;
     {
         QMutexLocker locker(&m_mutex);
@@ -810,13 +813,11 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
                 request->controls().set(c.first, c.second);
             }
         }
-        m_currentCamera->queueRequest(request);
     }
 
     if (m_singleStream) {
         if ( m_state == CapturingStill && m_frame < 5) {
             request->addBuffer(m_stillStream, buffer);
-            m_currentCamera->queueRequest(request);
         }
     } else if (m_captureStill) {
         qDebug() << "Submitting request for still image " << m_stillStream->configuration().toString().c_str();
@@ -827,13 +828,20 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
             if (!m_freeBuffers[m_stillStream].isEmpty()) {
                 stillBuffer = m_freeBuffers[m_stillStream].dequeue();
             }
-        }
 
-        if (stillBuffer) {
-            request->addBuffer(m_stillStream, stillBuffer);
-            m_captureStill = false;
-        } else {
-            qWarning() << "No free buffer available for Still capture";
+            /* Create requests and fill them with buffers from the still stream. */
+            libcamera::FrameBuffer *buffer = m_freeBuffers[m_stillStream].dequeue();
+
+            int ret = request->addBuffer(m_stillStream, buffer);
+            if (ret < 0) {
+                qWarning() << "Can't set buffer for request";
+                //goto error;
+                return;
+            }
+
         }
+        m_captureStill = false;
     }
+
+    m_currentCamera->queueRequest(request);
 }
