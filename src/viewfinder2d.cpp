@@ -13,6 +13,8 @@
 #include <QPainter>
 #include <QtDebug>
 #include <QVideoFrame>
+#include "facedetection.h"
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 #include "private/qvideoframe_p.h"
 #endif
@@ -64,11 +66,12 @@ int ViewFinder2D::setFormat(const libcamera::PixelFormat &format, const QSize &s
     return 0;
 }
 
-void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *image)
+void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *image, QList<QRectF> rects)
 {
     size_t size1 = buffer->metadata().planes()[0].bytesused;
     size_t totalSize = 0;
 
+    m_rects = rects;
     for (uint plane = 0; plane < buffer->metadata().planes().size(); ++plane) {
         totalSize += buffer->metadata().planes()[plane].bytesused;
     }
@@ -121,6 +124,11 @@ void ViewFinder2D::stop()
     update();
 }
 
+QImage ViewFinder2D::currentImage()
+{
+    return m_image;
+}
+
 void ViewFinder2D::paint(QPainter *painter)
 {
     /* If we have an image, draw it. */
@@ -129,6 +137,14 @@ void ViewFinder2D::paint(QPainter *painter)
 
     if (!m_image.isNull()) {
         painter->drawImage(QRectF(QPointF(offset,0), QSizeF(w, height())), m_image, m_image.rect());
+
+        QPen p(Qt::white);
+        p.setWidth(4);
+        painter->setPen(p);
+        for (QRectF r: m_rects) {
+            QRectF scaled(r.x() * width(), r.y() * height(), r.width() * width(), r.height() * height());
+            painter->drawRect(scaled);
+        }
         return;
     }
 

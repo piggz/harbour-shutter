@@ -18,6 +18,7 @@
 
 #include "viewfinder.h"
 #include "viewfinder2d.h"
+#include "facedetection.h"
 
 #include "image.h"
 
@@ -151,6 +152,11 @@ private:
     libcamera::Size bestViewfinderResolution(libcamera::PixelFormat format, libcamera::Size stillSize);
 
     std::unordered_map<Control, libcamera::ControlValue> m_controlValues;
+
+    //Face detection
+    FaceDetection m_fd;
+    QList<QRectF> m_rects;
+    uint m_rectDelay = 0;
 };
 
 class CaptureEvent : public QEvent

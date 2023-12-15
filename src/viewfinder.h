@@ -27,6 +27,6 @@ public:
     virtual int setFormat(const libcamera::PixelFormat &format, const QSize &size,
                   const libcamera::ColorSpace &colorSpace,
                   unsigned int stride) = 0;
-    virtual void renderImage(libcamera::FrameBuffer *buffer, Image *image) = 0;
+    virtual void renderImage(libcamera::FrameBuffer *buffer, Image *image, QList<QRectF>) = 0;
     virtual void stop() = 0;
 };

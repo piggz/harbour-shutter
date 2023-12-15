@@ -158,5 +158,6 @@
         <file>qml/pics/icon-m-delete.png</file>
         <file>qml/pics/icon-m-share.png</file>
         <file>qml/components/DockedControlListView.qml</file>
+        <file>assets/classifiers/lbpcascade_frontalface.xml</file>
     </qresource>
 </RCC>

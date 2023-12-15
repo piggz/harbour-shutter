@@ -28,6 +28,8 @@ License:    GPLv2
 URL:        http://github.com/piggz/harbour-shutter
 Source0:    %{name}-%{version}.tar.bz2
 Requires:   sailfishsilica-qt5 >= 0.10.9
+Requires:   libcamera
+Requires:   opencv
 BuildRequires:  pkgconfig(sailfishapp) >= 1.0.2
 BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(Qt5Multimedia)
@@ -38,6 +40,7 @@ BuildRequires:  ssu-sysinfo-devel
 BuildRequires:  libexif-devel
 BuildRequires:  desktop-file-utils
 BuildRequires:  pkgconfig(libcamera)
+BuildRequires:  opencv-devel
 
 %description
 Shutter is a camera application built ontop of libcamera.

@@ -15,7 +15,6 @@
 
 #include "viewfinder.h"
 
-
 class ViewFinder2D : public QQuickPaintedItem, public ViewFinder
 {
     Q_OBJECT
@@ -27,10 +26,10 @@ public:
     int setFormat(const libcamera::PixelFormat &format, const QSize &size,
                   const libcamera::ColorSpace &colorSpace,
                   unsigned int stride) override;
-    void renderImage(libcamera::FrameBuffer *buffer, class Image *image) override;
+    void renderImage(libcamera::FrameBuffer *buffer, class Image *image, QList<QRectF>) override;
     void stop() override;
 
-    //QImage getCurrentImage() override;
+    QImage currentImage();
 
 Q_SIGNALS:
     void renderComplete(libcamera::FrameBuffer *buffer);
@@ -53,6 +52,7 @@ private:
     QVideoFrame m_frame;
     QMutex m_mutex; /* Prevent concurrent access to image_ */
 
+    QList<QRectF> m_rects;
 };
 
 #endif // VIEWFINDER2D_H

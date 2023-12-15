@@ -170,7 +170,7 @@ void ViewFinderRenderer::stop()
     }
 }
 
-void ViewFinderRenderer::renderImage(libcamera::FrameBuffer *buffer, Image *image)
+void ViewFinderRenderer::renderImage(libcamera::FrameBuffer *buffer, Image *image, QList<QRectF>)
 {
     qDebug() << Q_FUNC_INFO;
     //if (buffer_)

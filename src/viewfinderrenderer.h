@@ -33,7 +33,7 @@ public:
     int setFormat(const libcamera::PixelFormat &format, const QSize &size,
                   const libcamera::ColorSpace &colorSpace,
                   unsigned int stride) override;
-    void renderImage(libcamera::FrameBuffer *buffer, Image *image) override;
+    void renderImage(libcamera::FrameBuffer *buffer, Image *image, QList<QRectF>) override;
     void stop() override;
 
 private:

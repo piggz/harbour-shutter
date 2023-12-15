@@ -18,7 +18,7 @@ CONFIG += no_keywords
 CONFIG += c++1z
 
 QT += quick multimedia multimedia-private
-PKGCONFIG += libcamera
+PKGCONFIG += libcamera opencv4
 
 INCLUDEPATH += /usr/local/include/libcamera
 
@@ -29,6 +29,7 @@ SOURCES += \
     src/effectsmodel.cpp \
     src/exifmodel.cpp \
     src/exposuremodel.cpp \
+    src/facedetection.cpp \
     src/format_converter.cpp \
     src/formatmodel.cpp \
     src/harbour-shutter.cpp \
@@ -50,6 +51,7 @@ SOURCES += \
 
 DISTFILES += \
     README.md \
+    assets/classifiers/lbpcascade_frontalface.xml \
     qml/components/ControlSlider.qml \
     qml/components/DockModes.qml \
     qml/components/DockedControlListView.qml \
@@ -149,6 +151,7 @@ HEADERS += \
     src/effectsmodel.h \
     src/exifmodel.h \
     src/exposuremodel.h \
+    src/facedetection.h \
     src/format_converter.h \
     src/formatmodel.h \
     src/image.h \

@@ -744,7 +744,22 @@ void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
 {
     //qDebug() << Q_FUNC_INFO;
 
-    m_viewFinder->renderImage(buffer, m_mappedBuffers[buffer].get());
+    Image *i = m_mappedBuffers[buffer].get();
+    QList<QRectF> rects = m_fd.detect(m_viewFinder->currentImage());
+
+    if (rects.length() > 0) {
+        m_rects = rects;
+        m_rectDelay = 30;
+    } else {
+        if (m_rectDelay > 0) {
+            m_rectDelay--;
+        }
+        if (m_rectDelay == 0) {
+            m_rects.clear();
+        }
+    }
+
+    m_viewFinder->renderImage(buffer, i, m_rects);
 }
 
 void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
@@ -794,7 +809,7 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
 
 void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
 {
-    qDebug() << Q_FUNC_INFO << m_state << m_viewFinderStream << m_stillStream;
+    //qDebug() << Q_FUNC_INFO << m_state << m_viewFinderStream << m_stillStream;
     libcamera::Request *request;
     {
         QMutexLocker locker(&m_mutex);
