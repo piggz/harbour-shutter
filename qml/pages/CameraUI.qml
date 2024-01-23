@@ -4,6 +4,7 @@ import QtMultimedia 5.6
 import QtSensors 5.0
 import QtQuick.Layouts 1.1
 import uk.co.piggz.shutter 1.0
+import QtQuick.Window 2.2
 import "../components/"
 import "../components/platform/"
 
@@ -18,8 +19,8 @@ PagePL {
     property bool _manualModeSelected: false
     readonly property real zoomStepSize: 0.05
     readonly property real zoomStepButton: 5.0
-    property int controlsRotation: 0
-    property int _pictureRotation: 90//Screen.primaryOrientation == Qt.PortraitOrientation ? 0 : 90
+    property bool _nativePortrait: Screen.primaryOrientation == Qt.PortraitOrientation ? true : false
+    property int controlsRotation: Screen.primaryOrientation == Qt.PortraitOrientation ? 0 : 90
     // Use easy device orientation values
     // 0=unknown, 1=portrait, 2=portrait inverted, 3=landscape, 4=landscape inverted
     property int _orientation: OrientationReading.TopUp
@@ -103,7 +104,9 @@ PagePL {
         "primary": [270, 270, 90, 180, 0, 270, 270],
         "secondary"//Uses orientation sensor value 0-6
         : [90, 90, 270, 180, 0, 90, 90],
-        "ui": [0, 90, 270, 0, 0, 0, 0, 0, 180] //Uses enum value 1,2,4,8
+        "ui": [0, 90, 270, 0, 0, 0, 0, 0, 180], //Uses enum value 1,2,4,8
+        "uil": [0, 00, 0, 0, 0, 0, 0, 0, 0] //Uses enum value 1,2,4,8
+
     }
 
     readonly property int viewfinderOrientation: {
@@ -187,13 +190,12 @@ PagePL {
 
         SettingsOverlay {
             id: settingsOverlay
-            rotation: settings.rotationCorrection
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-
-            //iconRotation: page.controlsRotation
+            rotation:  controlsContainer.rotation
+            iconRotation: _nativePortrait ? page.controlsRotation : 0
             onRotationChanged: {
-                console.log("Control rotation:", page._orientation, settingsOverlay.rotation, width, height, page.width, page.height);
+                console.log("Control rotation:", page._orientation, page.controlsRotation, settingsOverlay.rotation, width, height, page.width, page.height);
                 console.log(OrientationReading.TopUp, OrientationReading.TopDown, OrientationReading.LeftUp, OrientationReading.RightUp);
             }
 
@@ -206,11 +208,6 @@ PagePL {
             id: controlsContainer
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-
-            onRotationChanged: {
-                console.log("Control rotation:", page._orientation, rotation, width, height, page.width, page.height);
-                console.log(OrientationReading.TopUp, OrientationReading.TopDown, OrientationReading.LeftUp, OrientationReading.RightUp);
-            }
 
             width: rotation == 0 ? parent.width : parent.height
             height: rotation == 0 ? parent.height : parent.width
@@ -289,36 +286,37 @@ PagePL {
             Column {
                 id: grdOnscreenControls
                 spacing: styler.themePaddingMedium
-                rotation: page.controlsRotation
+                rotation: _nativePortrait ? page.controlsRotation : 0
                 height: childrenRect.height
 
                 anchors.horizontalCenter: {
-                    if ((_orientation === OrientationReading.TopUp)
-                            || (_orientation === OrientationReading.TopDown))
+                    if (((_orientation === OrientationReading.TopUp)
+                            || (_orientation === OrientationReading.TopDown)) && _nativePortrait)
                         return parent.right
                     else
                         return parent.horizontalCenter
                 }
 
                 anchors.verticalCenter: {
-                    if ((_orientation === OrientationReading.TopUp)
-                            || (_orientation === OrientationReading.TopDown))
+                    if (((_orientation === OrientationReading.TopUp)
+                            || (_orientation === OrientationReading.TopDown)) && _nativePortrait)
                         return parent.verticalCenter
                     else
                         return parent.top
                 }
 
                 anchors.verticalCenterOffset: {
-                    if ((_orientation === OrientationReading.TopUp)
-                            || (_orientation === OrientationReading.TopDown))
+                    if (((_orientation === OrientationReading.TopUp)
+                            || (_orientation === OrientationReading.TopDown)) && _nativePortrait)
                         return 0
                     else
                         return styler.themeItemSizeLarge
                 }
 
+
                 anchors.horizontalCenterOffset: {
-                    if ((_orientation === OrientationReading.TopUp)
-                            || (_orientation === OrientationReading.TopDown))
+                    if (((_orientation === OrientationReading.TopUp)
+                            || (_orientation === OrientationReading.TopDown)) && _nativePortrait)
                         return -(btnCapture.width + height)
                     else
                         return 0
@@ -417,7 +415,7 @@ PagePL {
                 anchors.rightMargin: (rotation === 90
                                       || rotation === 270) ? styler.themePaddingLarge
                                                              * 2 : styler.themePaddingMedium
-                rotation: page.controlsRotation
+                rotation: _nativePortrait ? page.controlsRotation : 0
                 width: styler.themeItemSizeSmall
 
                 icon1Source: styler.customIconPrefix + "../pics/icon-m-camera.svg"
@@ -441,6 +439,7 @@ PagePL {
         }
         //End controlsContainer
     }
+
     MouseArea {
         id: mouseFocusArea
         anchors.fill: parent
@@ -540,7 +539,9 @@ PagePL {
 */
     function startup() {
         console.log("Orientations:", OrientationReading.TopUp, OrientationReading.TopDown, OrientationReading.LeftUp, OrientationReading.RightUp)
-        console.log("Orientation: ", _orientation, _pictureRotation, controlsRotation);
+        console.log("Orientation: ", _orientation, controlsRotation, _nativePortrait);
+
+        updateRotation(orientationSensor.reading ? orientationSensor.reading.orientation : 0);
 
         cameraProxy.setViewFinder(viewFinder);
         settingsOverlay.setCameraProxy(cameraProxy);
@@ -638,10 +639,6 @@ PagePL {
             camera.unlock()
             if (camera.focus.focusMode === Camera.FocusAuto) camera.searchAndLock()
         }
-    }
-
-    Component.onCompleted: {
-        updateRotation(orientationSensor.reading ? orientationSensor.reading.orientation : 0);
     }
 
     function startViewfinder() {
@@ -913,24 +910,17 @@ PagePL {
     function updateRotation(orientation) {
         console.log("Orientation:", orientation, _orientation, controlsContainer.rotation, _rotationValues["ui"][page._orientation], _rotationValues["ui"][orientation], controlsRotation);
 
-        if (orientation >= OrientationReading.TopUp
-                && orientation <= OrientationReading.RightUp) {
+        if ((orientation >= OrientationReading.TopUp
+                && orientation <= OrientationReading.RightUp)) {
             _orientation = orientation
         }
 
-        controlsContainer.rotation = _rotationValues["ui"][orientation] + settings.rotationCorrection
-
-        switch (orientation) {
-        case OrientationReading.TopUp:
-            _pictureRotation = 0; break
-        case OrientationReading.TopDown:
-            _pictureRotation = 180; break
-        case OrientationReading.LeftUp:
-            _pictureRotation = 270; break
-        case OrientationReading.RightUp:
-            _pictureRotation = 90; break
-        default:
-            // Keep device orientation at previous state
+        if (_nativePortrait) {
+            controlsContainer.rotation = _rotationValues["ui"][_orientation]
+        } else {
+            controlsContainer.rotation = _rotationValues["uil"][_orientation]
         }
+
+        console.log("...", controlsContainer.rotation);
     }
 }
