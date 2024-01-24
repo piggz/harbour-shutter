@@ -4,7 +4,7 @@
 <context>
     <name>CameraUI</name>
     <message>
-        <location filename="../qml/pages/CameraUI.qml" line="338"/>
+        <location filename="../qml/pages/CameraUI.qml" line="306"/>
         <source>Camera: </source>
         <translation type="unfinished"></translation>
     </message>

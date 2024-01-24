@@ -6,7 +6,6 @@ DockedPanelPL {
 
     property alias model: listView.model
     property var selectedItem
-    property int rotation: 0
     modal: true
 
     dock: dockModes.left

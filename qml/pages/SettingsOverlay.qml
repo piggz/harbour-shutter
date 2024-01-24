@@ -266,8 +266,8 @@ Item {
     DockedControlListView {
         id: panelControls
         model: modelControls
-        width: (iconRotation === 90
-                || iconRotation === 270) ? parent.height : parent.width / 2
+        width: (rotation === 90
+                || rotation === 270) ? parent.height : parent.width / 2
         rotation: settingsOverlay.iconRotation
         height: parent.height
         z: 99

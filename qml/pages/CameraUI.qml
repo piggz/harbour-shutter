@@ -449,7 +449,7 @@ PagePL {
                 camera.focus.setCustomFocusPoint(focusPoint)
                 camera.unlock()
             }
-            camera.searchAndLock()
+            //TODO camera.searchAndLock()
             if (!_manualModeSelected) focusPointTimer.restart()
         }
     }
