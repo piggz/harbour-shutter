@@ -13,6 +13,7 @@ Drawer {
     property real _direction
 
     property int _managedDock: dock
+    property int rotation: 0
 
     function show(immediate) {
         _immediate = !!immediate
