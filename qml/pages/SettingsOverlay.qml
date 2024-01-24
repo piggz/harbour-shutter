@@ -7,6 +7,7 @@ import "../components/"
 import "../components/platform"
 
 Item {
+    id: settingsOverlay
     property int iconRotation: 0
     property bool panelOpen: panelFlash.expanded
                              || panelWhiteBalance.expanded
@@ -48,7 +49,7 @@ Item {
             RoundButton {
                 id: btnFormat
                 iconColor: styler.themePrimaryColor
-                iconRotation: iconRotation
+                iconRotation: settingsOverlay.iconRotation
                 iconSource: styler.customIconPrefix + "../pics/icon-m-pixelformat.png"
                 visible: modelFormats ? modelFormats.rowCount > 0 : false
 
@@ -60,7 +61,7 @@ Item {
             RoundButton {
                 id: btnResolution
                 iconColor: styler.themePrimaryColor
-                iconRotation: iconRotation
+                iconRotation: settingsOverlay.iconRotation
                 iconSource: styler.customIconPrefix + "../pics/icon-m-resolution.png"
                 visible: modelResolution ? modelResolution.rowCount > 0 : false
 
@@ -72,7 +73,7 @@ Item {
             RoundButton {
                 id: btnFocus
                 iconSource: focusIcon()
-                iconRotation: iconRotation
+                iconRotation: settingsOverlay.iconRotation
                 visible: modelFocus.rowCount > 0
 
                 onClicked: {
@@ -83,7 +84,7 @@ Item {
             RoundButton {
                 id: btnWhiteBalance
                 iconSource: whiteBalanceIcon()
-                iconRotation: iconRotation
+                iconRotation: settingsOverlay.iconRotation
                 visible: modelWhiteBalance.rowCount > 0
 
                 onClicked: {
@@ -93,7 +94,7 @@ Item {
             RoundButton {
                 id: btnFlash
                 iconSource: flashIcon()
-                iconRotation: iconRotation
+                iconRotation: settingsOverlay.iconRotation
                 visible: modelFlash.rowCount > 0
 
                 onClicked: {
@@ -104,7 +105,7 @@ Item {
             RoundButton {
                 id: btnIso
                 iconColor: styler.themePrimaryColor
-                iconRotation: iconRotation
+                iconRotation: settingsOverlay.iconRotation
                 iconSource: isoIcon()
                 visible: modelIso.rowCount > 0
 
@@ -117,7 +118,7 @@ Item {
                 id: btnStorage
                 objectName: "btnStorage"
                 iconColor: styler.themePrimaryColor
-                iconRotation: iconRotation
+                iconRotation: settingsOverlay.iconRotation
                 iconSource: styler.customIconPrefix + "../pics/icon-m-sd-card.svg"
                 visible: modelStorage ? modelStorage.rowCount > 0 : false
 
@@ -130,7 +131,7 @@ Item {
             RoundButton {
                 id: btnControls
                 iconColor: styler.themePrimaryColor
-                iconRotation: iconRotation
+                iconRotation: settingsOverlay.iconRotation
                 iconSource: styler.customIconPrefix + "../pics/icon-m-controls.svg"
 
                 onClicked: {
@@ -141,7 +142,7 @@ Item {
             RoundButton {
                 id: btnGeneral
                 iconColor: styler.themePrimaryColor
-                iconRotation: iconRotation
+                iconRotation: settingsOverlay.iconRotation
                 iconSource: styler.customIconPrefix + "../pics/icon-m-developer-mode.svg"
 
                 onClicked: {
@@ -155,7 +156,7 @@ Item {
         id: panelFormats
         model: modelFormats
         selectedItem: (forceUpdate || !forceUpdate) && modelFormats ? settings.getCameraModeValue("format", modelFormats.defaultFormat()) : ""
-        rotation: iconRotation
+        rotation: settingsOverlay.iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
 
@@ -170,7 +171,7 @@ Item {
         id: panelResolution
         model: sortedModelResolution
         selectedItem: (forceUpdate || !forceUpdate) && modelResolution ?  settings.getCameraModeValue("resolution", modelResolution.defaultResolution(settings.captureMode)) : ""
-        rotation: iconRotation
+        rotation: settingsOverlay.iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
 
@@ -185,7 +186,7 @@ Item {
         id: panelFlash
         model: modelFlash
         selectedItem: settings.getCameraModeValue("flash", 0)
-        rotation: iconRotation
+        rotation: settingsOverlay.iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
 
@@ -200,7 +201,7 @@ Item {
         id: panelWhiteBalance
         model: modelWhiteBalance
         selectedItem: settings.getCameraModeValue("whiteBalance", 0)
-        rotation: iconRotation
+        rotation: settingsOverlay.iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
 
@@ -215,7 +216,7 @@ Item {
         id: panelFocus
         model: modelFocus
         selectedItem: settings.getCameraModeValue("focus", 0)
-        rotation: iconRotation
+        rotation: settingsOverlay.iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
 
@@ -229,7 +230,7 @@ Item {
         id: panelIso
         model: modelIso
         selectedItem: settings.getCameraModeValue("iso", 0)
-        rotation: iconRotation
+        rotation: settingsOverlay.iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
 
@@ -248,7 +249,7 @@ Item {
         id: panelStorage
         model: modelStorage
         selectedItem: settings.get("global", "storagePath", "")
-        rotation: iconRotation
+        rotation: settingsOverlay.iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
 
@@ -267,7 +268,7 @@ Item {
         model: modelControls
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
-        rotation: iconRotation
+        rotation: settingsOverlay.iconRotation
         height: parent.height
         z: 99
         dock: dockModes.left
@@ -283,7 +284,7 @@ Item {
         z: 99
         dock: dockModes.left
         clip: true
-        //TODO rotation: iconRotation
+        rotation: settingsOverlay.iconRotation
 
         onVisibleChanged: {
             if (loadingComplete) {

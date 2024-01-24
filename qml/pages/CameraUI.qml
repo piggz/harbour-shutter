@@ -21,6 +21,8 @@ PagePL {
     readonly property real zoomStepButton: 5.0
     property bool _nativePortrait: Screen.primaryOrientation == Qt.PortraitOrientation ? true : false
     property int controlsRotation: Screen.primaryOrientation == Qt.PortraitOrientation ? 0 : 90
+    property int iconRotation: 0;
+
     // Use easy device orientation values
     // 0=unknown, 1=portrait, 2=portrait inverted, 3=landscape, 4=landscape inverted
     property int _orientation: OrientationReading.TopUp
@@ -105,8 +107,8 @@ PagePL {
         "secondary"//Uses orientation sensor value 0-6
         : [90, 90, 270, 180, 0, 90, 90],
         "ui": [0, 90, 270, 0, 0, 0, 0, 0, 180], //Uses enum value 1,2,4,8
-        "uil": [0, 00, 0, 0, 0, 0, 0, 0, 0] //Uses enum value 1,2,4,8
-
+        "uil": [0, 00, 0, 0, 0, 0, 0, 0, 0], //Uses enum value 1,2,4,8
+        "icon": [0, 270, 90, 0, 0, 0, 0, 0, 0]
     }
 
     readonly property int viewfinderOrientation: {
@@ -161,29 +163,6 @@ PagePL {
         function stop(){}
     }
 
-    /*
-    Camera {
-        id: camera
-
-        cameraState: page._completed
-                     && !page._cameraReload ? Camera.ActiveState : Camera.UnloadedState
-
-        // Write Orientation to metadata
-        metaData.orientation:  camera.position === Camera.FrontFace ? (720 + camera.orientation - _pictureRotation) % 360 : (720 + camera.orientation + _pictureRotation) % 360
-        metaData.cameraManufacturer: CameraManufacturer === "" ? null : CameraManufacturer
-        metaData.cameraModel: CameraPrettyModelName === "" ? null : CameraPrettyModelName
-
-        metaData.gpsSpeed: settings.global.locationMetadata && positionSource.position.speedValid ? positionSource.speed : null
-        metaData.gpsImgDirection: settings.global.locationMetadata && positionSource.directionValid ? positionSource.direction : null
-
-        metaData.gpsLatitude: settings.global.locationMetadata && positionSource.position.latitudeValid ? positionSource.position.coordinate.latitude : null
-        metaData.gpsLongitude: settings.global.locationMetadata && positionSource.position.longitudeValid ? positionSource.position.coordinate.longitude : null
-        metaData.gpsAltitude: settings.global.locationMetadata && positionSource.position.altitudeValid ? positionSource.position.coordinate.altitude : null
-
-        }
-    }
-*/
-
     Item {
         id: controlsOuter
         anchors.fill: parent
@@ -193,7 +172,7 @@ PagePL {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             rotation:  controlsContainer.rotation
-            iconRotation: _nativePortrait ? page.controlsRotation : 0
+            iconRotation: page.iconRotation
             onRotationChanged: {
                 console.log("Control rotation:", page._orientation, page.controlsRotation, settingsOverlay.rotation, width, height, page.width, page.height);
                 console.log(OrientationReading.TopUp, OrientationReading.TopDown, OrientationReading.LeftUp, OrientationReading.RightUp);
@@ -248,15 +227,6 @@ PagePL {
 
                     }
                 }
-
-                /*TODO
-            Connections {
-                target: camera
-
-                onDigitalZoomChanged: {
-                    zoomSlider.value = camera.digitalZoom
-                }
-            }*/
             }
 
             Image {
@@ -806,7 +776,6 @@ PagePL {
     }
 
     function doShutter() {
-        //camera.metaData.date = new Date()
         animFlash.start();
 
         var filename = fsOperations.writableLocation(
@@ -917,10 +886,11 @@ PagePL {
 
         if (_nativePortrait) {
             controlsContainer.rotation = _rotationValues["ui"][_orientation]
+            page.iconRotation = _rotationValues["icon"][_orientation]
         } else {
             controlsContainer.rotation = _rotationValues["uil"][_orientation]
         }
 
-        console.log("...", controlsContainer.rotation);
+        console.log("...", controlsContainer.rotation, page.iconRotation);
     }
 }
