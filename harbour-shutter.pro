@@ -173,9 +173,6 @@ HEADERS += \
 
 LIBS += -ldl
 
-RESOURCES += \
-    shutter.qrc
-
 equals(FLAVOR, "silica") {
     CONFIG += flavor_silica
     SOURCES += src/deviceinfo.cpp
@@ -188,6 +185,20 @@ equals(FLAVOR, "silica") {
 } else {
     error("Please specify platform using FLAVOR=platform as qmake option. Supported platforms: kirigami, silica, qtcontrols, uuitk.")
 }
+
+# Generate the appropriate .qrc file for the chosen flavor
+SHUTTER_QRC_TEMPLATE = shutter.qrc.in
+
+qrc_file.output   = shutter.qrc
+qrc_file.CONFIG  += no_link \
+                    add_inputs_as_makefile_deps\
+                    target_predeps
+qrc_file.commands = sed -e s/@FLAVOR@/$$FLAVOR/g -e s/@UT@/$$UT_SUBDIR/g ${QMAKE_FILE_NAME} > ${QMAKE_FILE_OUT}
+qrc_file.input = SHUTTER_QRC_TEMPLATE
+QMAKE_EXTRA_COMPILERS += qrc_file
+
+RESOURCES += \
+    shutter.qrc
 
 equals(DISABLE_SYSTEMD, "yes") {
     DEFINES += DISABLE_SYSTEMD
