@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Icon=harbour-shutter.svg
+Exec=harbour-shutter %U
+Name=Shutter
+X-Ubuntu-Touch=true
+X-Ubuntu-Splash-Color=#F5F5F5

@@ -1,0 +1,15 @@
+{
+    "name": "uk.co.piggz.shutter",
+    "description": "Camera app based on libcamera",
+    "architecture": "@CLICK_ARCH@",
+    "title": "Shutter",
+    "hooks": {
+        "harbour-shutter": {
+            "apparmor": "harbour-shutter.apparmor",
+            "desktop":  "harbour-shutter-ui.desktop"
+        }
+    },
+    "version": "1.0.0",
+    "maintainer": "Adam Pigg <adam@piggz.co.uk>",
+    "framework" : "ubuntu-sdk-20.04"
+}
