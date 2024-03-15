@@ -1,0 +1,26 @@
+# Build file for Ubuntu Touch's (https://ubuntu-touch.io/) Clickable (https://clickable-ut.dev/en/latest/).
+# If you are building for a different platform, this file should hold no interest for you.
+clickable_minimum_required: 8.0.0
+builder: qmake
+kill: harbour-shutter
+build_args:
+  - FLAVOR=kirigami
+  - CONFIG+=click
+dependencies_host:
+  - g++-aarch64-linux-gnu
+  - gcc-aarch64-linux-gnu
+  - pkg-config-aarch64-linux-gnu
+  - libopencv-dev
+  - qtmultimedia5-dev
+dependencies_target:
+  - libexif-dev
+prebuild:
+  - cp -r "${ROOT}/qml" "${ROOT}/assets" "${ROOT}/build/${ARCH_TRIPLET}/app"
+install_root_data:
+  - assets
+  - build/aarch64-linux-gnu/app/harbour-shutter
+  - click/harbour-shutter.apparmor
+  - click/harbour-shutter-ui.desktop
+  - click/manifest.json
+  - harbour-shutter.svg
+  - qml
