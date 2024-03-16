@@ -1,0 +1,63 @@
+# Build file for Ubuntu Touch's (https://ubuntu-touch.io/) Clickable (https://clickable-ut.dev/en/latest/).
+# If you are building for a different platform, this file should hold no interest for you.
+clickable_minimum_required: 8.0.0
+builder: qmake
+kill: harbour-shutter
+build_args:
+  - FLAVOR=kirigami
+  - CONFIG+=click
+dependencies_host:
+  - g++-aarch64-linux-gnu
+  - gcc-aarch64-linux-gnu
+  - pkg-config-aarch64-linux-gnu
+  - libopencv-dev
+  - qtmultimedia5-dev
+dependencies_target:
+  - libexif-dev
+prebuild:
+  - cp -r "${ROOT}/qml" "${ROOT}/assets" "${ROOT}/build/${ARCH_TRIPLET}/app"
+libraries:
+  libcamera:
+    builder: custom
+    build:
+      - echo "Building libcamera from source as it is not available in the Focal repos."
+      - "${ROOT}/libs/libcamera/build_libcamera_ubuntu_focal.sh"
+    dependencies_host:
+      - g++-aarch64-linux-gnu
+      - gcc-aarch64-linux-gnu
+      - libdw-dev
+      - libssl-dev
+      - libyaml-dev
+      - ninja-build
+      - python3-jinja2
+      - python3-pip
+      - python3-ply
+      - python3-setuptools
+      - python3-wheel
+      - python3-distutils
+    dependencies_target:
+      - libevent-dev
+      - libevent-pthreads-2.1-7
+  libopencv:
+    src_dir: libs/libopencv
+    prebuild:
+      - mkdir -p ${ROOT}/libs
+      - git config --global --add safe.directory ${SRC_DIR}
+      - git -C ${SRC_DIR} pull || git clone https://github.com/opencv/opencv.git ${SRC_DIR}
+    builder: cmake
+    build_args:
+      -DCMAKE_TOOLCHAIN_FILE="${ROOT}/libs/libopencv/platforms/linux/aarch64-gnu.toolchain.cmake"
+    dependencies_host:
+      - g++-aarch64-linux-gnu
+      - gcc-aarch64-linux-gnu
+install_root_data:
+  - assets
+  - build/aarch64-linux-gnu/app/harbour-shutter
+  - click/harbour-shutter.apparmor
+  - click/harbour-shutter-ui.desktop
+  - click/manifest.json
+  - harbour-shutter.svg
+  - qml
+install_lib:
+  - "${ROOT}/build/${ARCH_TRIPLET}/libopencv/lib/*"
+  - "${ROOT}/build/${ARCH_TRIPLET}/libcamera/libcamera/build/libcamera-install/usr/local/lib/*"

@@ -22,6 +22,22 @@ PKGCONFIG += libcamera opencv4
 
 INCLUDEPATH += /usr/local/include/libcamera
 
+CONFIG(click) {
+    # Qt no longer packages the multimedia-private headers on Ubuntu, and discourages their use.
+    # We put the only one we use in click/qtmultimedia-private and need to add this include path.
+    QT -= multimedia-private
+    INCLUDEPATH += ${ROOT}/click/qtmultimedia-private
+    # These paths are relative to the build directory
+    # We have to include both because shutter uses both 'libcamera' and 'libcamera/libcamera' levels when including headers
+    INCLUDEPATH += ../libcamera/libcamera/build/libcamera-install/usr/local/include/
+    INCLUDEPATH += ../libcamera/libcamera/build/libcamera-install/usr/local/include/libcamera
+    INCLUDEPATH += ../libopencv/install/include/opencv4/
+    # Neither of these packages is available on Ubuntu Focal (20.04), which is the current Ubuntu Touch version.
+    # We will therefore build the libraries ourselves from source.
+    PKGCONFIG -= libcamera opencv4
+    UT_SUBDIR = "ut"
+}
+
 SOURCES += \
     src/cameramodel.cpp \
     src/cameraproxy.cpp \
@@ -172,9 +188,9 @@ HEADERS += \
     src/storagemodel.h
 
 LIBS += -ldl
-
-RESOURCES += \
-    shutter.qrc
+CONFIG(click) {
+    LIBS += -Wl,--copy-dt-needed-entries,-rpath=../libopencv/lib -L../libcamera/libcamera/build/src/libcamera -lcamera -L../libopencv/lib -lopencv_core -lopencv_objdetect -lopencv_imgproc
+}
 
 equals(FLAVOR, "silica") {
     CONFIG += flavor_silica
@@ -188,6 +204,58 @@ equals(FLAVOR, "silica") {
 } else {
     error("Please specify platform using FLAVOR=platform as qmake option. Supported platforms: kirigami, silica, qtcontrols, uuitk.")
 }
+
+# Generate the appropriate .qrc file for the chosen flavor
+SHUTTER_QRC_TEMPLATE = shutter.qrc.in
+
+qrc_file.output   = shutter.qrc
+qrc_file.CONFIG  += no_link \
+                    add_inputs_as_makefile_deps\
+                    target_predeps
+qrc_file.commands = sed -e s/@FLAVOR@/$$FLAVOR/g -e s/@UT@/$$UT_SUBDIR/g ${QMAKE_FILE_NAME} > ${QMAKE_FILE_OUT}
+qrc_file.input = SHUTTER_QRC_TEMPLATE
+QMAKE_EXTRA_COMPILERS += qrc_file
+
+RESOURCES += \
+    shutter.qrc
+
+
+CONFIG(click) {
+    RESOURCES += icons.qrc
+    # figure out the current build architecture
+    CLICK_ARCH=$$system(dpkg-architecture -qDEB_HOST_ARCH)
+
+    UBUNTU_MANIFEST_FILE = $$PWD/click/manifest.json.in
+
+    # substitute the architecture in the manifest file
+    manifest_file.output   = $$PWD/click/manifest.json
+    manifest_file.CONFIG  += no_link \
+                            add_inputs_as_makefile_deps\
+                            target_predeps
+    manifest_file.commands = sed s/@CLICK_ARCH@/$$CLICK_ARCH/g ${QMAKE_FILE_NAME} > ${QMAKE_FILE_OUT}
+    manifest_file.input = UBUNTU_MANIFEST_FILE
+    QMAKE_EXTRA_COMPILERS += manifest_file
+
+    # installation path of the manifest file
+    manifest.CONFIG += no_check_exist
+    manifest.files  += $$OUT_PWD/manifest.json
+    manifest.path = /
+
+    # AppArmor profile
+    apparmor.files += $$PWD/click/harbour-shutter.apparmor
+    apparmor.path = /
+
+    # Desktop launcher icon
+    desktopicon.files += $$PWD/click/harbour-shutter-ui.png
+    desktopicon.path = /
+
+    # Desktop launcher
+    desktop.files += $$PWD/click/harbourshutter-ui.desktop
+    desktop.path = /
+
+    INSTALLS += manifest apparmor desktopicon desktop
+}
+
 
 equals(DISABLE_SYSTEMD, "yes") {
     DEFINES += DISABLE_SYSTEMD

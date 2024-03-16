@@ -1,0 +1,14 @@
+{
+    "template": "unconfined",
+    "policy_groups": [],
+    "policy_version": 20.04,
+    "read_path": [
+        "@{PROC}/@{pid}/mounts",
+        "@{PROC}/@{pid}/mountinfo",
+        "@{PROC}/*/mountinfo",
+        "/dev/disk/by-label/",
+        "/usr/local/lib/libcamera/*",
+        "/sys/bus/",
+        "/sys/class/"
+    ]
+}
