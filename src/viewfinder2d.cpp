@@ -66,12 +66,21 @@ int ViewFinder2D::setFormat(const libcamera::PixelFormat &format, const QSize &s
     return 0;
 }
 
+#ifdef FACE_DETECTION
 void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *image, QList<QRectF> rects)
+#else
+void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *image)
+#endif
 {
     size_t size1 = buffer->metadata().planes()[0].bytesused;
     size_t totalSize = 0;
 
+#ifdef FACE_DETECTION
+    qDebug() << "ViewFinder2D - renderImage - Face detection enabled";
     m_rects = rects;
+#else
+    qDebug() << "ViewFinder2D - renderImage - Face detction disabled";
+#endif
     for (uint plane = 0; plane < buffer->metadata().planes().size(); ++plane) {
         totalSize += buffer->metadata().planes()[plane].bytesused;
     }
@@ -141,10 +150,12 @@ void ViewFinder2D::paint(QPainter *painter)
         QPen p(Qt::white);
         p.setWidth(4);
         painter->setPen(p);
+#ifdef FACE_DETECTION
         for (QRectF r: m_rects) {
             QRectF scaled(r.x() * width(), r.y() * height(), r.width() * width(), r.height() * height());
             painter->drawRect(scaled);
         }
+#endif
         return;
     }
 

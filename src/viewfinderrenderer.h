@@ -33,7 +33,11 @@ public:
     int setFormat(const libcamera::PixelFormat &format, const QSize &size,
                   const libcamera::ColorSpace &colorSpace,
                   unsigned int stride) override;
+#ifdef FACE_DETECTION
     void renderImage(libcamera::FrameBuffer *buffer, Image *image, QList<QRectF>) override;
+#else
+    void renderImage(libcamera::FrameBuffer *buffer, Image *image) override;
+#endif
     void stop() override;
 
 private:

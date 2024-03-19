@@ -153,10 +153,12 @@ private:
 
     std::unordered_map<Control, libcamera::ControlValue> m_controlValues;
 
+#ifdef FACE_DETECTION
     //Face detection
     FaceDetection m_fd;
     QList<QRectF> m_rects;
     uint m_rectDelay = 0;
+#endif
 };
 
 class CaptureEvent : public QEvent
