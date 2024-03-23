@@ -52,7 +52,8 @@ private:
     QVideoFrame m_frame;
     QMutex m_mutex; /* Prevent concurrent access to image_ */
 
-    QList<QRectF> m_rects;
+    /* Face detection */
+    QList<QRectF> m_rects; /* Rectangles to draw around detected faces */
 };
 
 #endif // VIEWFINDER2D_H

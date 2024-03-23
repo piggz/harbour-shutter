@@ -289,11 +289,11 @@ Item {
         onVisibleChanged: {
             if (loadingComplete) {
                 if (visible) {
-                    console.log("loading...")
+                    console.log("SettingsOverlay - panelGeneral - Loading settings.")
                     sldAudioBitrate.value = settings.get("global", "audioBitrate", 128000);
                     sldVideoBitrate.value = settings.get("global", "videoBitrate", 1280000);
                 } else {
-                    console.log("saving...")
+                    console.log("SettingsOverlay - panelGeneral - Saving settings.")
                     settings.setGlobalValue("audioBitrate", sldAudioBitrate.value);
                     settings.setGlobalValue("videoBitrate", sldVideoBitrate.value);
                 }
@@ -390,7 +390,6 @@ Item {
                             settings.setGlobalValue("locationMetadata", checked);
                         }
                     }
-
                     TextSwitchPL{
                         id: showManualControls
                         width: parent.width
@@ -400,6 +399,18 @@ Item {
 
                         onCheckedChanged: {
                             settings.setGlobalValue("showManualControls", checked);
+                        }
+                    }
+                    TextSwitchPL {
+                        id: faceDetectionSwitch
+                        width: parent.width
+
+                        checked: appSettings.get("global", "faceDetection", false)
+                        text: qsTr("Enable/Disable face detection")
+
+                        onCheckedChanged: {
+                            console.log("The face detection button has been clicked! - ", checked)
+                            appSettings.set("global", "faceDetection", checked);
                         }
                     }
 
@@ -424,7 +435,7 @@ Item {
                                     anchors.fill: parent
 
                                     onClicked: {
-                                        console.log("Clicked ", index)
+                                        console.log("Clicked the button for Camera ", index)
                                         if (settings.disabledCameras.indexOf("[" + index + "]") >=0) {
                                             settings.disabledCameras = settings.disabledCameras.replace("[" + index + "]", "")
                                         } else {
@@ -635,12 +646,12 @@ Item {
     }
 
     function hideAllPanels() {
+        panelControls.hide()
         panelFlash.hide()
         panelFocus.hide()
         panelGeneral.hide()
         panelIso.hide()
         panelResolution.hide()
-        panelControls.hide()
         panelStorage.hide()
     }
 
