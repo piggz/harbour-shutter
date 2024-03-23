@@ -745,7 +745,6 @@ void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
     //qDebug() << Q_FUNC_INFO;
 
     Image *i = m_mappedBuffers[buffer].get();
-#ifdef FACE_DETECTION
     QList<QRectF> rects = m_fd.detect(m_viewFinder->currentImage());
 
     if (rects.length() > 0) {
@@ -761,9 +760,6 @@ void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
     }
 
     m_viewFinder->renderImage(buffer, i, m_rects);
-#else
-    m_viewFinder->renderImage(buffer, i);
-#endif
 }
 
 void CameraProxy::processStill(libcamera::FrameBuffer *buffer)

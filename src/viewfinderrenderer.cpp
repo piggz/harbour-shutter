@@ -170,11 +170,7 @@ void ViewFinderRenderer::stop()
     }
 }
 
-#ifdef FACE_DETECTION
 void ViewFinderRenderer::renderImage(libcamera::FrameBuffer *buffer, Image *image, QList<QRectF>)
-#else
-void ViewFinderRenderer::renderImage(libcamera::FrameBuffer *buffer, Image *image)
-#endif
 {
     qDebug() << Q_FUNC_INFO;
     //if (buffer_)
