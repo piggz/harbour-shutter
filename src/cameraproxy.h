@@ -16,11 +16,11 @@
 #include <libcamera/pixel_format.h>
 #include <libcamera/control_ids.h>
 
+#include "facedetection.h"
+#include "image.h"
+#include "settings.h"
 #include "viewfinder.h"
 #include "viewfinder2d.h"
-#include "facedetection.h"
-
-#include "image.h"
 
 class CameraProxy : public QObject
 {
@@ -65,6 +65,7 @@ public:
     bool event(QEvent *e) override;
 
     void setCameraManager(std::shared_ptr<libcamera::CameraManager> cm);
+    void setSettings(Settings *settings);
 
     Q_INVOKABLE QStringList supportedFormats() const;
     Q_INVOKABLE void setStillFormat(const QString &format);
@@ -104,6 +105,7 @@ Q_SIGNALS:
 private:
     std::shared_ptr<libcamera::CameraManager> m_cameraManager;
     std::shared_ptr<libcamera::Camera> m_currentCamera;
+    Settings *m_settings;
 
     ViewFinder2D* m_viewFinder;
     QString m_currentCameraId;

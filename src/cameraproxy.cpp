@@ -1,7 +1,8 @@
-#include "cameraproxy.h"
 #include <QDebug>
 #include <QCoreApplication>
+#include "cameraproxy.h"
 #include "encoder_jpeg.h"
+#include "settings.h"
 
 QDebug operator<< (QDebug d, const libcamera::Size &sz) {
     d << "Size:" << sz.width << "x" << sz.height;
@@ -50,6 +51,12 @@ void CameraProxy::setCameraManager(std::shared_ptr<libcamera::CameraManager> cm)
 {
     qDebug() << Q_FUNC_INFO;
     m_cameraManager = cm;
+}
+
+void CameraProxy::setSettings(Settings *settings)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_settings = settings;
 }
 
 QStringList CameraProxy::supportedFormats() const
@@ -745,7 +752,15 @@ void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
     //qDebug() << Q_FUNC_INFO;
 
     Image *i = m_mappedBuffers[buffer].get();
-    QList<QRectF> rects = m_fd.detect(m_viewFinder->currentImage());
+    QList<QRectF> rects;
+
+    if (!m_settings->get("global", "faceDetection", false).value<bool>()) {
+        m_viewFinder->renderImage(buffer, i, rects);
+        return;
+    }
+    //qDebug() << "CameraProxy - processViewFinder - Face detection active";
+
+    rects = m_fd.detect(m_viewFinder->currentImage());
 
     if (rects.length() > 0) {
         m_rects = rects;
@@ -758,7 +773,6 @@ void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
             m_rects.clear();
         }
     }
-
     m_viewFinder->renderImage(buffer, i, m_rects);
 }
 
