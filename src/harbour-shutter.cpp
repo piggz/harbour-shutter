@@ -111,6 +111,11 @@ int main(int argc, char *argv[])
     ResourceHandler handler(app);
     handler.acquire();
 
+    // We do not need to pass settings to QML by using setContextProperty, because Settings is a
+    // wrapper around QSettings via its m_settings member. Because the object instantiated in QML
+    // and the one in C++ will use QSettings, they will use the same app-global settings store anyway.
+    Settings settings(app);
+
     StorageModel storageModel(app);
     rootContext->setContextProperty("modelStorage", &storageModel);
 
@@ -119,6 +124,7 @@ int main(int argc, char *argv[])
 
     std::shared_ptr<CameraProxy> cameraProxy = std::make_shared<CameraProxy>();
     cameraProxy->setCameraManager(cm);
+    cameraProxy->setSettings(&settings);
     rootContext->setContextProperty("cameraProxy", cameraProxy.get());
 
     FormatModel formatModel(app);
