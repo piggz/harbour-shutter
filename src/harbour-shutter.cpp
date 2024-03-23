@@ -111,6 +111,9 @@ int main(int argc, char *argv[])
     ResourceHandler handler(app);
     handler.acquire();
 
+    Settings settings(app);
+    rootContext->setContextProperty("appSettings", &settings);
+
     StorageModel storageModel(app);
     rootContext->setContextProperty("modelStorage", &storageModel);
 
@@ -119,6 +122,7 @@ int main(int argc, char *argv[])
 
     std::shared_ptr<CameraProxy> cameraProxy = std::make_shared<CameraProxy>();
     cameraProxy->setCameraManager(cm);
+    cameraProxy->setSettings(&settings);
     rootContext->setContextProperty("cameraProxy", cameraProxy.get());
 
     FormatModel formatModel(app);
