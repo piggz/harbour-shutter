@@ -113,3 +113,6 @@ Once the libraries are built, you can build the app:
 After the build is finished, you can now deploy to your device:
 `clickable --ssh <your_device_ip>`
 
+## Development
+
+For documentation regarding development of `shutter`, please see [here](DEVELOPMENT.md).
