@@ -27,17 +27,17 @@ ApplicationWindowPL {
         return siz.width + "x" + siz.height
     }
 
+    function setGlobalValue(s, v) {
+        if (!loadingComplete) {
+            return;
+        }
+        settings.set("global", s, v);
+        forceUpdate = !forceUpdate;
+    }
+
     Settings {
         id: settings
         
-        function setGlobalValue(s, v) {
-            if (!loadingComplete) {
-                return;
-            }
-            set("global", s, v);
-            forceUpdate = !forceUpdate;
-        }
-
         function getCameraModeValue(s, d) {
             return get(cameraId + "_" + captureMode, s, d);
         }

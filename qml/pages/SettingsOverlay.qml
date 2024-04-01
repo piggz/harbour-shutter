@@ -294,8 +294,8 @@ Item {
                     sldVideoBitrate.value = settings.get("global", "videoBitrate", 1280000);
                 } else {
                     console.log("SettingsOverlay - panelGeneral - Saving settings.")
-                    settings.setGlobalValue("audioBitrate", sldAudioBitrate.value);
-                    settings.setGlobalValue("videoBitrate", sldVideoBitrate.value);
+                    app.setGlobalValue("audioBitrate", sldAudioBitrate.value);
+                    app.setGlobalValue("videoBitrate", sldVideoBitrate.value);
                 }
             }
         }
@@ -347,7 +347,7 @@ Item {
                         currentIndex: findIndex(app.gridMode)
                         onValueChanged: {
                             var index = gridSwitch.currentIndex;
-                            settings.setGlobalValue("gridMode", gridSwitch.values[index]);
+                            app.setGlobalValue("gridMode", gridSwitch.values[index]);
                         }
                     }
 
@@ -387,7 +387,7 @@ Item {
                         text: qsTr("Store GPS location to metadata")
 
                         onCheckedChanged: {
-                            settings.setGlobalValue("locationMetadata", checked);
+                            app.setGlobalValue("locationMetadata", checked);
                         }
                     }
                     TextSwitchPL{
@@ -398,7 +398,7 @@ Item {
                         text: qsTr("Display manual controls")
 
                         onCheckedChanged: {
-                            settings.setGlobalValue("showManualControls", checked);
+                            app.setGlobalValue("showManualControls", checked);
                         }
                     }
                     TextSwitchPL {
