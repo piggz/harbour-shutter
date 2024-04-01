@@ -20,14 +20,6 @@ ApplicationWindowPL {
         property string disabledCameras: ""
         property string gridMode: "none"
         
-        function setCameraValue(s, v) {
-            if (!loadingComplete) {
-                return;
-            }
-            set(cameraId, s, v);
-            forceUpdate = !forceUpdate;
-        }
-
         function setGlobalValue(s, v) {
             if (!loadingComplete) {
                 return;
