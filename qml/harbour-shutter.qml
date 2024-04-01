@@ -20,9 +20,6 @@ ApplicationWindowPL {
         property string disabledCameras: ""
         property string gridMode: "none"
         
-        function getCameraValue(s, d) {
-            return get(cameraId, s, d);
-        }
         function setCameraValue(s, v) {
             if (!loadingComplete) {
                 return;
