@@ -303,7 +303,7 @@ PagePL {
 
                     LabelPL {
                         id: lblCameraName
-                        text: qsTr("Camera: ") + modelCamera.get(settings.cameraId) + "(" + settings.cameraId +")"
+                        text: qsTr("Camera: ") + modelCamera.get(app.cameraId) + "(" + app.cameraId +")"
                         color: styler.themePrimaryColor
                     }
 
@@ -363,7 +363,7 @@ PagePL {
             RoundButton {
                 id: btnCameraSwitch
                 iconSource: styler.customIconPrefix + "../pics/icon-camera-switch.svg"
-                visible: (forceUpdate || !forceUpdate) ? settings.enabledCameras.length > 1 : false
+                visible: (forceUpdate || !forceUpdate) ? app.enabledCameras.length > 1 : false
                 iconRotation: page.controlsRotation
                 property string prevCamId
                 anchors {
@@ -574,20 +574,20 @@ PagePL {
         running: true
         interval: 200
         onTriggered: {
-            console.log("camera delayed start", settings.cameraId)
+            console.log("camera delayed start", app.cameraId)
             _loadParameters = true
 
             settings.calculateEnabledCameras()
 
-            console.log(settings.enabledCameras, settings.enabledCameras.length);
+            console.log("There are", app.enabledCameras.length, "enabled cameras: ", app.enabledCameras);
 
-            cameraProxy.setCameraIndex(modelCamera.get(settings.cameraId));
+            cameraProxy.setCameraIndex(modelCamera.get(app.cameraId));
 
             var f = settings.getCameraModeValue("format", modelFormats.defaultFormat());
             settings.setCameraModeValue("format", f);
             cameraProxy.setStillFormat(f);
 
-            var r = settings.getCameraModeValue("resolution", modelResolution.defaultResolution(settings.captureMode));
+            var r = settings.getCameraModeValue("resolution", modelResolution.defaultResolution(app.captureMode));
             settings.setCameraModeValue("resolution", r);
 
             console.log(f, r);
@@ -616,7 +616,7 @@ PagePL {
     }
 
     function volUp() {
-        if (settings.global.swapZoomControl) {
+        if (settings.get("global", "swapZoomControl")) {
             zoomOut()
         } else {
             zoomIn()
@@ -624,7 +624,7 @@ PagePL {
     }
 
     function volDown() {
-        if (settings.global.swapZoomControl) {
+        if (settings.get("global", "swapZoomControl")) {
             zoomIn()
         } else {
             zoomOut()
@@ -677,8 +677,7 @@ PagePL {
     }
 
     function applySettings() {
-        console.log("Applying settings in", settings.captureMode,
-                    "mode for", modelCamera.get(settings.cameraId))
+        console.log("Applying settings in", app.captureMode, "mode for", modelCamera.get(app.cameraId))
 
     }
 
@@ -703,7 +702,7 @@ PagePL {
             camera.start()
         }
         camera.unlock() // Do not forget to unlock camera when changing focus mode
-        settings.mode.focus = focus
+        settings.set("mode", "focus", focus)
 
         //Set the focus point back to centre
         camera.focus.setFocusPointMode(Camera.FocusPointAuto)
@@ -838,40 +837,40 @@ PagePL {
         console.log("Switching camera to", camId)
         cameraProxy.stop()
 
-        if (camId !== "") settings.cameraId = camId;
-        else if (parseInt(settings.cameraId) + 1 == settings.cameraCount) settings.cameraId = "0";
-        else settings.cameraId = parseInt(settings.global.cameraId) + 1;
+        if (camId !== "") app.cameraId = camId;
+        else if (parseInt(app.cameraId) + 1 == app.cameraCount) app.cameraId = "0";
+        else app.cameraId = parseInt(settings.global.cameraId) + 1;
 
-        console.log("switched to camera", settings.cameraId);
+        console.log("switched to camera", app.cameraId);
         tmrDelayedStart.start()
     }
 
     function checkIfCamExists(camId) {
-        console.log("Check if cam exists: ", camId, settings.enabledCameras.length)
+        console.log("Check if cam exists: ", camId, app.enabledCameras.length)
         var found = false;
-        for(var i = 0; i < settings.enabledCameras.length; i++) {
-            if(settings.enabledCameras[i] === camId)
+        for(var i = 0; i < app.enabledCameras.length; i++) {
+            if(app.enabledCameras[i] === camId)
                 found = true;
         }
         return found
     }
 
     function switchToNextCamera() {
-        console.log("Switching no next camera from", settings.cameraId, settings.enabledCameras)
-        if (settings.enabledCameras.length == 0) {
+        console.log("Switching no next camera from", app.cameraId, app.enabledCameras)
+        if (app.enabledCameras.length == 0) {
             switchCamera(0)
-        }else if (settings.enabledCameras.length == 1) {
-            switchCamera(settings.enabledCameras[0])
+        }else if (app.enabledCameras.length == 1) {
+            switchCamera(app.enabledCameras[0])
         } else {
-            var idx = settings.enabledCameras.indexOf(settings.cameraId);
+            var idx = app.enabledCameras.indexOf(app.cameraId);
             if (idx >= 0) {
                 idx++;
-                if (idx >= settings.enabledCameras.length) {
+                if (idx >= app.enabledCameras.length) {
                     idx = 0
                 }
-                switchCamera(settings.enabledCameras[idx])
+                switchCamera(app.enabledCameras[idx])
             } else {
-                switchCamera(settings.enabledCameras[0])
+                switchCamera(app.enabledCameras[0])
             }
         }
     }

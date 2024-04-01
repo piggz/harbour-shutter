@@ -10,21 +10,20 @@ ApplicationWindowPL {
     id: app
     property bool loadingComplete: false;
     property bool forceUpdate: false;
+    property int cameraId: 0
+    property int cameraCount
+    property variant enabledCameras: [] //Calculated on startup and when disabledCameras changes
+    property string disabledCameras: ""
+    property string captureMode
+    property string gridMode: "none"
 
     Settings {
         id: settings
-        property int cameraId: 0
-        property string captureMode
-        property int cameraCount
-        property variant enabledCameras: [] //Calculated on startup and when disabledCameras changes
-        property string disabledCameras: ""
-        property string gridMode: "none"
         
         function setGlobalValue(s, v) {
             if (!loadingComplete) {
                 return;
             }
-            settings[s] = v;
             set("global", s, v);
             forceUpdate = !forceUpdate;
         }
@@ -49,7 +48,7 @@ ApplicationWindowPL {
         }
         //Return either the current mode resolution or default resolution for that mode
         function resolution(mode) {
-            if (settings.captureMode === mode
+            if (captureMode === mode
                     && settings.mode.resolution !== "") {
                 var res = strToSize(settings.mode.resolution)
                 if (modelResolution.isValidResolution(res, mode)) {
@@ -61,39 +60,17 @@ ApplicationWindowPL {
 
         function calculateEnabledCameras()
         {
-            settings.enabledCameras = []
-            for (var i = 0; i < settings.cameraCount; ++i) {
-                if (settings.disabledCameras.indexOf("[" + i + "]") == -1) {
-                    settings.enabledCameras.push(i)
+            enabledCameras = []
+            for (var i = 0; i < cameraCount; ++i) {
+                if (disabledCameras.indexOf("[" + i + "]") == -1) {
+                    enabledCameras.push(i)
                 }
             }
-            console.log("Disabled Cameras:", settings.disabledCameras);
-            console.log("Enabled Cameras :", settings.enabledCameras);
+            console.log("Disabled Cameras:", disabledCameras);
+            console.log("Enabled Cameras :", enabledCameras);
 
             setGlobalValue("disabledCameras", disabledCameras);
             app.forceUpdate = !app.forceUpdate;
-        }
-
-        function loadGlobalSettings() {
-            captureMode = get("global", "captureMode", "image");
-            cameraId = get("global", "cameraId", 0);
-            disabledCameras = get("global", "disabledCameras", "");
-            gridMode = get("global", "gridMode", "none");
-        }
-
-        function saveGlobalSettings() {
-            setGlobalValue("captureMode", captureMode);
-            setGlobalValue("cameraId", cameraId);
-            setGlobalValue("disabledCameras", disabledCameras);
-            setGlobalValue("gridMode", gridMode);
-        }
-
-        Component.onCompleted: {
-            console.log("Setting up default settings");
-            loadGlobalSettings();
-            saveGlobalSettings();
-
-            cameraCount = modelCamera.rowCount;
         }
     }
 
@@ -109,9 +86,28 @@ ApplicationWindowPL {
         id: cameraUI
     }
 
+    function loadGlobalSettings() {
+	settings.set("global", "captureMode", captureMode);
+	settings.set("global", "cameraId", cameraId);
+	settings.set("global", "disabledCameras", disabledCameras);
+	settings.set("global", "gridMode", gridMode);
+    }
+
+    function saveGlobalSettings() {
+        captureMode = settings.get("global", "captureMode", "image");
+        cameraId = settings.get("global", "cameraId", 0);
+        disabledCameras = settings.get("global", "disabledCameras", "");
+        gridMode = settings.get("global", "gridMode", "none");
+    }
+
     Component.onCompleted: {
         cameraUI.startup();
         loadingComplete = true;
+        console.log("Setting up default settings");
+        loadGlobalSettings();
+        saveGlobalSettings();
+
+        cameraCount = modelCamera.rowCount;
     }
 
     onRunningChanged: {

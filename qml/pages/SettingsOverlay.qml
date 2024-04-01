@@ -344,7 +344,7 @@ Item {
                             return 0
                         }
 
-                        currentIndex: findIndex(settings.gridMode)
+                        currentIndex: findIndex(app.gridMode)
                         onValueChanged: {
                             var index = gridSwitch.currentIndex;
                             settings.setGlobalValue("gridMode", gridSwitch.values[index]);
@@ -426,7 +426,7 @@ Item {
                             Rectangle {
                                 width: styler.themeItemSizeSmall
                                 height: width
-                                color: (settings.disabledCameras.indexOf("[" + index + "]") >=0) ? "red" : "green"
+                                color: (app.disabledCameras.indexOf("[" + index + "]") >=0) ? "red" : "green"
                                 LabelPL  {
                                     anchors.centerIn: parent
                                     text: index
@@ -436,13 +436,13 @@ Item {
 
                                     onClicked: {
                                         console.log("Clicked the button for Camera ", index)
-                                        if (settings.disabledCameras.indexOf("[" + index + "]") >=0) {
-                                            settings.disabledCameras = settings.disabledCameras.replace("[" + index + "]", "")
+                                        if (app.disabledCameras.indexOf("[" + index + "]") >=0) {
+                                            app.disabledCameras = app.disabledCameras.replace("[" + index + "]", "")
                                         } else {
-                                            settings.disabledCameras += ("[" + index + "]")
+                                            app.disabledCameras += ("[" + index + "]")
                                         }
 
-                                        console.log(settings.disabledCameras)
+                                        console.log(app.disabledCameras)
                                         settings.calculateEnabledCameras()
                                     }
                                 }
