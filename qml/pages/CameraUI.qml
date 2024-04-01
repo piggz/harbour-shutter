@@ -724,8 +724,7 @@ PagePL {
         ///  * Best match from camera.supportedViewfinderResolutions() that fit to screen and have the same aspect ratio
         ///  * device resolution
 
-        var currentRatioSize = modelResolution.sizeToRatio(
-                    settings.resolution(settings.global.captureMode))
+        var currentRatioSize = modelResolution.sizeToRatio(app.resolution(settings.global.captureMode))
         var currentRatio = currentRatioSize.height
                 > 0 ? currentRatioSize.width / currentRatioSize.height : 0
         if (currentRatio > 0) {

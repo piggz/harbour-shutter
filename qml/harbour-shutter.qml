@@ -44,35 +44,34 @@ ApplicationWindowPL {
         forceUpdate = !forceUpdate;
     }
 
+    //Return either the current mode resolution or default resolution for that mode
+    function resolution(mode) {
+        if (captureMode === mode && settings.get(mode, "resolution") !== "") {
+            var res = strToSize(settings.get(mode, "resolution"))
+            if (modelResolution.isValidResolution(res, mode)) {
+                return res
+            }
+        }
+        return modelResolution.defaultResolution(mode)
+    }
+
+    function calculateEnabledCameras()
+    {
+        enabledCameras = []
+        for (var i = 0; i < cameraCount; ++i) {
+            if (disabledCameras.indexOf("[" + i + "]") == -1) {
+                enabledCameras.push(i)
+            }
+        }
+        console.log("Disabled Cameras:", disabledCameras);
+        console.log("Enabled Cameras :", enabledCameras);
+
+        setGlobalValue("disabledCameras", disabledCameras);
+        app.forceUpdate = !app.forceUpdate;
+    }
+
     Settings {
         id: settings
-        
-        //Return either the current mode resolution or default resolution for that mode
-        function resolution(mode) {
-            if (captureMode === mode
-                    && settings.mode.resolution !== "") {
-                var res = strToSize(settings.mode.resolution)
-                if (modelResolution.isValidResolution(res, mode)) {
-                    return res
-                }
-            }
-            return modelResolution.defaultResolution(mode)
-        }
-
-        function calculateEnabledCameras()
-        {
-            enabledCameras = []
-            for (var i = 0; i < cameraCount; ++i) {
-                if (disabledCameras.indexOf("[" + i + "]") == -1) {
-                    enabledCameras.push(i)
-                }
-            }
-            console.log("Disabled Cameras:", disabledCameras);
-            console.log("Enabled Cameras :", enabledCameras);
-
-            setGlobalValue("disabledCameras", disabledCameras);
-            app.forceUpdate = !app.forceUpdate;
-        }
     }
 
     StylerPL {
