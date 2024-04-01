@@ -29,11 +29,6 @@ ApplicationWindowPL {
             forceUpdate = !forceUpdate;
         }
 
-        function getGlobalValue(s, d) {
-            settings[s] = get("global", s, d);
-            return settings[s];
-        }
-
         function getCameraModeValue(s, d) {
             return get(cameraId + "_" + captureMode, s, d);
         }
@@ -80,10 +75,10 @@ ApplicationWindowPL {
         }
 
         function loadGlobalSettings() {
-            captureMode = getGlobalValue("captureMode", "image");
-            cameraId = getGlobalValue("cameraId", 0);
-            disabledCameras = getGlobalValue("disabledCameras", "");
-            gridMode = getGlobalValue("gridMode", "none");
+            captureMode = get("global", "captureMode", "image");
+            cameraId = get("global", "cameraId", 0);
+            disabledCameras = get("global", "disabledCameras", "");
+            gridMode = get("global", "gridMode", "none");
         }
 
         function saveGlobalSettings() {
