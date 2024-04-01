@@ -35,18 +35,18 @@ ApplicationWindowPL {
         forceUpdate = !forceUpdate;
     }
 
+    function getCameraModeValue(s, d) {
+        return settings.get(cameraId + "_" + captureMode, s, d);
+    }
+
+    function setCameraModeValue(s, v) {
+        settings.set(cameraId + "_" + captureMode, s, v);
+        forceUpdate = !forceUpdate;
+    }
+
     Settings {
         id: settings
         
-        function getCameraModeValue(s, d) {
-            return get(cameraId + "_" + captureMode, s, d);
-        }
-
-        function setCameraModeValue(s, v) {
-            set(cameraId + "_" + captureMode, s, v);
-            forceUpdate = !forceUpdate;
-        }
-
         //Return either the current mode resolution or default resolution for that mode
         function resolution(mode) {
             if (captureMode === mode

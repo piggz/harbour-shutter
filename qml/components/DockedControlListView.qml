@@ -40,7 +40,7 @@ DockedPanelPL {
 
                 onControlEnabledChanged: {
                     console.log("Control ", name, " enabled ", controlEnabled);
-                    settings.setCameraModeValue(name + "_enabled", controlEnabled);
+                    app.setCameraModeValue(name + "_enabled", controlEnabled);
                     if (controlEnabled) {
                         setValue();
                     } else {
@@ -52,11 +52,11 @@ DockedPanelPL {
                     if (cameraProxy && _ready && controlEnabled /*&& name !== "ExposureTime"*/) { //TODO ExposureTime seems to cause issues
                         if (type === CameraProxy.ControlTypeFloat || type === CameraProxy.ControlTypeInteger32 || type === CameraProxy.ControlTypeInteger64) {
                             console.log("setting control value", code, type, slider.value)
-                            settings.setCameraModeValue(name, slider.value);
+                            app.setCameraModeValue(name, slider.value);
                             cameraProxy.setControlValue(code, type, slider.value);
                         } else if (type === CameraProxy.ControlTypeBool) {
                             console.log("setting control value", code, type, switchButton.checked)
-                            settings.setCameraModeValue(name, switchButton.checked);
+                            app.setCameraModeValue(name, switchButton.checked);
                             cameraProxy.setControlValue(code, type, switchButton.checked);
                         }
                     }
@@ -127,13 +127,13 @@ DockedPanelPL {
                     console.log("Created delegate for ", name, code, type, min, max, def);
 
                     if (type === CameraProxy.ControlTypeFloat || type === CameraProxy.ControlTypeInteger32 || type === CameraProxy.ControlTypeInteger64) {
-                        console.log("Loading saved float value for", name, settings.getCameraModeValue(name, def));
-                        slider.value = settings.getCameraModeValue(name, def);
+                        console.log("Loading saved float value for", name, app.getCameraModeValue(name, def));
+                        slider.value = app.getCameraModeValue(name, def);
                     } else if (type === CameraProxy.ControlTypeBool) {
-                        console.log("Loading saved bool value", settings.getCameraModeValue(name, def));
-                        switchButton.checked = settings.getCameraModeValue(name, def) == "true";
+                        console.log("Loading saved bool value", app.getCameraModeValue(name, def));
+                        switchButton.checked = app.getCameraModeValue(name, def) == "true";
                     }
-                    controlEnabled = settings.getCameraModeValue(name + "_enabled", false) == "true";
+                    controlEnabled = app.getCameraModeValue(name + "_enabled", false) == "true";
                     _ready = true;
                 }
             }

@@ -155,13 +155,13 @@ Item {
     DockedListView {
         id: panelFormats
         model: modelFormats
-        selectedItem: (forceUpdate || !forceUpdate) && modelFormats ? settings.getCameraModeValue("format", modelFormats.defaultFormat()) : ""
+        selectedItem: (forceUpdate || !forceUpdate) && modelFormats ? app.getCameraModeValue("format", modelFormats.defaultFormat()) : ""
         rotation: settingsOverlay.iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
 
         onClicked: {
-            settings.setCameraModeValue("format", value);
+            app.setCameraModeValue("format", value);
             cameraProxy.setStillFormat(value);
             hide()
         }
@@ -170,13 +170,13 @@ Item {
     DockedListView {
         id: panelResolution
         model: sortedModelResolution
-        selectedItem: (forceUpdate || !forceUpdate) && modelResolution ?  settings.getCameraModeValue("resolution", modelResolution.defaultResolution(settings.captureMode)) : ""
+        selectedItem: (forceUpdate || !forceUpdate) && modelResolution ?  app.getCameraModeValue("resolution", modelResolution.defaultResolution(settings.captureMode)) : ""
         rotation: settingsOverlay.iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
 
         onClicked: {
-            settings.setCameraModeValue("resolution", value);
+            app.setCameraModeValue("resolution", value);
             cameraProxy.setResolution(value);
             hide();
         }
@@ -185,7 +185,7 @@ Item {
     DockedListView {
         id: panelFlash
         model: modelFlash
-        selectedItem: settings.getCameraModeValue("flash", 0)
+        selectedItem: app.getCameraModeValue("flash", 0)
         rotation: settingsOverlay.iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -200,7 +200,7 @@ Item {
     DockedListView {
         id: panelWhiteBalance
         model: modelWhiteBalance
-        selectedItem: settings.getCameraModeValue("whiteBalance", 0)
+        selectedItem: app.getCameraModeValue("whiteBalance", 0)
         rotation: settingsOverlay.iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -215,7 +215,7 @@ Item {
     DockedListView {
         id: panelFocus
         model: modelFocus
-        selectedItem: settings.getCameraModeValue("focus", 0)
+        selectedItem: app.getCameraModeValue("focus", 0)
         rotation: settingsOverlay.iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -229,7 +229,7 @@ Item {
     DockedListView {
         id: panelIso
         model: modelIso
-        selectedItem: settings.getCameraModeValue("iso", 0)
+        selectedItem: app.getCameraModeValue("iso", 0)
         rotation: settingsOverlay.iconRotation
         width: (iconRotation === 90
                 || iconRotation === 270) ? parent.height : parent.width / 2
@@ -494,7 +494,7 @@ Item {
 
     function flashIcon() {
         var flashIcon = ""
-        switch (settings.getCameraModeValue("flash", 0)) {
+        switch (app.getCameraModeValue("flash", 0)) {
         case Camera.FlashAuto:
             flashIcon = "../pics/icon-camera-flash-automatic.png"
             break
@@ -516,7 +516,7 @@ Item {
 
     function focusIcon() {
         var focusIcon = ""
-        switch (settings.getCameraModeValue("focus", 0)) {
+        switch (app.getCameraModeValue("focus", 0)) {
         case Camera.FocusAuto:
             focusIcon = "../pics/icon-camera-focus-auto.png"
             break
@@ -544,7 +544,7 @@ Item {
 
     function whiteBalanceIcon() {
         var wbIcon = ""
-        switch (settings.getCameraModeValue("whiteBalance", 0)) {
+        switch (app.getCameraModeValue("whiteBalance", 0)) {
         case CameraImageProcessing.WhiteBalanceAuto:
             wbIcon = "../pics/icon-camera-wb-automatic.png"
             break
@@ -578,12 +578,12 @@ Item {
 
     function isoIcon() {
         var iso = ""
-        if (settings.getCameraModeValue("iso", 0) === 0) {
+        if (app.getCameraModeValue("iso", 0) === 0) {
             iso = "../pics/icon-m-iso-auto.png"
-        } else if (settings.getCameraModeValue("iso", 0) === 1) {
+        } else if (app.getCameraModeValue("iso", 0) === 1) {
             iso = "../pics/icon-m-iso-hjr.png"
         } else {
-            iso = "../pics/icon-m-iso-" + settings.getCameraModeValue("iso") + ".png"
+            iso = "../pics/icon-m-iso-" + app.getCameraModeValue("iso") + ".png"
         }
         return styler.customIconPrefix + iso
     }
@@ -591,7 +591,7 @@ Item {
     function effectIcon() {
         var effectIcon = ""
 
-        switch (settings.getCameraModeValue("effect", CameraImageProcessing.ColorFilterNone)) {
+        switch (app.getCameraModeValue("effect", CameraImageProcessing.ColorFilterNone)) {
         case CameraImageProcessing.ColorFilterNone:
             effectIcon = "none"
             break
@@ -637,7 +637,7 @@ Item {
 
     function sceneModeIcon(scene) {
         return styler.customIconPrefix + "../pics/icon-m-scene_mode_" + modelExposure.iconName(
-                    settings.getCameraModeValue("exposure", 0)) + ".svg"
+                    app.getCameraModeValue("exposure", 0)) + ".svg"
     }
 
     function setMode(mode) {

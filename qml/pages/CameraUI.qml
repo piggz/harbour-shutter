@@ -192,7 +192,7 @@ PagePL {
             height: rotation == 0 ? parent.height : parent.width
 
             GridOverlay {
-                aspect: ratio(settings.getCameraModeValue("resolution", Qt.size(1280, 720)))
+                aspect: ratio(app.getCameraModeValue("resolution", Qt.size(1280, 720)))
 
                 function ratio(resolution) {
                     return resolution.width / resolution.height
@@ -311,7 +311,7 @@ PagePL {
                         id: lblResolution
                         color: styler.themePrimaryColor
                         text: (forceUpdate
-                               || !forceUpdate) ? sizeToStr(settings.getCameraModeValue("resolution", Qt.size(1280, 720))) : ""
+                               || !forceUpdate) ? sizeToStr(app.getCameraModeValue("resolution", Qt.size(1280, 720))) : ""
                     }
 
                     Item {
@@ -583,12 +583,12 @@ PagePL {
 
             cameraProxy.setCameraIndex(modelCamera.get(app.cameraId));
 
-            var f = settings.getCameraModeValue("format", modelFormats.defaultFormat());
-            settings.setCameraModeValue("format", f);
+            var f = app.getCameraModeValue("format", modelFormats.defaultFormat());
+            app.setCameraModeValue("format", f);
             cameraProxy.setStillFormat(f);
 
-            var r = settings.getCameraModeValue("resolution", modelResolution.defaultResolution(app.captureMode));
-            settings.setCameraModeValue("resolution", r);
+            var r = app.getCameraModeValue("resolution", modelResolution.defaultResolution(app.captureMode));
+            app.setCameraModeValue("resolution", r);
 
             console.log(f, r);
             cameraProxy.setResolution(r);
@@ -784,7 +784,7 @@ PagePL {
     }
 
     function fileExtension() {
-        var f = settings.getCameraModeValue("format", modelFormats.defaultFormat())
+        var f = app.getCameraModeValue("format", modelFormats.defaultFormat())
         if (f == "MJPEG") {
             f = "JPG";
         }
