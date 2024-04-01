@@ -17,6 +17,16 @@ ApplicationWindowPL {
     property string captureMode
     property string gridMode: "none"
 
+    function strToSize(siz) {
+        var w = parseInt(siz.substring(0, siz.indexOf("x")))
+        var h = parseInt(siz.substring(siz.indexOf("x") + 1))
+        return Qt.size(w, h)
+    }
+
+    function sizeToStr(siz) {
+        return siz.width + "x" + siz.height
+    }
+
     Settings {
         id: settings
         
@@ -37,15 +47,6 @@ ApplicationWindowPL {
             forceUpdate = !forceUpdate;
         }
 
-        function strToSize(siz) {
-            var w = parseInt(siz.substring(0, siz.indexOf("x")))
-            var h = parseInt(siz.substring(siz.indexOf("x") + 1))
-            return Qt.size(w, h)
-        }
-
-        function sizeToStr(siz) {
-            return siz.width + "x" + siz.height
-        }
         //Return either the current mode resolution or default resolution for that mode
         function resolution(mode) {
             if (captureMode === mode

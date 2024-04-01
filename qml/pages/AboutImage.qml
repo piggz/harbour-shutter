@@ -13,10 +13,6 @@ PagePL {
     // The effective value will be restricted by ApplicationWindow.allowedOrientations
     allowedOrientations: Orientation.All
 
-    function sizeToStr(siz) {
-        return siz.width + "x" + siz.height
-    }
-
     Image {
         id: image
         visible: false
@@ -24,7 +20,7 @@ PagePL {
         asynchronous: true
         onStatusChanged: {
             if (status === Image.Ready) {
-                mediaAbout.mediaSize = sizeToStr(sourceSize)
+                mediaAbout.mediaSize = app.sizeToStr(sourceSize)
             }
         }
     }

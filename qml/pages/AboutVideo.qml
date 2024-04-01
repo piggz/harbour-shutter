@@ -13,10 +13,6 @@ PagePl {
     // The effective value will be restricted by ApplicationWindow.allowedOrientations
     allowedOrientations: Orientation.All
 
-    function sizeToStr(siz) {
-        return siz.width + "x" + siz.height
-    }
-
     function msToTime(millis) {
         return new Date(millis).toISOString().substr(11, 8)
     }
@@ -28,7 +24,7 @@ PagePl {
 
         onStatusChanged: {
             if (status === MediaPlayer.Loaded) {
-                mediaAbout.mediaSize = sizeToStr(metaData.resolution)
+                mediaAbout.mediaSize = app.sizeToStr(metaData.resolution)
             }
         }
 

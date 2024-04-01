@@ -311,7 +311,7 @@ PagePL {
                         id: lblResolution
                         color: styler.themePrimaryColor
                         text: (forceUpdate
-                               || !forceUpdate) ? settings.sizeToStr(settings.getCameraModeValue("resolution", Qt.size(1280, 720))) : ""
+                               || !forceUpdate) ? sizeToStr(settings.getCameraModeValue("resolution", Qt.size(1280, 720))) : ""
                     }
 
                     Item {
@@ -731,16 +731,14 @@ PagePL {
         if (currentRatio > 0) {
             if (currentRatio <= 4.0 / 3
                     && settings.jollaCamera.viewfinderResolution_4_3) {
-                return settings.strToSize(
-                            settings.jollaCamera.viewfinderResolution_4_3)
+                return strToSize(settings.jollaCamera.viewfinderResolution_4_3)
             } else if (settings.jollaCamera.viewfinderResolution_16_9) {
-                return settings.strToSize(
-                            settings.jollaCamera.viewfinderResolution_16_9)
+                return strToSize(settings.jollaCamera.viewfinderResolution_16_9)
             }
         }
 
         if (settings.jollaCamera.viewfinderResolution) {
-            return settings.strToSize(settings.jollaCamera.viewfinderResolution)
+            return strToSize(settings.jollaCamera.viewfinderResolution)
         }
 
         var supportedResolutions = camera.supportedViewfinderResolutions()
