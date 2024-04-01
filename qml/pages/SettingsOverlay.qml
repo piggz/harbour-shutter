@@ -443,7 +443,7 @@ Item {
                                         }
 
                                         console.log(app.disabledCameras)
-                                        settings.calculateEnabledCameras()
+                                        app.calculateEnabledCameras()
                                     }
                                 }
                             }

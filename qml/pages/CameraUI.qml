@@ -577,7 +577,7 @@ PagePL {
             console.log("camera delayed start", app.cameraId)
             _loadParameters = true
 
-            settings.calculateEnabledCameras()
+            app.calculateEnabledCameras()
 
             console.log("There are", app.enabledCameras.length, "enabled cameras: ", app.enabledCameras);
 
