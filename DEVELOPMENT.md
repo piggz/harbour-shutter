@@ -8,4 +8,6 @@
 Passing values for these in the app's execution environment will let you control the looging. The easiest way to do it is to modify the desktop file.
 For SailfishOS, that is [harbour-shutter.desktop](harbour-shutter.desktop), for Ubuntu Touch [click/harbour-shutter-ui.desktop](click/harbour-shutter-ui.desktop)
 
+The following works on Ubuntu Touch ONLY, and will prevent the app from launching on Sailfish.
+
 Change the `Exec=harbour-shutter` line to `Exec=env LIBCAMERA_LOG_LEVELS='*:DEBUG' env LIBCAMERA_LOG_FILE="/tmp/libcamera.log" harbour-shutter`.
