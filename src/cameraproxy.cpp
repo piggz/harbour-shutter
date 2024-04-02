@@ -1,4 +1,4 @@
-#include <QDebug>
+
 #include <QCoreApplication>
 #include "cameraproxy.h"
 #include "encoder_jpeg.h"
@@ -753,8 +753,15 @@ void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
 
     Image *i = m_mappedBuffers[buffer].get();
     QList<QRectF> rects;
+    bool faceDetectionEnabled = false;
 
-    if (!m_settings->get("global", "faceDetection", false).value<bool>()) {
+    if (m_settings == nullptr) {
+        qWarning() << Q_FUNC_INFO << "The m_settings pointer is NULL. Default to face detection DISABLED.";
+    } else {
+        faceDetectionEnabled = m_settings->get("global", "faceDetection", false).value<bool>();
+    }
+
+    if (!faceDetectionEnabled) {
         m_viewFinder->renderImage(buffer, i, rects);
         return;
     }

@@ -105,7 +105,7 @@ Q_SIGNALS:
 private:
     std::shared_ptr<libcamera::CameraManager> m_cameraManager;
     std::shared_ptr<libcamera::Camera> m_currentCamera;
-    Settings *m_settings;
+    Settings *m_settings = nullptr;
 
     ViewFinder2D* m_viewFinder;
     QString m_currentCameraId;
