@@ -405,12 +405,12 @@ Item {
                         id: faceDetectionSwitch
                         width: parent.width
 
-                        checked: appSettings.get("global", "faceDetection", false)
+                        checked: settings.get("global", "faceDetection", false)
                         text: qsTr("Enable/Disable face detection")
 
                         onCheckedChanged: {
                             console.log("The face detection button has been clicked! - ", checked)
-                            appSettings.set("global", "faceDetection", checked);
+                            settings.set("global", "faceDetection", checked);
                         }
                     }
 

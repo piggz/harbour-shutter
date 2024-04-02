@@ -70,10 +70,6 @@ ApplicationWindowPL {
         app.forceUpdate = !app.forceUpdate;
     }
 
-    Settings {
-        id: settings
-    }
-
     StylerPL {
         id: styler
         themePrimaryColor: "white"

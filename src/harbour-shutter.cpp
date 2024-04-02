@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
     handler.acquire();
 
     Settings settings(app);
-    rootContext->setContextProperty("appSettings", &settings);
+    rootContext->setContextProperty("settings", &settings);
 
     StorageModel storageModel(app);
     rootContext->setContextProperty("modelStorage", &storageModel);
