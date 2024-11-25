@@ -190,7 +190,7 @@ bool ViewFinderRenderer::selectFormat(const libcamera::PixelFormat &format)
     textureMinMagFilters_ = GL_LINEAR;
 
     /* Use identity.vert as the default vertex shader. */
-    vertexShaderFile_ = ":qml/assets/identity.vert";
+    vertexShaderFile_ = QStringLiteral(":qml/assets/identity.vert");
 
     fragmentShaderDefines_.clear();
 
@@ -198,171 +198,171 @@ bool ViewFinderRenderer::selectFormat(const libcamera::PixelFormat &format)
     case libcamera::formats::NV12:
         horzSubSample_ = 2;
         vertSubSample_ = 2;
-        fragmentShaderDefines_.append("#define YUV_PATTERN_UV");
-        fragmentShaderFile_ = ":qml/assets/YUV_2_planes.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define YUV_PATTERN_UV"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/YUV_2_planes.frag");
         break;
     case libcamera::formats::NV21:
         horzSubSample_ = 2;
         vertSubSample_ = 2;
-        fragmentShaderDefines_.append("#define YUV_PATTERN_VU");
-        fragmentShaderFile_ = ":qml/assets/YUV_2_planes.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define YUV_PATTERN_VU"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/YUV_2_planes.frag");
         break;
     case libcamera::formats::NV16:
         horzSubSample_ = 2;
         vertSubSample_ = 1;
-        fragmentShaderDefines_.append("#define YUV_PATTERN_UV");
-        fragmentShaderFile_ = ":qml/assets/YUV_2_planes.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define YUV_PATTERN_UV"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/YUV_2_planes.frag");
         break;
     case libcamera::formats::NV61:
         horzSubSample_ = 2;
         vertSubSample_ = 1;
-        fragmentShaderDefines_.append("#define YUV_PATTERN_VU");
-        fragmentShaderFile_ = ":qml/assets/YUV_2_planes.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define YUV_PATTERN_VU"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/YUV_2_planes.frag");
         break;
     case libcamera::formats::NV24:
         horzSubSample_ = 1;
         vertSubSample_ = 1;
-        fragmentShaderDefines_.append("#define YUV_PATTERN_UV");
-        fragmentShaderFile_ = ":qml/assets/YUV_2_planes.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define YUV_PATTERN_UV"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/YUV_2_planes.frag");
         break;
     case libcamera::formats::NV42:
         horzSubSample_ = 1;
         vertSubSample_ = 1;
-        fragmentShaderDefines_.append("#define YUV_PATTERN_VU");
-        fragmentShaderFile_ = ":qml/assets/YUV_2_planes.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define YUV_PATTERN_VU"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/YUV_2_planes.frag");
         break;
     case libcamera::formats::YUV420:
         horzSubSample_ = 2;
         vertSubSample_ = 2;
-        fragmentShaderFile_ = ":qml/assets/YUV_3_planes.frag";
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/YUV_3_planes.frag");
         break;
     case libcamera::formats::YVU420:
         horzSubSample_ = 2;
         vertSubSample_ = 2;
-        fragmentShaderFile_ = ":qml/assets/YUV_3_planes.frag";
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/YUV_3_planes.frag");
         break;
     case libcamera::formats::UYVY:
-        fragmentShaderDefines_.append("#define YUV_PATTERN_UYVY");
-        fragmentShaderFile_ = ":qml/assets/YUV_packed.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define YUV_PATTERN_UYVY"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/YUV_packed.frag");
         break;
     case libcamera::formats::VYUY:
-        fragmentShaderDefines_.append("#define YUV_PATTERN_VYUY");
-        fragmentShaderFile_ = ":qml/assets/YUV_packed.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define YUV_PATTERN_VYUY"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/YUV_packed.frag");
         break;
     case libcamera::formats::YUYV:
-        fragmentShaderDefines_.append("#define YUV_PATTERN_YUYV");
-        fragmentShaderFile_ = ":qml/assets/YUV_packed.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define YUV_PATTERN_YUYV"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/YUV_packed.frag");
         break;
     case libcamera::formats::YVYU:
-        fragmentShaderDefines_.append("#define YUV_PATTERN_YVYU");
-        fragmentShaderFile_ = ":qml/assets/YUV_packed.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define YUV_PATTERN_YVYU"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/YUV_packed.frag");
         break;
     case libcamera::formats::ABGR8888:
-        fragmentShaderDefines_.append("#define RGB_PATTERN rgb");
-        fragmentShaderFile_ = ":qml/assets/RGB.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define RGB_PATTERN rgb"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/RGB.frag");
         break;
     case libcamera::formats::ARGB8888:
-        fragmentShaderDefines_.append("#define RGB_PATTERN bgr");
-        fragmentShaderFile_ = ":qml/assets/RGB.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define RGB_PATTERN bgr"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/RGB.frag");
         break;
     case libcamera::formats::BGRA8888:
-        fragmentShaderDefines_.append("#define RGB_PATTERN gba");
-        fragmentShaderFile_ = ":qml/assets/RGB.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define RGB_PATTERN gba"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/RGB.frag");
         break;
     case libcamera::formats::RGBA8888:
-        fragmentShaderDefines_.append("#define RGB_PATTERN abg");
-        fragmentShaderFile_ = ":qml/assets/RGB.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define RGB_PATTERN abg"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/RGB.frag");
         break;
     case libcamera::formats::BGR888:
-        fragmentShaderDefines_.append("#define RGB_PATTERN rgb");
-        fragmentShaderFile_ = ":qml/assets/RGB.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define RGB_PATTERN rgb"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/RGB.frag");
         break;
     case libcamera::formats::RGB888:
-        fragmentShaderDefines_.append("#define RGB_PATTERN bgr");
-        fragmentShaderFile_ = ":qml/assets/RGB.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define RGB_PATTERN bgr"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/RGB.frag");
         break;
     case libcamera::formats::SBGGR8:
         firstRed_.setX(1.0);
         firstRed_.setY(1.0);
-        vertexShaderFile_ = ":qml/assets/bayer_8.vert";
-        fragmentShaderFile_ = ":qml/assets/bayer_8.frag";
+        vertexShaderFile_ = QStringLiteral(":qml/assets/bayer_8.vert");
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/bayer_8.frag");
         textureMinMagFilters_ = GL_NEAREST;
         break;
     case libcamera::formats::SGBRG8:
         firstRed_.setX(0.0);
         firstRed_.setY(1.0);
-        vertexShaderFile_ = ":qml/assets/bayer_8.vert";
-        fragmentShaderFile_ = ":qml/assets/bayer_8.frag";
+        vertexShaderFile_ = QStringLiteral(":qml/assets/bayer_8.vert");
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/bayer_8.frag");
         textureMinMagFilters_ = GL_NEAREST;
         break;
     case libcamera::formats::SGRBG8:
         firstRed_.setX(1.0);
         firstRed_.setY(0.0);
-        vertexShaderFile_ = ":qml/assets/bayer_8.vert";
-        fragmentShaderFile_ = ":qml/assets/bayer_8.frag";
+        vertexShaderFile_ = QStringLiteral(":qml/assets/bayer_8.vert");
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/bayer_8.frag");
         textureMinMagFilters_ = GL_NEAREST;
         break;
     case libcamera::formats::SRGGB8:
         firstRed_.setX(0.0);
         firstRed_.setY(0.0);
-        vertexShaderFile_ = ":qml/assets/bayer_8.vert";
-        fragmentShaderFile_ = ":qml/assets/bayer_8.frag";
+        vertexShaderFile_ = QStringLiteral(":qml/assets/bayer_8.vert");
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/bayer_8.frag");
         textureMinMagFilters_ = GL_NEAREST;
         break;
     case libcamera::formats::SBGGR10_CSI2P:
         firstRed_.setX(1.0);
         firstRed_.setY(1.0);
-        fragmentShaderDefines_.append("#define RAW10P");
-        fragmentShaderFile_ = ":qml/assets/bayer_1x_packed.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define RAW10P"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/bayer_1x_packed.frag");
         textureMinMagFilters_ = GL_NEAREST;
         break;
     case libcamera::formats::SGBRG10_CSI2P:
         firstRed_.setX(0.0);
         firstRed_.setY(1.0);
-        fragmentShaderDefines_.append("#define RAW10P");
-        fragmentShaderFile_ = ":qml/assets/bayer_1x_packed.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define RAW10P"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/bayer_1x_packed.frag");
         textureMinMagFilters_ = GL_NEAREST;
         break;
     case libcamera::formats::SGRBG10_CSI2P:
         firstRed_.setX(1.0);
         firstRed_.setY(0.0);
-        fragmentShaderDefines_.append("#define RAW10P");
-        fragmentShaderFile_ = ":qml/assets/bayer_1x_packed.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define RAW10P"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/bayer_1x_packed.frag");
         textureMinMagFilters_ = GL_NEAREST;
         break;
     case libcamera::formats::SRGGB10_CSI2P:
         firstRed_.setX(0.0);
         firstRed_.setY(0.0);
-        fragmentShaderDefines_.append("#define RAW10P");
-        fragmentShaderFile_ = ":qml/assets/bayer_1x_packed.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define RAW10P"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/bayer_1x_packed.frag");
         textureMinMagFilters_ = GL_NEAREST;
         break;
     case libcamera::formats::SBGGR12_CSI2P:
         firstRed_.setX(1.0);
         firstRed_.setY(1.0);
-        fragmentShaderDefines_.append("#define RAW12P");
-        fragmentShaderFile_ = ":qml/assets/bayer_1x_packed.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define RAW12P"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/bayer_1x_packed.frag");
         textureMinMagFilters_ = GL_NEAREST;
         break;
     case libcamera::formats::SGBRG12_CSI2P:
         firstRed_.setX(0.0);
         firstRed_.setY(1.0);
-        fragmentShaderDefines_.append("#define RAW12P");
-        fragmentShaderFile_ = ":qml/assets/bayer_1x_packed.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define RAW12P"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/bayer_1x_packed.frag");
         textureMinMagFilters_ = GL_NEAREST;
         break;
     case libcamera::formats::SGRBG12_CSI2P:
         firstRed_.setX(1.0);
         firstRed_.setY(0.0);
-        fragmentShaderDefines_.append("#define RAW12P");
-        fragmentShaderFile_ = ":qml/assets/bayer_1x_packed.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define RAW12P"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/bayer_1x_packed.frag");
         textureMinMagFilters_ = GL_NEAREST;
         break;
     case libcamera::formats::SRGGB12_CSI2P:
         firstRed_.setX(0.0);
         firstRed_.setY(0.0);
-        fragmentShaderDefines_.append("#define RAW12P");
-        fragmentShaderFile_ = ":qml/assets/bayer_1x_packed.frag";
+        fragmentShaderDefines_.append(QStringLiteral("#define RAW12P"));
+        fragmentShaderFile_ = QStringLiteral(":qml/assets/bayer_1x_packed.frag");
         textureMinMagFilters_ = GL_NEAREST;
         break;
     default:
@@ -441,8 +441,8 @@ void ViewFinderRenderer::selectColorSpace(const libcamera::ColorSpace &colorSpac
     for (double coeff : yuv2rgb)
         matrix.append(QString::number(coeff, 'f'));
 
-    fragmentShaderDefines_.append("#define YUV2RGB_MATRIX " + matrix.join(", "));
-    fragmentShaderDefines_.append(QString("#define YUV2RGB_Y_OFFSET %1")
+    fragmentShaderDefines_.append(QStringLiteral("#define YUV2RGB_MATRIX ") + matrix.join(QStringLiteral(", ")));
+    fragmentShaderDefines_.append(QStringLiteral("#define YUV2RGB_Y_OFFSET %1")
                                   .arg(offset, 0, 'f', 1));
 }
 
@@ -473,7 +473,7 @@ bool ViewFinderRenderer::createFragmentShader()
     int attributeVertex;
     int attributeTexture;
 
-    if (fragmentShaderFile_ == "") {
+    if (fragmentShaderFile_.isEmpty()) {
         qDebug() << "fragemnt file not yet set";
         return false;
     }
@@ -490,7 +490,7 @@ bool ViewFinderRenderer::createFragmentShader()
         return false;
     }
 
-    QString defines = fragmentShaderDefines_.join('\n') + "\n";
+    QString defines = fragmentShaderDefines_.join(QStringLiteral("\n")) + QStringLiteral("\n");
     QByteArray src = file.readAll();
     src.prepend(defines.toUtf8());
 

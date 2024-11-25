@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 **/
+
 #include "resolutionmodel.h"
 
 QSize ResolutionModel::sizeToRatio(const QSize &siz) const
@@ -40,7 +41,7 @@ void ResolutionModel::setCameraProxy(std::shared_ptr<CameraProxy> cameraproxy)
     qDebug() << Q_FUNC_INFO;
 
     m_cameraProxy = cameraproxy;
-    setMode("image");
+    setMode(QStringLiteral("image"));
 
     connect(m_cameraProxy.get(), &CameraProxy::formatChanged, this, &ResolutionModel::populateResolutions);
 }
@@ -74,7 +75,7 @@ QVariant ResolutionModel::data(const QModelIndex &index, int role) const
 
     if (role == ResolutionName) {
         QSize r = sizeToRatio(m_resolutions.at(index.row()).second);
-        v = QString("%1 (%2:%3)").arg(m_resolutions.at(index.row()).first).arg(r.width()).arg(r.height());
+        v = QLatin1String("%1 (%2:%3)").arg(m_resolutions.at(index.row()).first).arg(r.width()).arg(r.height());
     } else if (role == ResolutionValue) {
         v = m_resolutions.at(index.row()).second;
     } else if (role == ResolutionMpx) {
@@ -89,12 +90,12 @@ void ResolutionModel::setMode(const QString &mode)
     beginResetModel();
     m_resolutions.clear();
 
-    if (mode == "image") {
+    if (mode == QStringLiteral("image")) {
         //for (int i = 0; i < m_supportedImageResolutions.count() ; i++) {
         //    m_resolutions.push_back(std::make_pair(QString("%1x%2").arg(m_supportedImageResolutions[i].width()).arg(
         //                      m_supportedImageResolutions[i].height()), m_supportedImageResolutions[i]));
         //}
-    } else if (mode == "video") {
+    } else if (mode == QStringLiteral("video")) {
         //for (int i = 0; i < m_supportedVideoResolutions.count() ; i++) {
         //    m_resolutions.push_back(std::make_pair(QString("%1x%2").arg(m_supportedVideoResolutions[i].width()).arg(
         //                      m_supportedVideoResolutions[i].height()), m_supportedVideoResolutions[i]));
@@ -117,11 +118,11 @@ void ResolutionModel::setMode(const QString &mode)
 QSize ResolutionModel::defaultResolution(const QString &mode)
 {
     qDebug() << "Getting default resolution for mode" << mode;
-    if (mode == "video") {
+    if (mode == QStringLiteral("video")) {
         //if (m_supportedVideoResolutions.count() > 0) {
         //    return m_supportedVideoResolutions.at(m_supportedVideoResolutions.count() - 1);
         //}
-    } else if (mode == "image") {
+    } else if (mode == QStringLiteral("image")) {
         if (m_resolutions.size() > 0) {
             qDebug() << m_resolutions.at(m_resolutions.size() - 1).second;
             return m_resolutions.at(m_resolutions.size() - 1).second;
@@ -132,9 +133,9 @@ QSize ResolutionModel::defaultResolution(const QString &mode)
 
 bool ResolutionModel::isValidResolution(const QSize &resolution, const QString &mode)
 {
-    if (mode == "image") {
+    if (mode == QStringLiteral("image")) {
         //return m_supportedImageResolutions.contains(resolution);
-    } else if (mode == "video") {
+    } else if (mode == QStringLiteral("video")) {
         //return m_supportedVideoResolutions.contains(resolution);
     }
     return false;
@@ -148,7 +149,7 @@ void ResolutionModel::populateResolutions()
 
     std::vector<libcamera::Size> res = m_cameraProxy->supportedResoluions(m_cameraProxy->currentStillFormat());
     for (const libcamera::Size s : res) {
-        m_resolutions.push_back(std::make_pair<QString, QSize>(QString("%1x%2").arg(s.width).arg(s.height), QSize(s.width, s.height)));
+        m_resolutions.push_back(std::make_pair<QString, QSize>(QStringLiteral("%1x%2").arg(s.width).arg(s.height), QSize(s.width, s.height)));
     }
 
     endResetModel();

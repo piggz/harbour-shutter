@@ -1,5 +1,6 @@
 
 #include <QCoreApplication>
+#include <QFile>
 #include "cameraproxy.h"
 #include "encoder_jpeg.h"
 #include "settings.h"
@@ -645,17 +646,18 @@ void CameraProxy::setControlValue(CameraProxy::Control c, ControlType type, QVar
 {
     qDebug() << Q_FUNC_INFO << c << type << val << controlMin(c) << controlMax(c);
 
+    float val_f = val.toFloat();
     libcamera::ControlValue v;
     if (controlExists(c)) {
-        if (type == ControlTypeFloat && val <= controlMax(c) && val >= controlMin(c)) {
+        if (type == ControlTypeFloat && val_f <= controlMax(c) && val_f >= controlMin(c)) {
             qDebug() << "Setting float value";
             v.set<float>(val.toFloat());
             m_controlValues[c] = v;
-        } else if (type == ControlTypeInteger32 && val <= controlMax(c) && val >= controlMin(c)) {
+        } else if (type == ControlTypeInteger32 && val_f <= controlMax(c) && val_f >= controlMin(c)) {
             qDebug() << "Setting int32 value";
             v.set<int32_t>(val.toInt());
             m_controlValues[c] = v;
-        } else if (type == ControlTypeInteger64 && val <= controlMax(c) && val >= controlMin(c)) {
+        } else if (type == ControlTypeInteger64 && val_f <= controlMax(c) && val_f >= controlMin(c)) {
             qDebug() << "Setting int64 value";
             v.set<int64_t>(val.toInt());
             m_controlValues[c] = v;
@@ -753,7 +755,7 @@ void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
 
     Image *i = m_mappedBuffers[buffer].get();
     QList<QRectF> rects;
-    bool faceDetectionEnabled = m_settings && m_settings->get("global", "faceDetection", false).value<bool>();
+    bool faceDetectionEnabled = m_settings && m_settings->get(QStringLiteral("global"), QStringLiteral("faceDetection"), false).value<bool>();
 
     if (faceDetectionEnabled) {
         rects = m_fd.detect(m_viewFinder->currentImage());
@@ -800,11 +802,11 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
     file.close();
 
     EncoderJpeg jpeg;
-    bool ok = jpeg.encode(m_config->at(1), buffer, m_mappedBuffers[buffer].get(), QString(m_saveFileName + ".jpg").toStdString());
+    bool ok = jpeg.encode(m_config->at(1), buffer, m_mappedBuffers[buffer].get(), QString(m_saveFileName + QStringLiteral(".jpg")).toStdString());
     if (!ok) {
         qDebug() << "Unable to save jpeg file";
     }
-    qDebug() << "Saved JPEG as " << QString(m_saveFileName + ".jpg");
+    qDebug() << "Saved JPEG as " << QString(m_saveFileName + QStringLiteral(".jpg"));
 
 
     {

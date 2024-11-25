@@ -22,6 +22,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <QAbstractListModel>
 #include <QCamera>
 
+#if QT_VERSION > 0x060000
+    typedef QCamera QCameraFocus;
+#endif
+
 class FocusModel : public QAbstractListModel
 {
     Q_OBJECT

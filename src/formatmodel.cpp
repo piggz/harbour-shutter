@@ -68,8 +68,8 @@ void FormatModel::setCameraProxy(std::shared_ptr<CameraProxy> cameraproxy)
 
 QString FormatModel::defaultFormat() const
 {
-    if (m_formats.contains("MJPEG")) {
-        return "MJPEG";
+    if (m_formats.contains(QStringLiteral("MJPEG"))) {
+        return QStringLiteral("MJPEG");
     } else {
         if (m_formats.size() > 0) {
             return m_formats[0];

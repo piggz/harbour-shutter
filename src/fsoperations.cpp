@@ -19,17 +19,17 @@ bool FSOperations::deleteFile(const QString &path)
 QString FSOperations::writableLocation(const QString &type, const QString &baseDir)
 {
     QString dir;
-    if (type == "image") {
-        dir = baseDir + "/Pictures/Shutter";
-    } else if (type == "video") {
-        dir = baseDir + "/Videos/Shutter";
+    if (type == QLatin1String("image")) {
+        dir = baseDir + QStringLiteral("/Pictures/Shutter");
+    } else if (type == QStringLiteral("video")) {
+        dir = baseDir + QStringLiteral("/Videos/Shutter");
     } else {
         return QString();
     }
 
     if (!createFolder(dir)) {
         qWarning() << "Unable to create" << dir << ", fallback to home dir!";
-        Q_EMIT rescan("/media/sdcard");
+        Q_EMIT rescan(QLatin1String("/media/sdcard"));
         return writableLocation(type, QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     }
     return dir;
@@ -39,7 +39,7 @@ bool FSOperations::createFolder(const QString &path)
 {
     QDir dir(path);
     if (!dir.exists()) {
-        return dir.mkpath(".");
+        return dir.mkpath(QLatin1String("."));
     }
     return true;
 }
@@ -56,18 +56,18 @@ QString FSOperations::getFileSizeHuman(const QString &path)
 {
     float num = (float)getFileSize(path);
     QStringList list;
-    list << "KiB" << "MiB" << "GiB" << "TiB";
+    list << QLatin1String("KiB") << QLatin1String("MiB") << QLatin1String("GiB") << QLatin1String("TiB");
 
     QStringListIterator i(list);
-    QString unit("B");
+    QLatin1String unit("B");
 
     if (num < 1024.0)
-        return QString().setNum(num, 'f', 0) + " " + unit;
+        return QString().setNum(num, 'f', 0) + QStringLiteral(" ") + unit;
 
     while(num >= 1024.0 && i.hasNext())
      {
-        unit = i.next();
+        unit = QLatin1String(i.next().toLatin1());
         num /= 1024.0;
     }
-    return QString().setNum(num, 'f', 2) + " " + unit;
+    return QString().setNum(num, 'f', 2) + QStringLiteral(" ") + unit;
 }

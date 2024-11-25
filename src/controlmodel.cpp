@@ -91,6 +91,6 @@ QVariant ControlModel::controlValue(libcamera::ControlValue val) const
     case libcamera::ControlTypeSize:
         return QVariant();
     default:
-        return QString("unknown");
+        return QStringLiteral("unknown");
     }
 }

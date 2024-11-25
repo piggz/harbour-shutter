@@ -176,58 +176,58 @@
 <context>
     <name>FlashModel</name>
     <message>
-        <location filename="../src/flashmodel.cpp" line="65"/>
-        <location filename="../src/flashmodel.cpp" line="114"/>
+        <location filename="../src/flashmodel.cpp" line="66"/>
+        <location filename="../src/flashmodel.cpp" line="115"/>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/flashmodel.cpp" line="84"/>
+        <location filename="../src/flashmodel.cpp" line="85"/>
         <source>Auto</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/flashmodel.cpp" line="87"/>
+        <location filename="../src/flashmodel.cpp" line="88"/>
         <source>Off</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/flashmodel.cpp" line="90"/>
+        <location filename="../src/flashmodel.cpp" line="91"/>
         <source>On</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/flashmodel.cpp" line="93"/>
+        <location filename="../src/flashmodel.cpp" line="94"/>
         <source>Red Eye Reduction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/flashmodel.cpp" line="96"/>
+        <location filename="../src/flashmodel.cpp" line="97"/>
         <source>Fill</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/flashmodel.cpp" line="99"/>
+        <location filename="../src/flashmodel.cpp" line="100"/>
         <source>Torch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/flashmodel.cpp" line="102"/>
+        <location filename="../src/flashmodel.cpp" line="103"/>
         <source>Video Light</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/flashmodel.cpp" line="105"/>
+        <location filename="../src/flashmodel.cpp" line="106"/>
         <source>Slow Sync Front Curtain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/flashmodel.cpp" line="108"/>
+        <location filename="../src/flashmodel.cpp" line="109"/>
         <source>Slow Sync Rear Curtain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/flashmodel.cpp" line="111"/>
+        <location filename="../src/flashmodel.cpp" line="112"/>
         <source>Manual</source>
         <translation type="unfinished"></translation>
     </message>
@@ -330,12 +330,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsOverlay.qml" line="399"/>
+        <location filename="../qml/pages/SettingsOverlay.qml" line="398"/>
         <source>Display manual controls</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/SettingsOverlay.qml" line="407"/>
+        <location filename="../qml/pages/SettingsOverlay.qml" line="409"/>
+        <source>Enable/Disable face detection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/SettingsOverlay.qml" line="418"/>
         <source>Disabled Cameras</source>
         <translation type="unfinished"></translation>
     </message>

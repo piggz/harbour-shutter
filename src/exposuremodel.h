@@ -36,18 +36,18 @@ public:
 
     ExposureModel();
 
-    virtual QHash<int, QByteArray> roleNames() const;
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual QVariant data(const QModelIndex &index, int role) const;
+    QHash<int, QByteArray> roleNames() const override;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
 
     Q_INVOKABLE void setCamera(QObject *camera);
-    Q_INVOKABLE QString iconName(QCameraExposure::ExposureMode e) const;
+    Q_INVOKABLE QString iconName(QCamera::ExposureMode e) const;
 
 private:
-    std::vector<std::pair<QCameraExposure::ExposureMode, QString>> m_exposures;
+    std::vector<std::pair<QCamera::ExposureMode, QString>> m_exposures;
     QCamera *m_camera = nullptr;
 
-    QString exposureName(QCameraExposure::ExposureMode e) const;
+    QString exposureName(QCamera::ExposureMode e) const;
 
 Q_SIGNALS:
     void rowCountChanged();

@@ -37,9 +37,9 @@ public:
 
     explicit ResolutionModel(QObject *parent = nullptr);
 
-    virtual QHash<int, QByteArray> roleNames() const;
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual QVariant data(const QModelIndex &index, int role) const;
+    QHash<int, QByteArray> roleNames() const override;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
 
     Q_INVOKABLE QSize sizeToRatio(const QSize &siz) const;
     void setCameraProxy(std::shared_ptr<CameraProxy> cameraproxy);
@@ -50,7 +50,7 @@ public:
 private:
     std::shared_ptr<CameraProxy> m_cameraProxy;
     std::vector<std::pair<QString, QSize>> m_resolutions;
-    QString m_mode = "image";
+    QString m_mode = QStringLiteral("image");
     void populateResolutions();
 
 Q_SIGNALS:

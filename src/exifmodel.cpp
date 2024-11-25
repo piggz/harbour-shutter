@@ -31,7 +31,7 @@ bool ExifModel::loadLibexif()
     if (m_lib.isLoaded())
         return true;
 
-    m_lib.setFileName("libexif.so.12");
+    m_lib.setFileName(QStringLiteral("libexif.so.12"));
     if (m_lib.load())
     {
         f_fromfile =  (ExifFromFile) m_lib.resolve("exif_data_new_from_file");
@@ -103,8 +103,8 @@ void parseEntry(ExifEntry *entry, void *userdata)
 {
     ExifContent *content = static_cast<ExifContent *>(userdata);
     ExifIfd ifd = f_getifd(content);
-    QString tag(f_gettag(entry->tag, ifd));
+    QLatin1String tag(f_gettag(entry->tag, ifd));
     char bufValue[1024];
     f_getvalue(entry, bufValue, 1024);
-    m_exif.insert(tag, QString(bufValue));
+    m_exif.insert(tag, QLatin1String(bufValue));
 }

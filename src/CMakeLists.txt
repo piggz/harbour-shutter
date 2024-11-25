@@ -1,0 +1,164 @@
+add_executable(harbour-shutter)
+
+target_include_directories(harbour-shutter PUBLIC ${LIBCAMERA_INCLUDE_DIRS})
+target_compile_options(harbour-shutter PUBLIC ${LIBCAMERA_CFLAGS_OTHER})
+
+ecm_add_qml_module(harbour-shutter
+    URI
+    uk.co.piggz.shutter
+    QML_FILES
+    qml/Main.qml
+    qml/pages/CameraUI.qml
+    qml/pages/GalleryUI.qml
+    qml/pages/GridOverlay.qml
+    qml/pages/SettingsOverlay.qml
+    qml/pages/AboutImage.qml
+    qml/pages/AboutVideo.qml
+    qml/components/AboutMedia.qml
+    qml/components/ControlSlider.qml
+    qml/components/DockedControlListView.qml
+    qml/components/DockedListView.qml
+    qml/components/DockedPanel.qml
+    qml/components/DockModes.qml
+    qml/components/IconButton.qml
+    qml/components/IconSwitch.qml
+    qml/components/ListItem.qml
+    qml/components/RoundButton.qml
+    qml/components/TextSwitch.qml
+    qml/components/TruncationModes.qml
+    RESOURCES
+    qml/pics/icon-camera-flash-automatic.png
+    qml/pics/icon-camera-flash-off.png
+    qml/pics/icon-camera-flash-on.png
+    qml/pics/icon-camera-focus-auto.png
+    qml/pics/icon-camera-focus-continuous.png
+    qml/pics/icon-camera-focus-hyperfocal.png
+    qml/pics/icon-camera-focus-infinity.png
+    qml/pics/icon-camera-focus-macro.png
+    qml/pics/icon-camera-focus-manual.png
+    qml/pics/icon-camera-focus.png
+    qml/pics/icon-camera-shutter.png
+    qml/pics/icon-camera-shutter-release.png
+    qml/pics/icon-camera-switch.svg
+    qml/pics/icon-camera-video-shutter-off.png
+    qml/pics/icon-camera-video-shutter-on.png
+    qml/pics/icon-camera-wb-automatic.png
+    qml/pics/icon-camera-wb-cloudy.png
+    qml/pics/icon-camera-wb-fluorecent.png
+    qml/pics/icon-camera-wb-sunny.png
+    qml/pics/icon-camera-wb-tungsten.png
+    qml/pics/icon-m-about.png
+    qml/pics/icon-m-camera.svg
+    qml/pics/icon-m-close.png
+    qml/pics/icon-m-controls.svg
+    qml/pics/icon-m-delete.png
+    qml/pics/icon-m-developer-mode.svg
+    qml/pics/icon-m-effect-aqua.svg
+    qml/pics/icon-m-effect-blackboard.svg
+    qml/pics/icon-m-effect-default.svg
+    qml/pics/icon-m-effect-emboss.svg
+    qml/pics/icon-m-effect-grayscale.svg
+    qml/pics/icon-m-effect-negative.svg
+    qml/pics/icon-m-effect-neon.svg
+    qml/pics/icon-m-effect-none.svg
+    qml/pics/icon-m-effect.png
+    qml/pics/icon-m-effect-posterize.svg
+    qml/pics/icon-m-effect-sepia.svg
+    qml/pics/icon-m-effect-sketch.svg
+    qml/pics/icon-m-effect-solarize.svg
+    qml/pics/icon-m-effect-whiteboard.svg
+    qml/pics/icon-m-image.svg
+    qml/pics/icon-m-iso-100.png
+    qml/pics/icon-m-iso-1600.png
+    qml/pics/icon-m-iso-200.png
+    qml/pics/icon-m-iso-3200.png
+    qml/pics/icon-m-iso-400.png
+    qml/pics/icon-m-iso-6400.png
+    qml/pics/icon-m-iso-800.png
+    qml/pics/icon-m-iso-auto.png
+    qml/pics/icon-m-iso-hjr.png
+    qml/pics/icon-m-pixelformat.png
+    qml/pics/icon-m-resolution.png
+    qml/pics/icon-m-scene_mode_action.svg
+    qml/pics/icon-m-scene_mode_ar.svg
+    qml/pics/icon-m-scene_mode_asd.svg
+    qml/pics/icon-m-scene_mode_backlight.svg
+    qml/pics/icon-m-scene_mode_barcode.svg
+    qml/pics/icon-m-scene_mode_beach.svg
+    qml/pics/icon-m-scene_mode_candlelight.svg
+    qml/pics/icon-m-scene_mode_fireworks.svg
+    qml/pics/icon-m-scene_mode_flowers.svg
+    qml/pics/icon-m-scene_mode_hdr.svg
+    qml/pics/icon-m-scene_mode_landscape.svg
+    qml/pics/icon-m-scene_mode_large_aperture.svg
+    qml/pics/icon-m-scene_mode_night_portrait.svg
+    qml/pics/icon-m-scene_mode_night.svg
+    qml/pics/icon-m-scene_mode_none.svg
+    qml/pics/icon-m-scene_mode_party.svg
+    qml/pics/icon-m-scene_mode_portrait.svg
+    qml/pics/icon-m-scene_mode_small_aperture.svg
+    qml/pics/icon-m-scene_mode_snow.svg
+    qml/pics/icon-m-scene_mode_sports.svg
+    qml/pics/icon-m-scene_mode_spotlight.svg
+    qml/pics/icon-m-scene_mode_steady_photo.svg
+    qml/pics/icon-m-scene_mode_sunset.svg
+    qml/pics/icon-m-scene_mode_theatre.svg
+    qml/pics/icon-m-scene_mode_unknown.svg
+    qml/pics/icon-m-sd-card.svg
+    qml/pics/icon-m-share.png
+    qml/pics/icon-m-tele-lense-active.png
+    qml/pics/icon-m-tele-lense.png
+    qml/pics/icon-m-tele-lense.svg
+    qml/pics/icon-m-uwide-lense-active.png
+    qml/pics/icon-m-uwide-lense.png
+    qml/pics/icon-m-uwide-lense.svg
+    qml/pics/icon-m-video.svg
+    qml/pics/icon-m-wide-lense-active.png
+    qml/pics/icon-m-wide-lense.png
+    qml/pics/icon-m-wide-lense.svg
+)
+
+target_sources(harbour-shutter
+    PRIVATE
+    harbour-shutter.cpp
+    cameramodel.cpp
+    cameraproxy.cpp
+    controlmodel.cpp
+    exifmodel.cpp
+    exposuremodel.cpp
+    facedetection.cpp
+    format_converter.cpp
+    formatmodel.cpp
+    image.cpp
+    isomodel.cpp
+    encoder_jpeg.cpp
+    metadatamodel.cpp
+    resolutionmodel.cpp
+    settings.cpp
+    viewfinder2d.cpp
+    viewfinderitem.cpp
+    viewfinderrenderer.cpp
+    wbmodel.cpp
+    focusmodel.cpp
+    flashmodel.cpp
+    fsoperations.cpp
+    resourcehandler.cpp
+    storagemodel.cpp
+)
+
+target_link_libraries(harbour-shutter
+    PRIVATE
+    Qt6::Quick
+    Qt6::Qml
+    Qt6::Gui
+    Qt6::QuickControls2
+    Qt6::Widgets
+    Qt6::Multimedia
+    KF6::I18n
+    KF6::CoreAddons
+    KF6::IconThemes
+    ${LIBCAMERA_LIBRARIES}
+    ${OPENCV_LIBRARIES}
+)
+
+install(TARGETS harbour-shutter ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})

@@ -1,1 +1,0 @@
-../platform.generic/MenuDrawerPL.qml

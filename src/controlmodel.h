@@ -3,7 +3,7 @@
 
 #include "libcamera/camera_manager.h"
 #include "libcamera/controls.h"
-#include "src/cameraproxy.h"
+#include "cameraproxy.h"
 #include <QAbstractListModel>
 
 class ControlModel : public QAbstractListModel

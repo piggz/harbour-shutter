@@ -63,8 +63,8 @@ void StorageModel::scan()
         // Sailfish OS specific mount point base for SD cards!
         if (storage.isValid() &&
             storage.isReady() &&
-            (mountPoint.startsWith("/media") ||
-             mountPoint.startsWith("/run/media/") /* SFOS >= 2.2 */ )
+            (mountPoint.startsWith(QStringLiteral("/media")) ||
+             mountPoint.startsWith(QStringLiteral("/run/media/")) /* SFOS >= 2.2 */ )
             ) {
 
             qDebug() << "Found storage:" << mountPoint;

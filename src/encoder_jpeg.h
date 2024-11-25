@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "src/format_converter.h"
+#include "format_converter.h"
 #include <libcamera/stream.h>
 
 class EncoderJpeg

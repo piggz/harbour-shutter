@@ -61,12 +61,14 @@ void IsoModel::setCamera(QObject *camera)
     beginResetModel();
     m_isoModes.clear();
 
+#if 0
     QList<int> supportedIsoRange = m_camera->exposure()->supportedIsoSensitivities();
 
     for (int i = 0; i < supportedIsoRange.count() ; i++) {
         m_isoModes.push_back(std::make_pair(i, isoName(supportedIsoRange[i])));
         qDebug() << "Found support for" << isoName(supportedIsoRange[i]);
     }
+#endif
     endResetModel();
     Q_EMIT rowCountChanged();
 
@@ -82,9 +84,9 @@ QString IsoModel::isoName(int iso) const
     if (iso == 0) {
         name = tr("Auto ISO");
     } else if (iso == 1) {
-        name = "ISO_HJR";
+        name = QStringLiteral("ISO_HJR");
     } else {
-        name = QString("ISO_%1").arg(iso);
+        name = QStringLiteral("ISO_%1").arg(iso);
     }
     return name;
 }

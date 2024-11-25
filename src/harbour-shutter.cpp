@@ -1,25 +1,15 @@
-#include "src/controlmodel.h"
-#ifdef QT_QML_DEBUG
-#include <QtQuick>
-#endif
-
-#include <QQuickView>
-#include <QGuiApplication>
+#include <QApplication>
+#include <QQmlApplicationEngine>
+#include <QtQml>
+#include <QUrl>
+#include <QQuickStyle>
 #include <QQmlContext>
 #include <QQuickItem>
 #include <QSortFilterProxyModel>
 
-#ifdef MER_EDITION_SAILFISH
-#include <sailfishapp.h>
-#include "deviceinfo.h"
-#else
-#include <QQmlApplicationEngine>
-#endif
-
 #include <libcamera/camera_manager.h>
 
 #include "cameramodel.h"
-#include "effectsmodel.h"
 #include "exposuremodel.h"
 #include "isomodel.h"
 #include "resolutionmodel.h"
@@ -36,29 +26,18 @@
 #include "viewfinder2d.h"
 #include "cameraproxy.h"
 #include "settings.h"
+#include "controlmodel.h"
 
 int main(int argc, char *argv[])
 {
-    // SailfishApp::main() will display "qml/harbour-advanced-camera.qml", if you need more
-    // control over initialization, you can use:
-    //
-    //   - SailfishApp::application(int, char *[]) to get the QGuiApplication *
-    //   - SailfishApp::createView() to get a new QQuickView * instance
-    //   - SailfishApp::pathTo(QString) to get a QUrl to a resource file
-    //   - SailfishApp::pathToMainQml() to get a QUrl to the main QML file
-    //
-    // To display the view, call "show()" (will show fullscreen on device).
+    QQuickStyle::setStyle(QStringLiteral("Material"));
 
-    QGuiApplication *app;
-#ifdef MER_EDITION_SAILFISH
-    app = SailfishApp::application(argc, argv);
-#else
-    app = new QGuiApplication(argc, argv);
-#endif
+    QApplication app(argc, argv);
+    QQmlApplicationEngine engine;
 
-    app->setOrganizationDomain("piggz.co.uk");
-    app->setOrganizationName("uk.co.piggz"); // needed for Sailjail
-    app->setApplicationName("shutter");
+    QApplication::setOrganizationDomain(QStringLiteral("piggz.co.uk"));
+    QApplication::setOrganizationName(QStringLiteral("uk.co.piggz")); // needed for Sailjail
+    QApplication::setApplicationName(QStringLiteral("shutter"));
 
     std::shared_ptr<libcamera::CameraManager> cm = std::make_shared<libcamera::CameraManager>();
 
@@ -70,7 +49,7 @@ int main(int argc, char *argv[])
 
     CameraModel cameraModel(0, cm);
 
-    qmlRegisterType<EffectsModel>("uk.co.piggz.shutter", 1, 0, "EffectsModel");
+    //qmlRegisterType<EffectsModel>("uk.co.piggz.shutter", 1, 0, "EffectsModel");
     qmlRegisterType<ExposureModel>("uk.co.piggz.shutter", 1, 0, "ExposureModel");
     qmlRegisterType<IsoModel>("uk.co.piggz.shutter", 1, 0, "IsoModel");
     qmlRegisterType<WbModel>("uk.co.piggz.shutter", 1, 0, "WhiteBalanceModel");
@@ -78,93 +57,60 @@ int main(int argc, char *argv[])
     qmlRegisterType<FlashModel>("uk.co.piggz.shutter", 1, 0, "FlashModel");
     qmlRegisterType<ExifModel>("uk.co.piggz.shutter", 1, 0, "ExifModel");
     qmlRegisterType<MetadataModel>("uk.co.piggz.shutter", 1, 0, "MetadataModel");
-    qmlRegisterUncreatableType<FormatModel>("uk.co.piggz.shutter", 1, 0, "FormatModel", "Not to be created within QML");
-    qmlRegisterUncreatableType<ResolutionModel>("uk.co.piggz.shutter", 1, 0, "ResolutionModel", "Not to be created within QML");
-    qmlRegisterUncreatableType<ControlModel>("uk.co.piggz.shutter", 1, 0, "ControlModel", "Not to be created within QML");
+    qmlRegisterUncreatableType<FormatModel>("uk.co.piggz.shutter", 1, 0, "FormatModel", QStringLiteral("Not to be created within QML"));
+    qmlRegisterUncreatableType<ResolutionModel>("uk.co.piggz.shutter", 1, 0, "ResolutionModel", QStringLiteral("Not to be created within QML"));
+    qmlRegisterUncreatableType<ControlModel>("uk.co.piggz.shutter", 1, 0, "ControlModel", QStringLiteral("Not to be created within QML"));
     qmlRegisterType<ViewFinderItem>("uk.co.piggz.shutter", 1, 0, "ViewFinderItem");
     qmlRegisterType<ViewFinder2D>("uk.co.piggz.shutter", 1, 0, "ViewFinder2D");
     qmlRegisterType<Settings>("uk.co.piggz.shutter", 1, 0, "Settings");
     qmlRegisterType<CameraProxy>("uk.co.piggz.shutter", 1, 0, "CameraProxy");
 
-
-#ifdef IS_SAILFISH_OS
-
-#endif
-#ifdef IS_QTCONTROLS_QT
-
-#endif
-
-#ifdef MER_EDITION_SAILFISH
-    QQuickView *view = SailfishApp::createView();
-    QQmlContext *rootContext = view->rootContext();
-#else
-    QQmlApplicationEngine engine;
-    QQmlContext *rootContext = engine.rootContext();
-#endif
-
-    if (!rootContext)
-    {
-        qDebug() << "Failed to initialize QML context\n";
-        return -2;
-    }
-
-    ResourceHandler handler(app);
+    ResourceHandler handler(&app);
     handler.acquire();
 
     // We do not need to pass settings to QML by using setContextProperty, because Settings is a
     // wrapper around QSettings via its m_settings member. Because the object instantiated in QML
     // and the one in C++ will use QSettings, they will use the same app-global settings store anyway.
-    Settings settings(app);
+    Settings settings(&app);
 
-    StorageModel storageModel(app);
-    rootContext->setContextProperty("modelStorage", &storageModel);
+    StorageModel storageModel(&app);
+    engine.rootContext()->setContextProperty(QStringLiteral("modelStorage"), (QObject*)&storageModel);
 
-    FSOperations fsOperations(app);
-    rootContext->setContextProperty("fsOperations", &fsOperations);
+    FSOperations fsOperations(&app);
+    engine.rootContext()->setContextProperty(QStringLiteral("fsOperations"), &fsOperations);
 
     std::shared_ptr<CameraProxy> cameraProxy = std::make_shared<CameraProxy>();
     cameraProxy->setCameraManager(cm);
     cameraProxy->setSettings(&settings);
-    rootContext->setContextProperty("cameraProxy", cameraProxy.get());
+    engine.rootContext()->setContextProperty(QStringLiteral("cameraProxy"), (QObject*)cameraProxy.get());
 
-    FormatModel formatModel(app);
+    FormatModel formatModel(&app);
     formatModel.setCameraProxy(cameraProxy);
-    rootContext->setContextProperty("modelFormats", &formatModel);
+    engine.rootContext()->setContextProperty(QStringLiteral("modelFormats"), (QObject*)&formatModel);
 
-    ResolutionModel resolutionModel(app);
+    ResolutionModel resolutionModel(&app);
     resolutionModel.setCameraProxy(cameraProxy);
 
-    ControlModel controlModel(app);
+    ControlModel controlModel(&app);
     controlModel.setCameraProxy(cameraProxy);
-    rootContext->setContextProperty("modelControls", &controlModel);
+    engine.rootContext()->setContextProperty(QStringLiteral("modelControls"), (QObject*)&controlModel);
+
 
     QSortFilterProxyModel sortedResolutionModel;
     sortedResolutionModel.setSourceModel(&resolutionModel);
     sortedResolutionModel.setSortRole(ResolutionModel::ResolutionMpx);
     sortedResolutionModel.sort(0, Qt::DescendingOrder);
-    rootContext->setContextProperty("modelResolutions", &resolutionModel);
-    rootContext->setContextProperty("modelCamera", &cameraModel);
-    rootContext->setContextProperty("modelResolution", &resolutionModel);
-    rootContext->setContextProperty("sortedModelResolution", &sortedResolutionModel);
+    engine.rootContext()->setContextProperty(QStringLiteral("modelResolutions"), (QObject*)&resolutionModel);
+    engine.rootContext()->setContextProperty(QStringLiteral("modelCamera"), (QObject*)&cameraModel);
+    engine.rootContext()->setContextProperty(QStringLiteral("modelResolution"), (QObject*)&resolutionModel);
+    engine.rootContext()->setContextProperty(QStringLiteral("sortedModelResolution"), &sortedResolutionModel);
 
-#ifdef MER_EDITION_SAILFISH
-    DeviceInfo deviceInfo;
-    rootContext->setContextProperty("CameraManufacturer", deviceInfo.manufacturer());
-    rootContext->setContextProperty("CameraPrettyModelName", deviceInfo.prettyModelName());
-#endif
 
- //   QObject::connect(&fsOperations, &FSOperations::rescan, &storageModel,
- //                    &StorageModel::scan);
+    engine.loadFromModule("uk.co.piggz.shutter", "Main");
 
-#ifdef MER_EDITION_SAILFISH
-    QObject::connect(view, &QQuickView::focusObjectChanged, &handler,
-                     &ResourceHandler::handleFocusChange);
+    if (engine.rootObjects().isEmpty()) {
+        return -1;
+    }
 
-    view->setSource(SailfishApp::pathTo("qml/harbour-shutter.qml"));
-    view->show();
-#else
-    engine.load(QUrl("qrc:/qml/harbour-shutter.qml"));
-#endif
-
-    return app->exec();
+    return app.exec();
 }

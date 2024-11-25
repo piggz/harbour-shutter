@@ -40,19 +40,18 @@ void MetadataModel::setPlayer(QObject *player)
     QMediaPlayer* pl = qvariant_cast<QMediaPlayer *>(player->property("mediaObject"));
     if (m_player != pl)
         m_player = pl;
-    connect(m_player, &QMediaPlayer::metaDataAvailableChanged, this, &MetadataModel::getMetadata);
+    //connect(m_player, &QMediaPlayer::metaDataChanged, this, &MetadataModel::getMetadata);
 }
 
 void MetadataModel::getMetadata(bool available)
 {
     Q_UNUSED(available);
-    if (m_player->isMetaDataAvailable())
-    {
-        QStringList meta (m_player->availableMetaData());
+    QMediaMetaData meta = m_player->metaData();
+    if (!meta.isEmpty()) {
         qDebug() << "Metadata available:" << meta;
         beginResetModel();
-        for (const QString &mdName : meta)
-            m_data[mdName] = m_player->metaData(mdName);
+        for (auto key : meta.keys())
+            m_data[key] = meta.value(key);
         endResetModel();
         if (m_data.count() == 0)
             qDebug() << "No metadata found!";

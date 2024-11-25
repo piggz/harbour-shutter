@@ -60,6 +60,8 @@ void FlashModel::setCamera(QObject *camera)
 
     beginResetModel();
     m_flashModes.clear();
+
+#if 0
     for (int c = (int)QCameraExposure::FlashAuto; c <= (int)QCameraExposure::FlashManual; c++) {
         if (m_camera->exposure()->isFlashModeSupported((QCameraExposure::FlashMode)c)
                 && flashName((QCameraExposure::FlashMode)c) != tr("Unknown")) {
@@ -67,9 +69,10 @@ void FlashModel::setCamera(QObject *camera)
             m_flashModes.push_back(std::make_pair((QCameraExposure::FlashMode)c, flashName((QCameraExposure::FlashMode)c)));
         }
     }
+#endif
+
     endResetModel();
     Q_EMIT rowCountChanged();
-
     if (m_flashModes.size() == 0) {
         qDebug() << "No flash modes found";
     }
@@ -78,7 +81,7 @@ void FlashModel::setCamera(QObject *camera)
 QString FlashModel::flashName(QCameraExposure::FlashMode flash) const
 {
     QString name;
-
+#if 0
     switch (flash) {
     case QCameraExposure::FlashAuto:
         name = tr("Auto");
@@ -114,6 +117,6 @@ QString FlashModel::flashName(QCameraExposure::FlashMode flash) const
         name = tr("Unknown");
         break;
     }
-
+#endif
     return name;
 }

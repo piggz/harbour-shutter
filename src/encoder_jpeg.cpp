@@ -9,8 +9,8 @@
 #include <libcamera/camera.h>
 #include <libcamera/libcamera/formats.h>
 
-#include "src/image.h"
-#include "src/format_converter.h"
+#include "image.h"
+#include "format_converter.h"
 #include "qdebug.h"
 
 static const QMap<libcamera::PixelFormat, QImage::Format> nativeFormats

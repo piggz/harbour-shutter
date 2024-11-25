@@ -1,8 +1,6 @@
 #include "viewfinder2d.h"
 
 #include <assert.h>
-#include <stdint.h>
-#include <utility>
 
 #include <libcamera/formats.h>
 
@@ -13,28 +11,25 @@
 #include <QPainter>
 #include <QtDebug>
 #include <QVideoFrame>
-#include "facedetection.h"
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-#include "private/qvideoframe_p.h"
-#endif
+#include <QVideoFrameFormat>
+#include <QAbstractVideoBuffer>
 
 #include "image.h"
 #include <string.h>
 
-static const QMap<libcamera::PixelFormat, QVideoFrame::PixelFormat> nativeFormats
+static const QMap<libcamera::PixelFormat, QVideoFrameFormat::PixelFormat> nativeFormats
 {
-    { libcamera::formats::MJPEG, QVideoFrame::Format_Jpeg },
-    { libcamera::formats::ABGR8888, QVideoFrame::Format_BGR32 },
-    { libcamera::formats::ARGB8888, QVideoFrame::Format_ARGB32 },
-    { libcamera::formats::XRGB8888, QVideoFrame::Format_RGB32 },
-    { libcamera::formats::RGB888, QVideoFrame::Format_RGB24 },
-    { libcamera::formats::BGR888, QVideoFrame::Format_BGR24 },
-    { libcamera::formats::YUYV, QVideoFrame::Format_YUYV },
-    { libcamera::formats::YUV444, QVideoFrame::Format_YUV444 },
-    { libcamera::formats::UYVY, QVideoFrame::Format_UYVY },
-    { libcamera::formats::NV12, QVideoFrame::Format_NV12 },
-    { libcamera::formats::NV21, QVideoFrame::Format_NV21 },
+    { libcamera::formats::MJPEG, QVideoFrameFormat::Format_Jpeg },
+    { libcamera::formats::ABGR8888, QVideoFrameFormat::Format_ABGR8888 },
+    { libcamera::formats::ARGB8888, QVideoFrameFormat::Format_ARGB8888 },
+    { libcamera::formats::XRGB8888, QVideoFrameFormat::Format_XRGB8888 },
+//    { libcamera::formats::RGB888, QVideoFrameFormat::Format_RGB888 },
+//    { libcamera::formats::BGR888, QVideoFrameFormat::Format_BGR888 },
+    { libcamera::formats::YUYV, QVideoFrameFormat::Format_YUYV },
+    { libcamera::formats::YUV420, QVideoFrameFormat::Format_YUV420P },
+    { libcamera::formats::UYVY, QVideoFrameFormat::Format_UYVY },
+    { libcamera::formats::NV12, QVideoFrameFormat::Format_NV12 },
+    { libcamera::formats::NV21, QVideoFrameFormat::Format_NV21 },
 };
 
 ViewFinder2D::ViewFinder2D()
@@ -83,27 +78,22 @@ void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *imag
         QSize sz(m_size.width(), m_size.height());
 
         //Configure the frame if required
-        if ((m_frame.width() != sz.width() || m_frame.height() != sz.height()) || m_qvFormat == QVideoFrame::Format_Jpeg) {
-            m_frame = QVideoFrame(totalSize, sz, size1 / m_size.height(), m_qvFormat);
+        if ((m_frame.width() != sz.width() || m_frame.height() != sz.height()) || m_qvFormat == QVideoFrameFormat::Format_Jpeg) {
+            m_frame = QVideoFrame(QVideoFrameFormat(m_size, m_qvFormat));
         }
 
         //Copy data into the frame
-        if (m_frame.map(QAbstractVideoBuffer::WriteOnly)) {
+        if (m_frame.map(QVideoFrame::WriteOnly)) {
             size_t curOffset = 0;
             for (uint plane = 0; plane < buffer->metadata().planes().size(); ++plane) {
-                memcpy(m_frame.bits() + curOffset, image->data(plane).data(), buffer->metadata().planes()[plane].bytesused);
-                curOffset += buffer->metadata().planes()[plane].bytesused;
+                memcpy(m_frame.bits(plane), image->data(plane).data(), buffer->metadata().planes()[plane].bytesused);
             }
             m_frame.unmap();
         } else {
             qDebug() << "Unable to map video frame writeonly";
         }
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-        m_image= qt_imageFromVideoFrame(m_frame);
-#else
-        m_image = m_frame.image();
-#endif
+        m_image = m_frame.toImage();
     }
     update();
 

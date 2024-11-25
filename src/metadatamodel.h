@@ -22,7 +22,7 @@ public:
 public Q_SLOTS:
     void getMetadata(bool available);
 private:
-    QMap<QString, QVariant> m_data;
+    QMap<QMediaMetaData::Key, QVariant> m_data;
     QMediaPlayer *m_player;
 };
 

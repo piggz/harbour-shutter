@@ -76,10 +76,11 @@ void ExposureModel::setCamera(QObject *camera)
     }
 }
 
-QString ExposureModel::exposureName(QCameraExposure::ExposureMode e) const
+QString ExposureModel::exposureName(QCamera::ExposureMode e) const
 {
     QString name;
 
+#if 0
     switch (e) {
     case QCameraExposure::ExposureAuto:
         name = tr("Automatic Scene Detection");
@@ -157,14 +158,15 @@ QString ExposureModel::exposureName(QCameraExposure::ExposureMode e) const
     default:
         name = "Unknown (" + QString::number(e) + ")";
     }
-
+#endif
     return name;
 }
 
-QString ExposureModel::iconName(QCameraExposure::ExposureMode e) const
+QString ExposureModel::iconName(QCamera::ExposureMode e) const
 {
     QString name;
 
+#if 0
     switch (e) {
     case QCameraExposure::ExposureAuto:
         name = "asd";
@@ -242,6 +244,6 @@ QString ExposureModel::iconName(QCameraExposure::ExposureMode e) const
         name = "unknown";
         break;
     }
-
+#endif
     return name;
 }

@@ -60,6 +60,7 @@ void FocusModel::setCamera(QObject *camera)
 
     beginResetModel();
     m_focusModes.clear();
+#if 0
     for (int c = (int)QCameraFocus::ManualFocus; c <= (int)QCameraFocus::MacroFocus; c++) {
         if (m_camera->focus()->isFocusModeSupported((QCameraFocus::FocusMode)c)
                 && focusName((QCameraFocus::FocusMode)c) != tr("Unknown")) {
@@ -75,6 +76,7 @@ void FocusModel::setCamera(QObject *camera)
         m_focusModes.push_back(std::make_pair(QCameraFocus::ManualFocus, focusName(QCameraFocus::ManualFocus)));
     }
     endResetModel();
+#endif
     Q_EMIT rowCountChanged();
 
     if (m_focusModes.size() == 0) {
@@ -87,6 +89,7 @@ QString FocusModel::focusName(QCameraFocus::FocusMode focus) const
     QString name;
     qDebug() << "Checking focus name: " << focus;
 
+#if 0
     switch (focus) {
     case QCameraFocus::ManualFocus:
         name = tr("Manual");
@@ -110,5 +113,6 @@ QString FocusModel::focusName(QCameraFocus::FocusMode focus) const
         name = tr("Unknown");
         break;
     }
+#endif
     return name;
 }
