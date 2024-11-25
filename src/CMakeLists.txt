@@ -1,5 +1,9 @@
 add_executable(harbour-shutter)
 
+qt_add_resources(harbour-shutter "classifiers"
+    PREFIX "/"
+    FILES assets/classifiers/lbpcascade_frontalface.xml)
+
 target_include_directories(harbour-shutter PUBLIC ${LIBCAMERA_INCLUDE_DIRS})
 target_compile_options(harbour-shutter PUBLIC ${LIBCAMERA_CFLAGS_OTHER})
 

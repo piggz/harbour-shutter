@@ -6,7 +6,7 @@
 
 FaceDetection::FaceDetection()
 {
-    QFile xml(QLatin1String(":/assets/classifiers/lbpcascade_frontalface.xml"));
+    QFile xml(QLatin1String(":assets/classifiers/lbpcascade_frontalface.xml"));
 
     if(xml.open(QFile::ReadOnly | QFile::Text))
     {

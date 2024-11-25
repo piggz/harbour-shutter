@@ -1,15 +1,13 @@
-import QtQuick 2.5
+import QtQuick
+import QtQuick.Controls
 import uk.co.piggz.shutter 1.0
 
 import "../components/"
-import "../components/platform"
 
-PagePL {
+Page {
     id: galleryPage
 
-    property var fileList: ({
-
-                            })
+    property var fileList: ({})
     property alias showButtons: btnClose.visible
 
     function isVideo(idx) {
@@ -132,8 +130,23 @@ PagePL {
 
     }
 
-    SlideshowPL {
-        id: gallery
+    SwipeView{
+        id:gallery
+        readonly property bool canShare: false
+        property var model
+
         model: fileList
+        anchors.fill:parent
+        clip:true//setting it make item outside of view invisible
+        z: -1
+        Repeater {
+          model:gallery.model
+          Image{
+             width: gallery.width
+             height: gallery.height
+             source: filePath //we use this name in ListModel
+             fillMode: Image.Stretch
+          }
+       }
     }
 }
