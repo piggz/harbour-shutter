@@ -22,7 +22,6 @@ ecm_add_qml_module(harbour-shutter
     qml/components/DockModes.qml
     qml/components/IconButton.qml
     qml/components/IconSwitch.qml
-    qml/components/ListItem.qml
     qml/components/RoundButton.qml
     qml/components/TextSwitch.qml
     qml/components/TruncationModes.qml

@@ -13,9 +13,8 @@ Slider {
     from: (forceUpdate || !forceUpdate) && cameraProxy ? minimim : 0
     to: (forceUpdate || !forceUpdate) && cameraProxy ? maximum : 0
 
-    Text {
+    Label {
         text: sldControl.value.toFixed(2)
         anchors.centerIn: parent
-        color: styler.themePrimaryColor
     }
 }

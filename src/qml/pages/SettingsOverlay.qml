@@ -300,156 +300,151 @@ Item {
             }
         }
 
-        Rectangle {
+        Flickable {
             anchors.fill: parent
-            color: "black"
-            opacity: 0.7
+            anchors.margins: styler.themePaddingMedium
+            contentHeight: mainColumn.height
 
-            Flickable {
-                anchors.fill: parent
-                anchors.margins: styler.themePaddingMedium
-                contentHeight: mainColumn.height
-
-                Column {
-                    id: mainColumn
-                    width: parent.width
-                    height: childrenRect.height
-                    spacing: styler.themePaddingMedium
-                    TextSwitch {
-                        id: zoomSwitch
-                        text: qsTr("Swap zoom controls")
-                        checked: settings.get("global", "swapZoomControl", false)
-                        onCheckedChanged: {
-                            settings.set("global", "swapZoomControl", checked);
-                        }
+            Column {
+                id: mainColumn
+                width: parent.width
+                height: childrenRect.height
+                spacing: styler.themePaddingMedium
+                TextSwitch {
+                    id: zoomSwitch
+                    text: qsTr("Swap zoom controls")
+                    checked: settings.get("global", "swapZoomControl", false)
+                    onCheckedChanged: {
+                        settings.set("global", "swapZoomControl", checked);
                     }
+                }
 
-                    ComboBox {
-                        id: gridSwitch
-                        //label: qsTr("Grid:")
-                        model: grids
-                        property var grids: [
-                            qsTr("None"),
-                            qsTr("Thirds"),
-                            qsTr("Ambience")
-                        ]
-                        property var values: ["none", "thirds", "ambience"]
+                ComboBox {
+                    id: gridSwitch
+                    //label: qsTr("Grid:")
+                    model: grids
+                    property var grids: [
+                        qsTr("None"),
+                        qsTr("Thirds"),
+                        qsTr("Ambience")
+                    ]
+                    property var values: ["none", "thirds", "ambience"]
 
-                        function findIndex(id) {
-                            for (var i = 0; i < values.length; i++) {
-                                if (values[i] === id) {
-                                    return i
-                                }
+                    function findIndex(id) {
+                        for (var i = 0; i < values.length; i++) {
+                            if (values[i] === id) {
+                                return i
                             }
-                            return 0
                         }
-
-                        currentIndex: findIndex(settings.gridMode)
-                        onCurrentValueChanged: {
-                            var index = gridSwitch.currentIndex;
-                            settings.setGlobalValue("gridMode", gridSwitch.values[index]);
-                        }
+                        return 0
                     }
 
-                    Slider {
-                        id: sldVideoBitrate
-                        //label: qsTr("Video Bitrate")
-                        width: parent.width
-                        height: styler.themeItemSizeLarge
-                        from: 6400000
-                        to: 32000000
-                        stepSize: 800000
-                        Text {
-                            text: sldVideoBitrate.value
-                            anchors.centerIn: parent
-                        }
-
+                    currentIndex: findIndex(settings.gridMode)
+                    onCurrentValueChanged: {
+                        var index = gridSwitch.currentIndex;
+                        settings.setGlobalValue("gridMode", gridSwitch.values[index]);
                     }
-                    Slider {
-                        id: sldAudioBitrate
-                        //label: qsTr("Audio Bitrate")
-                        width: parent.width
-                        height: styler.themeItemSizeLarge
-                        from: 64000
-                        to: 320000
-                        stepSize: 8-000
-                        Text {
-                            text: sldAudioBitrate.value
-                            anchors.centerIn: parent
-                        }
+                }
 
-                    }
-                    TextSwitch{
-                        id: locationMetadataSwitch
-                        width: parent.width
-
-                        checked: settings.get("global", "locationMetadata", false)
-                        text: qsTr("Store GPS location to metadata")
-
-                        onCheckedChanged: {
-                            settings.setGlobalValue("locationMetadata", checked);
-                        }
-                    }
-                    TextSwitch{
-                        id: showManualControls
-                        width: parent.width
-
-                        checked: settings.get("global", "showManualControls", false)
-                        text: qsTr("Display manual controls")
-
-                        onCheckedChanged: {
-                            settings.setGlobalValue("showManualControls", checked);
-                        }
-                    }
-                    TextSwitch {
-                        id: faceDetectionSwitch
-                        width: parent.width
-
-                        checked: settings.get("global", "faceDetection", false)
-                        text: qsTr("Enable/Disable face detection")
-
-                        onCheckedChanged: {
-                            console.log("The face detection button has been clicked! - ", checked)
-                            settings.set("global", "faceDetection", checked);
-                        }
+                Slider {
+                    id: sldVideoBitrate
+                    //label: qsTr("Video Bitrate")
+                    width: parent.width
+                    height: styler.themeItemSizeLarge
+                    from: 6400000
+                    to: 32000000
+                    stepSize: 800000
+                    Text {
+                        text: sldVideoBitrate.value
+                        anchors.centerIn: parent
                     }
 
-                    Label {
-                        text: qsTr("Disabled Cameras")
+                }
+                Slider {
+                    id: sldAudioBitrate
+                    //label: qsTr("Audio Bitrate")
+                    width: parent.width
+                    height: styler.themeItemSizeLarge
+                    from: 64000
+                    to: 320000
+                    stepSize: 8-000
+                    Text {
+                        text: sldAudioBitrate.value
+                        anchors.centerIn: parent
                     }
 
-                    Row {
-                        width: parent.width
-                        spacing: 5
-                        Repeater {
-                            model: modelCamera
-                            Rectangle {
-                                width: styler.themeItemSizeSmall
-                                height: width
-                                color: (settings.disabledCameras.indexOf("[" + index + "]") >=0) ? "red" : "green"
-                                Label  {
-                                    anchors.centerIn: parent
-                                    text: index
-                                }
-                                MouseArea {
-                                    anchors.fill: parent
+                }
+                TextSwitch{
+                    id: locationMetadataSwitch
+                    width: parent.width
 
-                                    onClicked: {
-                                        console.log("Clicked the button for Camera ", index)
-                                        if (settings.disabledCameras.indexOf("[" + index + "]") >=0) {
-                                            settings.disabledCameras = settings.disabledCameras.replace("[" + index + "]", "")
-                                        } else {
-                                            settings.disabledCameras += ("[" + index + "]")
-                                        }
+                    checked: settings.get("global", "locationMetadata", false)
+                    text: qsTr("Store GPS location to metadata")
 
-                                        console.log(settings.disabledCameras)
-                                        settings.calculateEnabledCameras()
+                    onCheckedChanged: {
+                        settings.setGlobalValue("locationMetadata", checked);
+                    }
+                }
+                TextSwitch{
+                    id: showManualControls
+                    width: parent.width
+
+                    checked: settings.get("global", "showManualControls", false)
+                    text: qsTr("Display manual controls")
+
+                    onCheckedChanged: {
+                        settings.setGlobalValue("showManualControls", checked);
+                    }
+                }
+                TextSwitch {
+                    id: faceDetectionSwitch
+                    width: parent.width
+
+                    checked: settings.get("global", "faceDetection", false)
+                    text: qsTr("Enable/Disable face detection")
+
+                    onCheckedChanged: {
+                        console.log("The face detection button has been clicked! - ", checked)
+                        settings.set("global", "faceDetection", checked);
+                    }
+                }
+
+                Label {
+                    text: qsTr("Disabled Cameras")
+                }
+
+                Row {
+                    width: parent.width
+                    spacing: 5
+                    Repeater {
+                        model: modelCamera
+                        Rectangle {
+                            width: styler.themeItemSizeSmall
+                            height: width
+                            color: (settings.disabledCameras.indexOf("[" + index + "]") >=0) ? "red" : "green"
+                            Label  {
+                                anchors.centerIn: parent
+                                text: index
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+
+                                onClicked: {
+                                    console.log("Clicked the button for Camera ", index)
+                                    if (settings.disabledCameras.indexOf("[" + index + "]") >=0) {
+                                        settings.disabledCameras = settings.disabledCameras.replace("[" + index + "]", "")
+                                    } else {
+                                        settings.disabledCameras += ("[" + index + "]")
                                     }
+
+                                    console.log(settings.disabledCameras)
+                                    settings.calculateEnabledCameras()
                                 }
                             }
                         }
                     }
                 }
+
             }
         }
     }
@@ -475,7 +470,7 @@ Item {
     }
 
     function setCameraProxy(cam) {
-/*
+        /*
         modelExposure.setCamera(cam)
         modelEffects.setCamera(cam)
         modelIso.setCamera(cam)

@@ -31,6 +31,7 @@
 int main(int argc, char *argv[])
 {
     QQuickStyle::setStyle(QStringLiteral("Material"));
+    qputenv("QT_QUICK_CONTROLS_MATERIAL_THEME", QByteArray("Dark"));
 
     QApplication app(argc, argv);
     QQmlApplicationEngine engine;

@@ -6,40 +6,30 @@ DockedPanel {
 
     property alias model: listView.model
     property var selectedItem
-    modal: true
-
-    dock: dockModes.left
-
     signal clicked(var value)
 
+    modal: true
+    dock: dockModes.left
     width: parent.width / 2
     height: parent.height
     z: 99
 
     clip: true
 
-    Rectangle {
+    ListView {
+        id: listView
         anchors.fill: parent
-        color: "black"
-        opacity: 0.7
+        clip: true
 
-        ListView {
-            id: listView
-            anchors.fill: parent
-            clip: true
+        delegate: ItemDelegate {
+            highlighted: value === selectedItem
+            width: ListView.view.width
+            text: name
 
-            delegate: ListItem {
-                highlighted: value === selectedItem
-
-                Label {
-                    id: lbl
-                    color: highlighted ? styler.themeHighlightColor : styler.themePrimaryColor
-                    text: name
-                }
-                onClicked: {
-                    panel.clicked(value)
-                }
+            onClicked: {
+                panel.clicked(value)
             }
         }
     }
+
 }
