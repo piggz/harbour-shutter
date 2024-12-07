@@ -32,6 +32,7 @@ Requires:   opencv
 Requires:   qt6-qtsensors
 Requires:   kf6-kirigami
 Requires:   qt6-qtsvg
+Requires:   qt-runner
 BuildRequires:  qt6-qtmultimedia-devel
 BuildRequires:  qt6-qtdeclarative-devel
 BuildRequires:  ssu-sysinfo-devel
@@ -73,7 +74,7 @@ Url:
 %build
 # >> build pre
 # << build pre
-%cmake_kf6
+%cmake_kf6 -DSAILFISHOS=ON
 %cmake_build
 
 # >> build post
@@ -95,7 +96,7 @@ desktop-file-install --delete-original       \
 %files
 %defattr(-,root,root,-)
 %{_bindir}
-%{_datadir}/applications/uk.co.piggz.shutter.desktop
-#{_datadir}/icons/hicolor/*/apps/%{name}.png
+%{_datadir}/applications/harbour-shutter.desktop
+%{_datadir}/icons/hicolor/*/apps/%{name}.png
 # >> files
 # << files

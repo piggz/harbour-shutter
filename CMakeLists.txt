@@ -37,7 +37,7 @@ add_subdirectory(src)
 
 if (SAILFISHOS)
     install(PROGRAMS harbour-shutter.desktop DESTINATION ${KDE_INSTALL_APPDIR})
-    install(FILES harbour-supersonik.png DESTINATION ${KDE_INSTALL_FULL_ICONDIR}/hicolor/86x86/apps)
+    install(FILES harbour-shutter.png DESTINATION ${KDE_INSTALL_FULL_ICONDIR}/hicolor/86x86/apps)
 else()
     install(PROGRAMS uk.co.piggz.shutter.desktop DESTINATION ${KDE_INSTALL_APPDIR})
 endif()
