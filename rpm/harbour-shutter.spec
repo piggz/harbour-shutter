@@ -21,21 +21,19 @@ Name:       harbour-shutter
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    Shutter Camera
-Version:    0.0.1
+Version:    0.0.2
 Release:    1
 Group:      Qt/Qt
 License:    GPLv2
 URL:        http://github.com/piggz/harbour-shutter
 Source0:    %{name}-%{version}.tar.bz2
-Requires:   sailfishsilica-qt5 >= 0.10.9
 Requires:   libcamera
 Requires:   opencv
-BuildRequires:  pkgconfig(sailfishapp) >= 1.0.2
-BuildRequires:  pkgconfig(Qt5Core)
-BuildRequires:  pkgconfig(Qt5Multimedia)
-BuildRequires:  pkgconfig(Qt5Qml)
-BuildRequires:  pkgconfig(Qt5Quick)
-BuildRequires:  qt5-qttools-linguist
+Requires:   qt6-qtsensors
+Requires:   kf6-kirigami
+Requires:   qt6-qtsvg
+BuildRequires:  qt6-qtmultimedia-devel
+BuildRequires:  qt6-qtdeclarative-devel
 BuildRequires:  ssu-sysinfo-devel
 BuildRequires:  libexif-devel
 BuildRequires:  desktop-file-utils
@@ -75,13 +73,8 @@ Url:
 %build
 # >> build pre
 # << build pre
-%if 0%{?sailfishos}
-%qtc_qmake5 VERSION='%{version}-%{release}' FLAVOR=silica
-%else
-%qtc_qmake5 VERSION='%{version}-%{release}' FLAVOR=kirigami
-%endif
-
-%qtc_make %{?_smp_mflags}
+%cmake_kf6
+%cmake_build
 
 # >> build post
 # << build post
@@ -90,7 +83,7 @@ Url:
 rm -rf %{buildroot}
 # >> install pre
 # << install pre
-%qmake5_install
+%cmake_install
 
 # >> install post
 # << install post
@@ -102,8 +95,7 @@ desktop-file-install --delete-original       \
 %files
 %defattr(-,root,root,-)
 %{_bindir}
-%{_datadir}/%{name}
-%{_datadir}/applications/%{name}.desktop
-%{_datadir}/icons/hicolor/*/apps/%{name}.png
+%{_datadir}/applications/uk.co.piggz.shutter.desktop
+#{_datadir}/icons/hicolor/*/apps/%{name}.png
 # >> files
 # << files
