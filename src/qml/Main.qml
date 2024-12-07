@@ -143,7 +143,7 @@ Kirigami.ApplicationWindow {
         property int  themeFontSizeHuge: Math.round(themeFontSizeMedium*3.0)
         property int  themeFontSizeExtraLarge: Math.round(themeFontSizeMedium*2.0)
         property int  themeFontSizeLarge: Math.round(themeFontSizeMedium*1.5)
-        property int  themeFontSizeMedium: Math.round(Qt.application.font.pixelSize*1.0)
+        property int  themeFontSizeMedium: Math.round(Qt.application.font.pixelSize*2.0)
         property int  themeFontSizeSmall: Math.round(themeFontSizeMedium*0.9)
         property int  themeFontSizeExtraSmall: Math.round(themeFontSizeMedium*0.7)
         property real themeFontSizeOnMap: themeFontSizeSmall

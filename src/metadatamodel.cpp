@@ -48,13 +48,11 @@ void MetadataModel::getMetadata(bool available)
     Q_UNUSED(available);
     QMediaMetaData meta = m_player->metaData();
     if (!meta.isEmpty()) {
-        qDebug() << "Metadata available:" << meta;
+        qDebug() << "Metadata available";
         beginResetModel();
         for (auto key : meta.keys())
             m_data[key] = meta.value(key);
         endResetModel();
-        if (m_data.count() == 0)
-            qDebug() << "No metadata found!";
     }
     else {
         qDebug() << "No metadata available!";

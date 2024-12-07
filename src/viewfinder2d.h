@@ -7,13 +7,13 @@
 #include <QMutex>
 #include <QSize>
 #include <QPixmap>
-#include <QVideoFrame>
 
 #include <libcamera/formats.h>
 #include <libcamera/framebuffer.h>
 #include <libcamera/pixel_format.h>
 
 #include "viewfinder.h"
+#include "format_converter.h"
 
 class ViewFinder2D : public QQuickPaintedItem, public ViewFinder
 {
@@ -38,8 +38,8 @@ protected:
     virtual void paint(QPainter *) override;
 
 private:
+    FormatConverter m_converter;
     libcamera::PixelFormat m_format;
-    QVideoFrameFormat::PixelFormat m_qvFormat;
     QSize m_size;
 
     /* Camera stopped icon */
@@ -49,7 +49,6 @@ private:
     /* Buffer and render image */
     libcamera::FrameBuffer *m_buffer;
     QImage m_image;
-    QVideoFrame m_frame;
     QMutex m_mutex; /* Prevent concurrent access to image_ */
 
     QList<QRectF> m_rects;

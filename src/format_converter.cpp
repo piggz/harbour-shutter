@@ -34,7 +34,7 @@
 int FormatConverter::configure(const libcamera::PixelFormat &format,
 			       const QSize &size, unsigned int stride)
 {
-    qDebug() << Q_FUNC_INFO << QString::fromStdString(format.toString());
+    qDebug() << Q_FUNC_INFO << QString::fromStdString(format.toString()) << size << stride;
 
 	switch (format) {
 	case libcamera::formats::NV12:

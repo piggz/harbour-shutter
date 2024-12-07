@@ -141,7 +141,7 @@ private:
     bool m_captureStill = false;
     bool m_singleStream = false;
 
-    bool buildConfiguration( std::initializer_list<libcamera::StreamRole> roles);
+    bool buildConfiguration( std::initializer_list<libcamera::StreamRole> roles, bool configure = false);
     bool configureCamera();
 
     void processCapture();

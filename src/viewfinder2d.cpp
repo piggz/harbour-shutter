@@ -12,24 +12,19 @@
 #include <QtDebug>
 #include <QVideoFrame>
 #include <QVideoFrameFormat>
-#include <QAbstractVideoBuffer>
 
 #include "image.h"
 #include <string.h>
 
-static const QMap<libcamera::PixelFormat, QVideoFrameFormat::PixelFormat> nativeFormats
+static const QMap<libcamera::PixelFormat, QImage::Format> nativeFormats
 {
-    { libcamera::formats::MJPEG, QVideoFrameFormat::Format_Jpeg },
-    { libcamera::formats::ABGR8888, QVideoFrameFormat::Format_ABGR8888 },
-    { libcamera::formats::ARGB8888, QVideoFrameFormat::Format_ARGB8888 },
-    { libcamera::formats::XRGB8888, QVideoFrameFormat::Format_XRGB8888 },
-//    { libcamera::formats::RGB888, QVideoFrameFormat::Format_RGB888 },
-//    { libcamera::formats::BGR888, QVideoFrameFormat::Format_BGR888 },
-    { libcamera::formats::YUYV, QVideoFrameFormat::Format_YUYV },
-    { libcamera::formats::YUV420, QVideoFrameFormat::Format_YUV420P },
-    { libcamera::formats::UYVY, QVideoFrameFormat::Format_UYVY },
-    { libcamera::formats::NV12, QVideoFrameFormat::Format_NV12 },
-    { libcamera::formats::NV21, QVideoFrameFormat::Format_NV21 },
+    { libcamera::formats::ABGR8888, QImage::Format_RGBX8888 },
+    { libcamera::formats::XBGR8888, QImage::Format_RGBX8888 },
+    { libcamera::formats::ARGB8888, QImage::Format_RGB32 },
+    { libcamera::formats::XRGB8888, QImage::Format_RGB32 },
+    { libcamera::formats::RGB888, QImage::Format_BGR888 },
+    { libcamera::formats::BGR888, QImage::Format_RGB888 },
+    { libcamera::formats::RGB565, QImage::Format_RGB16 },
 };
 
 ViewFinder2D::ViewFinder2D()
@@ -46,16 +41,27 @@ const QList<libcamera::PixelFormat> &ViewFinder2D::nativeFormats() const
 int ViewFinder2D::setFormat(const libcamera::PixelFormat &format, const QSize &size,
                             [[maybe_unused]] const libcamera::ColorSpace &colorSpace, unsigned int stride)
 {
-    qDebug() << "Setting vf pixel format to " << m_qvFormat << size;
+    qDebug() << "Setting vf pixel format to " << format << size;
 
     m_image = QImage();
     m_format = format;
     m_size = size;
 
-    auto match = ::nativeFormats.find(m_format);
-    if (match != ::nativeFormats.end()) {
-        m_qvFormat = match.value();
-        qDebug() << "Setting vf pixel format to " << m_qvFormat;
+    /*
+     * If format conversion is needed, configure the converter and allocate
+     * the destination image.
+     */
+    if (!::nativeFormats.contains(format)) {
+        int ret = m_converter.configure(format, size, stride);
+        if (ret < 0)
+            return ret;
+
+        m_image = QImage(size, QImage::Format_RGB32);
+
+        qInfo() << "Using software format conversion from"
+            << format.toString().c_str();
+    } else {
+        qInfo() << "Zero-copy enabled";
     }
 
     return 0;
@@ -71,29 +77,34 @@ void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *imag
         totalSize += buffer->metadata().planes()[plane].bytesused;
     }
 
-    //qDebug() << "Frame size " << totalSize << "Planes " <<  buffer->metadata().planes().size();
+    //qDebug() << "Frame size " << totalSize << size1 << "Planes " <<  buffer->metadata().planes().size() << m_format;
 
     {
         QMutexLocker locker(&m_mutex);
-        QSize sz(m_size.width(), m_size.height());
 
-        //Configure the frame if required
-        if ((m_frame.width() != sz.width() || m_frame.height() != sz.height()) || m_qvFormat == QVideoFrameFormat::Format_Jpeg) {
-            m_frame = QVideoFrame(QVideoFrameFormat(m_size, m_qvFormat));
-        }
-
-        //Copy data into the frame
-        if (m_frame.map(QVideoFrame::WriteOnly)) {
-            size_t curOffset = 0;
-            for (uint plane = 0; plane < buffer->metadata().planes().size(); ++plane) {
-                memcpy(m_frame.bits(plane), image->data(plane).data(), buffer->metadata().planes()[plane].bytesused);
-            }
-            m_frame.unmap();
+        if (::nativeFormats.contains(m_format)) {
+            /*
+             * If the frame format is identical to the display
+             * format, create a QImage that references the frame
+             * and store a reference to the frame buffer. The
+             * previously stored frame buffer, if any, will be
+             * released.
+             *
+             * \todo Get the stride from the buffer instead of
+             * computing it naively
+             */
+            assert(buffer->planes().size() == 1);
+            m_image = QImage(image->data(0).data(), m_size.width(),
+                    m_size.height(), size1 / m_size.height(),
+                    ::nativeFormats[m_format]);
+            std::swap(buffer, m_buffer);
         } else {
-            qDebug() << "Unable to map video frame writeonly";
+            /*
+             * Otherwise, convert the format and release the frame
+             * buffer immediately.
+             */
+            m_converter.convert(image, size1, &m_image);
         }
-
-        m_image = m_frame.toImage();
     }
     update();
 
@@ -124,6 +135,8 @@ void ViewFinder2D::paint(QPainter *painter)
     /* If we have an image, draw it. */
     int w = height() * ((float)m_image.rect().width() / (float)m_image.rect().height());
     int offset = (width() - w) / 2;
+
+    //qDebug() << Q_FUNC_INFO << m_image.rect();
 
     if (!m_image.isNull()) {
         painter->drawImage(QRectF(QPointF(offset,0), QSizeF(w, height())), m_image, m_image.rect());

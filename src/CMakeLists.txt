@@ -4,8 +4,8 @@ qt_add_resources(harbour-shutter "classifiers"
     PREFIX "/"
     FILES assets/classifiers/lbpcascade_frontalface.xml)
 
-target_include_directories(harbour-shutter PUBLIC ${LIBCAMERA_INCLUDE_DIRS})
-target_compile_options(harbour-shutter PUBLIC ${LIBCAMERA_CFLAGS_OTHER})
+target_include_directories(harbour-shutter PUBLIC ${LIBCAMERA_INCLUDE_DIRS} ${OPENCV_INCLUDE_DIRS})
+target_compile_options(harbour-shutter PUBLIC ${LIBCAMERA_CFLAGS_OTHER} ${OPENCV_CFLAGS_OTHER})
 
 ecm_add_qml_module(harbour-shutter
     URI
@@ -162,6 +162,7 @@ target_link_libraries(harbour-shutter
     KF6::IconThemes
     ${LIBCAMERA_LIBRARIES}
     ${OPENCV_LIBRARIES}
+    dl
 )
 
 install(TARGETS harbour-shutter ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
