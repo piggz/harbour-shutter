@@ -50,6 +50,7 @@ Page {
         active: true
 
         onReadingChanged: {
+            console.log("Orientation changed: ", reading.orientation);
             updateRotation(reading.orientation);
         }
     }

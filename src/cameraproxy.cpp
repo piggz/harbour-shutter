@@ -803,7 +803,8 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
     file.close();
 
     EncoderJpeg jpeg;
-    bool ok = jpeg.encode(m_config->at(0), buffer, m_mappedBuffers[buffer].get(), QString(m_saveFileName + QStringLiteral(".jpg")).toStdString());
+    libcamera::StreamConfiguration config = m_config->at(m_singleStream ? 0 : 1);
+    bool ok = jpeg.encode(config, buffer, m_mappedBuffers[buffer].get(), QString(m_saveFileName + QStringLiteral(".jpg")).toStdString());
     if (!ok) {
         qDebug() << "Unable to save jpeg file";
     }
