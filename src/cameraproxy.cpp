@@ -820,7 +820,7 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
         renderComplete(buffer);
     }
 
-    Q_EMIT stillCaptureFinished(m_saveFileName);
+    Q_EMIT stillCaptureFinished(m_saveFileName + QStringLiteral(".jpg"));
 }
 
 void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
