@@ -47,7 +47,7 @@ Page {
 
     OrientationSensor {
         id: orientationSensor
-        active: true
+        active: !settings.useSizeAsOrientation
 
         onReadingChanged: {
             console.log("Orientation changed: ", reading.orientation);
@@ -111,16 +111,16 @@ Page {
     }
 
     readonly property int viewfinderOrientation: {
-        var rotation = 0
+        var rotation = 90
         switch (_orientation) {
         case OrientationReading.RightUp:
-            rotation = 90
+            rotation = 0
             break
         case OrientationReading.TopDown:
-            rotation = 180
+            rotation = 270
             break
         case OrientationReading.LeftUp:
-            rotation = 270
+            rotation = 180
             break
         }
 
@@ -876,6 +876,10 @@ Page {
     }
 
     function updateRotation(orientation) {
+        if (!settings.useSizeAsOrientation) {
+            return;
+        }
+
         console.log("Orientation:", orientation, _orientation, controlsContainer.rotation, _rotationValues["ui"][page._orientation], _rotationValues["ui"][orientation], controlsRotation);
 
         if ((orientation >= OrientationReading.TopUp
@@ -889,6 +893,8 @@ Page {
         } else {
             controlsContainer.rotation = _rotationValues["uil"][_orientation]
         }
+
+        viewFinder.rotation = viewfinderOrientation;
 
         console.log("...", controlsContainer.rotation, page.iconRotation);
     }

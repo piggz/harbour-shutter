@@ -378,34 +378,46 @@ Item {
                     id: locationMetadataSwitch
                     width: parent.width
 
-                    checked: settings.get("global", "locationMetadata", false)
                     text: qsTr("Store GPS location to metadata")
+
+                    Component.onCompleted: {
+                        checked = settings.getGlobalValue("locationMetadata", false)
+                    }
 
                     onCheckedChanged: {
                         settings.setGlobalValue("locationMetadata", checked);
                     }
                 }
-                TextSwitch{
-                    id: showManualControls
-                    width: parent.width
 
-                    checked: settings.get("global", "showManualControls", false)
-                    text: qsTr("Display manual controls")
-
-                    onCheckedChanged: {
-                        settings.setGlobalValue("showManualControls", checked);
-                    }
-                }
                 TextSwitch {
                     id: faceDetectionSwitch
                     width: parent.width
 
-                    checked: settings.get("global", "faceDetection", false)
                     text: qsTr("Enable/Disable face detection")
+
+                    Component.onCompleted: {
+                        checked = settings.getGlobalValue("faceDetection", false)
+                    }
 
                     onCheckedChanged: {
                         console.log("The face detection button has been clicked! - ", checked)
-                        settings.set("global", "faceDetection", checked);
+                        settings.setGlobalValue("faceDetection", checked);
+                    }
+                }
+
+                TextSwitch {
+                    id: sizeOrientationSwitch
+                    width: parent.width
+
+                    text: qsTr("Use screen size as orientation")
+
+                    Component.onCompleted: {
+                        checked = settings.getGlobalValue("useSizeAsOrientation", false)
+                    }
+
+                    onCheckedChanged: {
+                        console.log("Size as orientation! - ", checked)
+                        settings.setGlobalValue("useSizeAsOrientation", checked);
                     }
                 }
 

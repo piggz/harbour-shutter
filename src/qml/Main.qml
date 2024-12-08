@@ -2,9 +2,11 @@ import QtQuick 2.0
 import QtQuick.Controls
 import org.kde.kirigami as Kirigami
 import QtMultimedia
+import QtSensors
+import uk.co.piggz.shutter 1.0
+
 import "pages"
 import "components"
-import uk.co.piggz.shutter 1.0
 
 Kirigami.ApplicationWindow {
     id: app
@@ -28,6 +30,9 @@ Kirigami.ApplicationWindow {
         property variant enabledCameras: [] //Calculated on startup and when disabledCameras changes
         property string disabledCameras: ""
         property string gridMode: "none"
+        property bool useSizeAsOrientation: false
+        property bool faceDetection: false
+        property bool locationMetadata: false
         
         function getCameraValue(s, d) {
             return get(cameraId, s, d);
@@ -50,7 +55,10 @@ Kirigami.ApplicationWindow {
         }
 
         function getGlobalValue(s, d) {
+            console.log("getting", s, settings[s]);
             settings[s] = get("global", s, d);
+            console.log("getting", s, settings[s]);
+
             return settings[s];
         }
 
@@ -104,6 +112,7 @@ Kirigami.ApplicationWindow {
             cameraId = getGlobalValue("cameraId", 0);
             disabledCameras = getGlobalValue("disabledCameras", "");
             gridMode = getGlobalValue("gridMode", "none");
+            useSizeAsOrientation = getGlobalValue("useSizeAsOrientation", false);
         }
 
         function saveGlobalSettings() {
@@ -111,6 +120,7 @@ Kirigami.ApplicationWindow {
             setGlobalValue("cameraId", cameraId);
             setGlobalValue("disabledCameras", disabledCameras);
             setGlobalValue("gridMode", gridMode);
+            setGlobalValue("useSizeAsOrientation", useSizeAsOrientation);
         }
 
         Component.onCompleted: {
@@ -131,6 +141,18 @@ Kirigami.ApplicationWindow {
         } else {
             if (pageStack.depth === 1){
                 cameraUI.startViewfinder();
+            }
+        }
+    }
+
+    onWidthChanged: {
+        console.log("app width changed", width, height)
+
+        if (settings.useSizeAsOrientation) {
+            if (width > height) {
+                cameraUI.updateRotation(OrientationReading.RightUp);
+            } else {
+                cameraUI.updateRotation(OrientationReading.TopUp);
             }
         }
     }
