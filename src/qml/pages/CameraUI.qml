@@ -513,6 +513,8 @@ Page {
         updateRotation(orientationSensor.reading ? orientationSensor.reading.orientation : 0);
 
         cameraProxy.setViewFinder(viewFinder);
+        cameraProxy.setFaceDetectionEnabled(settings.faceDetection);
+
         settingsOverlay.setCameraProxy(cameraProxy);
 
         for( var i = 0; i < modelCamera.rowCount; i++ ) {

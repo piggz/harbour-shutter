@@ -113,6 +113,15 @@ void CameraProxy::setResolution(const QSize &res)
     }
 }
 
+void CameraProxy::setFaceDetectionEnabled(bool enabled)
+{
+    m_enableFaceDetection = enabled;
+
+    if (!m_enableFaceDetection) {
+        m_rects.clear();
+    }
+}
+
 std::vector<libcamera::Size> CameraProxy::supportedResoluions(QString format)
 {
     return m_stillFormats[libcamera::PixelFormat::fromString(format.toStdString())];
@@ -740,32 +749,28 @@ void CameraProxy::processCapture()
 
 void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
 {
-    //qDebug() << Q_FUNC_INFO << buffer;
+    //qDebug() << Q_FUNC_INFO << "Buffer request:" << buffer->request()->toString().c_str();
 
     if (!buffer) return;
 
-    //qDebug() << "Buffer request:" << buffer->request()->toString().c_str();
-
     Image *i = m_mappedBuffers[buffer].get();
     QList<QRectF> rects;
-    bool faceDetectionEnabled = m_settings && m_settings->get(QStringLiteral("global"), QStringLiteral("faceDetection"), false).value<bool>();
 
-    if (faceDetectionEnabled) {
+    if (m_enableFaceDetection) {
         rects = m_fd.detect(m_viewFinder->currentImage());
+        if (rects.length() > 0) {
+            m_rects = rects;
+            m_rectDelay = 30;
+        } else {
+            if (m_rectDelay > 0) {
+                m_rectDelay--;
+            }
+            if (m_rectDelay == 0) {
+                m_rects.clear();
+            }
+        }
     }
-    //qDebug() << "CameraProxy - processViewFinder - Face detection active";
 
-    if (rects.length() > 0) {
-        m_rects = rects;
-        m_rectDelay = 30;
-    } else {
-        if (m_rectDelay > 0) {
-            m_rectDelay--;
-        }
-        if (m_rectDelay == 0) {
-            m_rects.clear();
-        }
-    }
     m_viewFinder->renderImage(buffer, i, m_rects);
 }
 

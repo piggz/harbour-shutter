@@ -30,6 +30,7 @@ public:
     ~CameraProxy();
 
     Q_PROPERTY(CameraState state READ state WRITE setState NOTIFY stateChanged)
+
     enum CameraState {
         Stopped = 0,
         Stopping,
@@ -71,6 +72,7 @@ public:
     Q_INVOKABLE void setStillFormat(const QString &format);
     Q_INVOKABLE QString currentStillFormat() const;
     Q_INVOKABLE void setResolution(const QSize &res);
+    Q_INVOKABLE void setFaceDetectionEnabled(bool enabled);
 
     std::vector<libcamera::Size> supportedResoluions(QString format);
     libcamera::ControlInfoMap supportedControls() const;
@@ -156,6 +158,7 @@ private:
     std::unordered_map<Control, libcamera::ControlValue> m_controlValues;
 
     //Face detection
+    bool m_enableFaceDetection;
     FaceDetection m_fd;
     QList<QRectF> m_rects;
     uint m_rectDelay = 0;

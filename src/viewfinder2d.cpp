@@ -70,14 +70,10 @@ int ViewFinder2D::setFormat(const libcamera::PixelFormat &format, const QSize &s
 void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *image, QList<QRectF> rects)
 {
     size_t size1 = buffer->metadata().planes()[0].bytesused;
-    size_t totalSize = 0;
 
     m_rects = rects;
-    for (uint plane = 0; plane < buffer->metadata().planes().size(); ++plane) {
-        totalSize += buffer->metadata().planes()[plane].bytesused;
-    }
 
-    //qDebug() << "Frame size " << totalSize << size1 << "Planes " <<  buffer->metadata().planes().size() << m_format;
+    //qDebug() << "Plane size " << size1 << "Planes " <<  buffer->metadata().planes().size() << m_format;
 
     {
         QMutexLocker locker(&m_mutex);
@@ -108,9 +104,7 @@ void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *imag
     }
     update();
 
-    if (buffer) {
-        Q_EMIT renderComplete(buffer);
-    }
+    Q_EMIT renderComplete(buffer);
 }
 
 void ViewFinder2D::stop()

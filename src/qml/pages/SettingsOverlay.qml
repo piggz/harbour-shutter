@@ -402,6 +402,7 @@ Item {
                     onCheckedChanged: {
                         console.log("The face detection button has been clicked! - ", checked)
                         settings.setGlobalValue("faceDetection", checked);
+                        cameraProxy.setFaceDetectionEnabled(checked);
                     }
                 }
 
