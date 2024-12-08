@@ -291,46 +291,12 @@ Page {
                         return 0
                 }
 
-                Row {
-                    id: rowTop
-                    spacing: styler.themePaddingMedium
-
-                    Item {
-                        height: 1
-                        width: styler.themeItemSizeLarge
-                    }
-
-                    Label {
-                        id: lblCameraName
-                        text: qsTr("Camera: ") + modelCamera.get(settings.cameraId) + "(" + settings.cameraId +")"
-                        color: styler.themePrimaryColor
-                    }
-
-                    Label {
-                        id: lblResolution
-                        color: styler.themePrimaryColor
-                        text: (forceUpdate
-                               || !forceUpdate) ? settings.sizeToStr(settings.getCameraModeValue("resolution", Qt.size(1280, 720))) : ""
-                    }
-
-                    Item {
-                        height: 1
-                        width: styler.themeItemSizeLarge
-                    }
-                }
-
-                Slider {
-                    id: exposureCompensationSlider
-                    width: rowTop.childrenRect.width
-                    from: -2
-                    to: +2
-                    value: 0
-                    stepSize: 0.1
-                    visible: settings.get("global", "showManualControls", false)
-                    //value : (Math.round(value*10)/10) + " EV"
-
-                    onValueChanged: {
-                        console.log("Need to implement exposure compensation");
+                Label {
+                    color: "white"
+                    text: qsTr("  Camera: ") + modelCamera.get(settings.cameraId) + "(" + settings.cameraId +")" + " - " + settings.sizeToStr(settings.getCameraModeValue("resolution", Qt.size(1280, 720))) + "  "
+                    background: Rectangle {
+                        color: "black"
+                        radius: 4
                     }
                 }
             }
@@ -378,6 +344,7 @@ Page {
 
             IconSwitch {
                 id: btnModeSwitch
+                visible: false //Disable until video recording is implemented
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: styler.themePaddingMedium
                 anchors.right: parent.right
