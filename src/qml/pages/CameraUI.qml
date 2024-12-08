@@ -515,8 +515,6 @@ Page {
         cameraProxy.setViewFinder(viewFinder);
         cameraProxy.setFaceDetectionEnabled(settings.faceDetection);
 
-        settingsOverlay.setCameraProxy(cameraProxy);
-
         for( var i = 0; i < modelCamera.rowCount; i++ ) {
             console.log("Camera: ", modelCamera.get(i) );
         }
@@ -844,6 +842,7 @@ Page {
         else settings.cameraId = parseInt(settings.global.cameraId) + 1;
 
         console.log("switched to camera", settings.cameraId);
+        settings.setGlobalValue("cameraId", settings.cameraId);
         tmrDelayedStart.start()
     }
 

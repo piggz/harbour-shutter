@@ -143,8 +143,8 @@ void CameraProxy::setCameraIndex(QString id)
         m_currentCameraId = id;
         const std::shared_ptr<libcamera::Camera> &cam = m_cameraManager->get(id.toStdString());
 
-        if (cam->acquire()) {
-            qInfo() << "Failed to acquire camera" << cam->id().c_str();
+        if (!cam || cam->acquire()) {
+            qInfo() << "Failed to acquire camera" << id;
             return;
         }
 
@@ -176,6 +176,10 @@ void CameraProxy::setCameraIndex(QString id)
 bool CameraProxy::buildConfiguration(std::initializer_list<libcamera::StreamRole> roles, bool configure)
 {
     qDebug() << Q_FUNC_INFO << roles.size();
+
+    if (!m_currentCamera) {
+        return false;
+    }
 
     //Configure the camera for view finder
     m_config = m_currentCamera->generateConfiguration(roles);
@@ -368,7 +372,10 @@ void CameraProxy::startViewFinder()
         }
     }
 
-    buildConfiguration({libcamera::StreamRole::Viewfinder, libcamera::StreamRole::StillCapture}, true);
+    if (!buildConfiguration({libcamera::StreamRole::Viewfinder, libcamera::StreamRole::StillCapture}, true)) {
+        qInfo() << "Failed to build configuration";
+        return;
+    }
 
     // Configure the viewfinder. If no color space is reported, default to sYCC.
     ret = m_viewFinder->setFormat(m_vfStreamConfig->pixelFormat,

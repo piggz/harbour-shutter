@@ -55,10 +55,7 @@ Kirigami.ApplicationWindow {
         }
 
         function getGlobalValue(s, d) {
-            console.log("getting", s, settings[s]);
             settings[s] = get("global", s, d);
-            console.log("getting", s, settings[s]);
-
             return settings[s];
         }
 
@@ -80,6 +77,7 @@ Kirigami.ApplicationWindow {
         function sizeToStr(siz) {
             return siz.width + "x" + siz.height
         }
+
         //Return either the current mode resolution or default resolution for that mode
         function resolution(mode) {
             if (settings.captureMode === mode
@@ -92,8 +90,7 @@ Kirigami.ApplicationWindow {
             return modelResolution.defaultResolution(mode)
         }
 
-        function calculateEnabledCameras()
-        {
+        function calculateEnabledCameras() {
             settings.enabledCameras = []
             for (var i = 0; i < settings.cameraCount; ++i) {
                 if (settings.disabledCameras.indexOf("[" + i + "]") == -1) {
