@@ -10,10 +10,7 @@
 #include <libcamera/camera_manager.h>
 
 #include "cameramodel.h"
-#include "exposuremodel.h"
-#include "isomodel.h"
 #include "resolutionmodel.h"
-#include "wbmodel.h"
 #include "focusmodel.h"
 #include "flashmodel.h"
 #include "fsoperations.h"
@@ -50,10 +47,6 @@ int main(int argc, char *argv[])
 
     CameraModel cameraModel(0, cm);
 
-    //qmlRegisterType<EffectsModel>("uk.co.piggz.shutter", 1, 0, "EffectsModel");
-    qmlRegisterType<ExposureModel>("uk.co.piggz.shutter", 1, 0, "ExposureModel");
-    qmlRegisterType<IsoModel>("uk.co.piggz.shutter", 1, 0, "IsoModel");
-    qmlRegisterType<WbModel>("uk.co.piggz.shutter", 1, 0, "WhiteBalanceModel");
     qmlRegisterType<FocusModel>("uk.co.piggz.shutter", 1, 0, "FocusModel");
     qmlRegisterType<FlashModel>("uk.co.piggz.shutter", 1, 0, "FlashModel");
     qmlRegisterType<ExifModel>("uk.co.piggz.shutter", 1, 0, "ExifModel");

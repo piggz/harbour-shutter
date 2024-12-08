@@ -10,8 +10,7 @@ Item {
     id: settingsOverlay
     property int iconRotation: 0
     property bool panelOpen: panelFlash.expanded
-                             || panelWhiteBalance.expanded
-                             || panelFocus.expanded || panelIso.expanded
+                             || panelFocus.expanded
                              || panelResolution.expanded
                              || panelStorage.expanded || panelGeneral.expanded
 
@@ -82,16 +81,6 @@ Item {
             }
 
             RoundButton {
-                id: btnWhiteBalance
-                iconSource: whiteBalanceIcon()
-                iconRotation: settingsOverlay.iconRotation
-                visible: modelWhiteBalance.rowCount > 0
-
-                onClicked: {
-                    panelWhiteBalance.show()
-                }
-            }
-            RoundButton {
                 id: btnFlash
                 iconSource: flashIcon()
                 iconRotation: settingsOverlay.iconRotation
@@ -99,18 +88,6 @@ Item {
 
                 onClicked: {
                     panelFlash.show()
-                }
-            }
-
-            RoundButton {
-                id: btnIso
-                iconColor: styler.themePrimaryColor
-                iconRotation: settingsOverlay.iconRotation
-                iconSource: isoIcon()
-                visible: modelIso.rowCount > 0
-
-                onClicked: {
-                    panelIso.show()
                 }
             }
 
@@ -198,21 +175,6 @@ Item {
     }
 
     DockedListView {
-        id: panelWhiteBalance
-        model: modelWhiteBalance
-        selectedItem: settings.getCameraModeValue("whiteBalance", 0)
-        rotation: settingsOverlay.iconRotation
-        width: (iconRotation === 90
-                || iconRotation === 270) ? parent.height : parent.width / 2
-
-        onClicked: {
-            camera.imageProcessing.setWhiteBalanceMode(value)
-            settings.mode.whiteBalance = value
-            hide()
-        }
-    }
-
-    DockedListView {
         id: panelFocus
         model: modelFocus
         selectedItem: settings.getCameraModeValue("focus", 0)
@@ -222,25 +184,6 @@ Item {
 
         onClicked: {
             setFocusMode(value)
-            hide()
-        }
-    }
-
-    DockedListView {
-        id: panelIso
-        model: modelIso
-        selectedItem: settings.getCameraModeValue("iso", 0)
-        rotation: settingsOverlay.iconRotation
-        width: (iconRotation === 90
-                || iconRotation === 270) ? parent.height : parent.width / 2
-
-        onClicked: {
-            if (value === 0) {
-                camera.exposure.setAutoIsoSensitivity()
-            } else {
-                camera.exposure.setManualIsoSensitivity(value)
-            }
-            settings.mode.iso = value
             hide()
         }
     }
@@ -462,38 +405,12 @@ Item {
         }
     }
 
-    ExposureModel {
-        id: modelExposure
-    }
-
-    IsoModel {
-        id: modelIso
-    }
-
-    WhiteBalanceModel {
-        id: modelWhiteBalance
-    }
-
     FocusModel {
         id: modelFocus
     }
 
     FlashModel {
         id: modelFlash
-    }
-
-    function setCameraProxy(cam) {
-        /*
-        modelExposure.setCamera(cam)
-        modelEffects.setCamera(cam)
-        modelIso.setCamera(cam)
-        modelWhiteBalance.setCamera(cam)
-        modelFocus.setCamera(cam)
-        modelFlash.setCamera(cam)
-        modelResolution.setImageCapture(cam.imageCapture)
-        modelResolution.setVideoRecorder(cam.videoRecorder)
-        modelResolution.setMode(settings.global.captureMode)
- */
     }
 
     function flashIcon() {
@@ -546,106 +463,6 @@ Item {
         return styler.customIconPrefix + focusIcon
     }
 
-    function whiteBalanceIcon() {
-        var wbIcon = ""
-        /*
-        switch (settings.getCameraModeValue("whiteBalance", 0)) {
-        case CameraImageProcessing.WhiteBalanceAuto:
-            wbIcon = "../pics/icon-camera-wb-automatic.png"
-            break
-        case CameraImageProcessing.WhiteBalanceSunlight:
-            wbIcon = "../pics/icon-camera-wb-sunny.png"
-            break
-        case CameraImageProcessing.WhiteBalanceCloudy:
-            wbIcon = "../pics/icon-camera-wb-cloudy.png"
-            break
-        case CameraImageProcessing.WhiteBalanceShade:
-            wbIcon = "../pics/icon-camera-wb-shade.png"
-            break
-        case CameraImageProcessing.WhiteBalanceTungsten:
-            wbIcon = "../pics/icon-camera-wb-tungsten.png"
-            break
-        case CameraImageProcessing.WhiteBalanceFluorescent:
-            wbIcon = "../pics/icon-camera-wb-fluorecent.png"
-            break
-        case CameraImageProcessing.WhiteBalanceSunset:
-            wbIcon = "../pics/icon-camera-wb-sunset.png"
-            break
-        case CameraImageProcessing.WhiteBalanceFlash:
-            wbIcon = "../pics/icon-camera-wb-default.png" //TODO need icon
-            break
-        default:
-            wbIcon = "../pics/icon-camera-wb-default.png"
-            break
-        }
-        */
-        return styler.customIconPrefix + wbIcon
-    }
-
-    function isoIcon() {
-        var iso = ""
-        if (settings.getCameraModeValue("iso", 0) === 0) {
-            iso = "../pics/icon-m-iso-auto.png"
-        } else if (settings.getCameraModeValue("iso", 0) === 1) {
-            iso = "../pics/icon-m-iso-hjr.png"
-        } else {
-            iso = "../pics/icon-m-iso-" + settings.getCameraModeValue("iso") + ".png"
-        }
-        return styler.customIconPrefix + iso
-    }
-
-    function effectIcon() {
-        var effectIcon = ""
-
-        switch (settings.getCameraModeValue("effect", CameraImageProcessing.ColorFilterNone)) {
-        case CameraImageProcessing.ColorFilterNone:
-            effectIcon = "none"
-            break
-        case CameraImageProcessing.ColorFilterAqua:
-            effectIcon = "aqua"
-            break
-        case CameraImageProcessing.ColorFilterBlackboard:
-            effectIcon = "blackboard"
-            break
-        case CameraImageProcessing.ColorFilterGrayscale:
-            effectIcon = "grayscale"
-            break
-        case CameraImageProcessing.ColorFilterNegative:
-            effectIcon = "negative"
-            break
-        case CameraImageProcessing.ColorFilterPosterize:
-            effectIcon = "posterize"
-            break
-        case CameraImageProcessing.ColorFilterSepia:
-            effectIcon = "sepia"
-            break
-        case CameraImageProcessing.ColorFilterSolarize:
-            effectIcon = "solarize"
-            break
-        case CameraImageProcessing.ColorFilterWhiteboard:
-            effectIcon = "whiteboard"
-            break
-        case CameraImageProcessing.ColorFilterEmboss:
-            effectIcon = "emboss"
-            break
-        case CameraImageProcessing.ColorFilterSketch:
-            effectIcon = "sketch"
-            break
-        case CameraImageProcessing.ColorFilterNeon:
-            effectIcon = "neon"
-            break
-        default:
-            effectIcon = "default"
-            break
-        }
-        return styler.customIconPrefix + "../pics/icon-m-effect-" + effectIcon + ".svg"
-    }
-
-    function sceneModeIcon(scene) {
-        return styler.customIconPrefix + "../pics/icon-m-scene_mode_" + modelExposure.iconName(
-                    settings.getCameraModeValue("exposure", 0)) + ".svg"
-    }
-
     function setMode(mode) {
         modelResolution.setMode(mode)
         settings.set("global", "captureMode", mode);
@@ -656,7 +473,6 @@ Item {
         panelFlash.hide()
         panelFocus.hide()
         panelGeneral.hide()
-        panelIso.hide()
         panelResolution.hide()
         panelStorage.hide()
     }

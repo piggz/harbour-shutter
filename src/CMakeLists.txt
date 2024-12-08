@@ -128,12 +128,10 @@ target_sources(harbour-shutter
     cameraproxy.cpp
     controlmodel.cpp
     exifmodel.cpp
-    exposuremodel.cpp
     facedetection.cpp
     format_converter.cpp
     formatmodel.cpp
     image.cpp
-    isomodel.cpp
     encoder_jpeg.cpp
     metadatamodel.cpp
     resolutionmodel.cpp
@@ -141,7 +139,6 @@ target_sources(harbour-shutter
     viewfinder2d.cpp
     viewfinderitem.cpp
     viewfinderrenderer.cpp
-    wbmodel.cpp
     focusmodel.cpp
     flashmodel.cpp
     fsoperations.cpp
