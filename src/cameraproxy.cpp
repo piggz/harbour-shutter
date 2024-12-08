@@ -756,9 +756,9 @@ void CameraProxy::processCapture()
 
 void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
 {
-    //qDebug() << Q_FUNC_INFO << "Buffer request:" << buffer->request()->toString().c_str();
-
     if (!buffer) return;
+
+    //qDebug() << Q_FUNC_INFO << "Buffer request:" << buffer << buffer->request();//->toString().c_str();
 
     Image *i = m_mappedBuffers[buffer].get();
     QList<QRectF> rects;
@@ -816,7 +816,6 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
     }
     qDebug() << "Saved JPEG as " << QString(m_saveFileName + QStringLiteral(".jpg"));
 
-
     {
         QMutexLocker locker(&m_mutex);
         m_freeBuffers[m_stillStream].enqueue(buffer);
@@ -831,7 +830,7 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
 
 void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
 {
-    //qDebug() << Q_FUNC_INFO << m_state << m_viewFinderStream << m_stillStream;
+    //qDebug() << Q_FUNC_INFO << buffer << m_state << m_viewFinderStream << m_stillStream;
     libcamera::Request *request;
     {
         QMutexLocker locker(&m_mutex);
