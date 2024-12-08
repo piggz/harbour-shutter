@@ -427,7 +427,6 @@ void CameraProxy::startViewFinder()
     ret = m_currentCamera->start();
     if (ret) {
         qInfo() << "Failed to start capture";
-        //goto error;
         return;
     }
     setState(CapturingViewFinder);
@@ -439,7 +438,6 @@ void CameraProxy::startViewFinder()
         ret = m_currentCamera->queueRequest(request.get());
         if (ret < 0) {
             qWarning() << "Can't queue request";
-            //goto error_disconnect;
             return;
         }
     }
@@ -536,14 +534,12 @@ void CameraProxy::stillCapture(const QString &filename)
             if (!request) {
                 qWarning() << "Can't create request";
                 ret = -ENOMEM;
-                //goto error;
                 return;
             }
 
             ret = request->addBuffer(m_stillStream, buffer);
             if (ret < 0) {
                 qWarning() << "Can't set buffer for request";
-                //goto error;
                 return;
             }
 
@@ -553,7 +549,6 @@ void CameraProxy::stillCapture(const QString &filename)
         ret = m_currentCamera->start();
         if (ret) {
             qInfo() << "Failed to start capture";
-            //goto error;
             return;
         }
 
@@ -566,7 +561,6 @@ void CameraProxy::stillCapture(const QString &filename)
             ret = m_currentCamera->queueRequest(request.get());
             if (ret < 0) {
                 qWarning() << "Can't queue request";
-                //goto error_disconnect;
                 return;
             }
         }
@@ -866,7 +860,6 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
             int ret = request->addBuffer(m_stillStream, buffer);
             if (ret < 0) {
                 qWarning() << "Can't set buffer for request";
-                //goto error;
                 return;
             }
 
