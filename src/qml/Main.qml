@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import QtQuick.Controls
-import org.kde.kirigami as Kirigami
 import QtMultimedia
 import QtSensors
 import uk.co.piggz.shutter 1.0
@@ -8,13 +7,18 @@ import uk.co.piggz.shutter 1.0
 import "pages"
 import "components"
 
-Kirigami.ApplicationWindow {
+ApplicationWindow {
     id: app
     property bool loadingComplete: false;
     property bool forceUpdate: false;
+    visible: true
 
-    pageStack.initialPage: CameraUI{
-        id: cameraUI
+    StackView {
+        id: pageStack
+        initialItem: CameraUI{
+            id: cameraUI
+        }
+        anchors.fill: parent
     }
 
     Component.onCompleted: {
