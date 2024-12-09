@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 
-Slider {
+TextSlider {
     id: sldControl
 
     property string title

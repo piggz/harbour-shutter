@@ -29,6 +29,7 @@ ecm_add_qml_module(harbour-shutter
     qml/components/RoundButton.qml
     qml/components/TextSwitch.qml
     qml/components/TruncationModes.qml
+    qml/components/TextSlider.qml
     RESOURCES
     qml/pics/icon-camera-flash-automatic.png
     qml/pics/icon-camera-flash-off.png

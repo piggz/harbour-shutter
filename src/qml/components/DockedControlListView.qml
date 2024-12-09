@@ -81,7 +81,7 @@ DockedPanel {
 
                     ControlSlider {
                         id: slider
-                        title: name
+                        label: name
                         visible: type === CameraProxy.ControlTypeFloat || type === CameraProxy.ControlTypeInteger32 || type === CameraProxy.ControlTypeInteger64
                         control: code
                         from: min

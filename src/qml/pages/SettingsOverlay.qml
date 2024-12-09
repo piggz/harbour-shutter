@@ -289,34 +289,22 @@ Item {
                     }
                 }
 
-                Slider {
+                TextSlider {
                     id: sldVideoBitrate
-                    //label: qsTr("Video Bitrate")
-                    width: parent.width
-                    height: styler.themeItemSizeLarge
+                    label: qsTr("Video Bitrate")
                     from: 6400000
                     to: 32000000
                     stepSize: 800000
-                    Text {
-                        text: sldVideoBitrate.value
-                        anchors.centerIn: parent
-                    }
-
                 }
-                Slider {
+
+                TextSlider {
                     id: sldAudioBitrate
-                    //label: qsTr("Audio Bitrate")
-                    width: parent.width
-                    height: styler.themeItemSizeLarge
+                    label: qsTr("Audio Bitrate")
                     from: 64000
                     to: 320000
                     stepSize: 8-000
-                    Text {
-                        text: sldAudioBitrate.value
-                        anchors.centerIn: parent
-                    }
-
                 }
+
                 TextSwitch{
                     id: locationMetadataSwitch
                     width: parent.width
