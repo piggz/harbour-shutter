@@ -359,6 +359,11 @@ void CameraProxy::startViewFinder()
         qDebug() << f.first.toString().c_str();
     }
 
+    if (!buildConfiguration({libcamera::StreamRole::Viewfinder, libcamera::StreamRole::StillCapture}, true)) {
+        qInfo() << "Failed to build configuration";
+        return;
+    }
+
     // Use a format supported by the viewfinder if available. Default to JPEG
     //if supported by the hardware as that is first on the list
     for (const libcamera::PixelFormat &format : m_viewFinder->nativeFormats()) {
@@ -370,11 +375,6 @@ void CameraProxy::startViewFinder()
             qDebug() << "Setting vf pixel format to " << format.toString().c_str();
             break;
         }
-    }
-
-    if (!buildConfiguration({libcamera::StreamRole::Viewfinder, libcamera::StreamRole::StillCapture}, true)) {
-        qInfo() << "Failed to build configuration";
-        return;
     }
 
     // Configure the viewfinder. If no color space is reported, default to sYCC.
