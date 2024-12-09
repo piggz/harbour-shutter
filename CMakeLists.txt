@@ -19,19 +19,14 @@ find_package(Qt6 REQUIRED COMPONENTS
     Widgets
     Multimedia
 )
-
 find_package(KF6 REQUIRED COMPONENTS
-    Kirigami
-    I18n
     CoreAddons
-    ColorScheme
-    IconThemes
 )
 
 pkg_check_modules(LIBCAMERA REQUIRED libcamera)
 pkg_check_modules(OPENCV REQUIRED opencv4)
 
-ecm_find_qmlmodule(org.kde.kirigami REQUIRED)
+#ecm_find_qmlmodule(org.kde.kirigami REQUIRED)
 
 add_subdirectory(src)
 

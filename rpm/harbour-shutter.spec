@@ -41,6 +41,7 @@ BuildRequires:  pkgconfig(libcamera)
 BuildRequires:  opencv-devel
 BuildRequires:  qt6-rpm-macros
 BuildRequires:  kf6-extra-cmake-modules
+BuildRequires:  kf6-kcoreaddons-devel
 
 %description
 Shutter is a camera application built ontop of libcamera.
