@@ -20,7 +20,6 @@
 #include "image.h"
 #include "settings.h"
 #include "viewfinder.h"
-#include "viewfinder2d.h"
 
 class CameraProxy : public QObject
 {
@@ -90,7 +89,7 @@ public:
 
 public Q_SLOTS:
     void renderComplete(libcamera::FrameBuffer *buffer);
-    void setViewFinder(ViewFinder2D *vf);
+    void setViewFinder(ViewFinder *vf);
     void setCameraIndex(QString idx);
     void startViewFinder();
     void stop();
@@ -109,7 +108,7 @@ private:
     std::shared_ptr<libcamera::Camera> m_currentCamera;
     Settings *m_settings = nullptr;
 
-    ViewFinder2D* m_viewFinder;
+    ViewFinder* m_viewFinder;
     QString m_currentCameraId;
     QMutex m_mutex;
 

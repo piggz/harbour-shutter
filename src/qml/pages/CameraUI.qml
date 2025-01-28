@@ -55,6 +55,37 @@ Page {
         }
     }
 
+    //! [3]
+    ViewFinder3D {
+        id: viewFinder
+        anchors.centerIn: parent
+        width: parent.width
+        height: parent.height
+        z:-5
+
+        transform: [
+            Rotation { id: rotation; axis.x: 0; axis.z: 0; axis.y: 1; angle: 0; origin.x: viewFinder.width / 2; origin.y: viewFinder.height / 2; },
+            Translate { id: txOut; x: -viewFinder.width / 2; y: -viewFinder.height / 2 },
+            Scale { id: scale; },
+            Translate { id: txIn; x: viewFinder.width / 2; y: viewFinder.height / 2 }
+        ]
+
+        Rectangle {
+            id: rectFlash
+            anchors.fill: parent
+            opacity: 0
+
+            NumberAnimation on opacity {
+                id: animFlash
+                from: 1.0
+                to: 0.0
+                duration: 200
+            }
+        }
+
+    }
+
+    /*
     ViewFinder2D {
         id: viewFinder;
         anchors.centerIn: parent
@@ -75,7 +106,7 @@ Page {
             }
         }
     }
-
+*/
     /*
     PositionSource {
         id: positionSource
@@ -260,7 +291,7 @@ Page {
 
                 anchors.horizontalCenter: {
                     if (((_orientation === OrientationReading.TopUp)
-                            || (_orientation === OrientationReading.TopDown)) && _nativePortrait)
+                         || (_orientation === OrientationReading.TopDown)) && _nativePortrait)
                         return parent.right
                     else
                         return parent.horizontalCenter
@@ -268,7 +299,7 @@ Page {
 
                 anchors.verticalCenter: {
                     if (((_orientation === OrientationReading.TopUp)
-                            || (_orientation === OrientationReading.TopDown)) && _nativePortrait)
+                         || (_orientation === OrientationReading.TopDown)) && _nativePortrait)
                         return parent.verticalCenter
                     else
                         return parent.top
@@ -276,7 +307,7 @@ Page {
 
                 anchors.verticalCenterOffset: {
                     if (((_orientation === OrientationReading.TopUp)
-                            || (_orientation === OrientationReading.TopDown)) && _nativePortrait)
+                         || (_orientation === OrientationReading.TopDown)) && _nativePortrait)
                         return 0
                     else
                         return styler.themeItemSizeLarge
@@ -285,7 +316,7 @@ Page {
 
                 anchors.horizontalCenterOffset: {
                     if (((_orientation === OrientationReading.TopUp)
-                            || (_orientation === OrientationReading.TopDown)) && _nativePortrait)
+                         || (_orientation === OrientationReading.TopDown)) && _nativePortrait)
                         return -(btnCapture.width + height)
                     else
                         return 0
@@ -420,7 +451,7 @@ Page {
         }
     }
 
- /*
+    /*
     Rectangle {
         id: focusCircle
         height: (camera.lockStatus === Camera.Locked) ? styler.themeItemSizeSmall : styler.themeItemSizeMedium
@@ -851,7 +882,7 @@ Page {
         console.log("Orientation:", orientation, _orientation, controlsContainer.rotation, _rotationValues["ui"][page._orientation], _rotationValues["ui"][orientation], controlsRotation);
 
         if ((orientation >= OrientationReading.TopUp
-                && orientation <= OrientationReading.RightUp)) {
+             && orientation <= OrientationReading.RightUp)) {
             _orientation = orientation
         }
 

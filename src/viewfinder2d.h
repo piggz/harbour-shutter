@@ -26,10 +26,10 @@ public:
     int setFormat(const libcamera::PixelFormat &format, const QSize &size,
                   const libcamera::ColorSpace &colorSpace,
                   unsigned int stride) override;
-    void renderImage(libcamera::FrameBuffer *buffer, class Image *image, QList<QRectF>) override;
+    void render(libcamera::FrameBuffer *buffer, class Image *image, QList<QRectF>) override;
     void stop() override;
 
-    QImage currentImage();
+    QImage getCurrentImage() override;
 
 Q_SIGNALS:
     void renderComplete(libcamera::FrameBuffer *buffer);

@@ -4,6 +4,19 @@ qt_add_resources(harbour-shutter "classifiers"
     PREFIX "/"
     FILES assets/classifiers/lbpcascade_frontalface.xml)
 
+qt_add_resources(harbour-shutter "shaders"
+    PREFIX "/"
+    FILES
+    assets/shaders/RGB.frag
+    assets/shaders/YUV_2_planes.frag
+    assets/shaders/YUV_3_planes.frag
+    assets/shaders/YUV_packed.frag
+    assets/shaders/bayer_1x_packed.frag
+    assets/shaders/bayer_8.frag
+    assets/shaders/bayer_8.vert
+    assets/shaders/identity.vert
+    )
+
 target_include_directories(harbour-shutter PUBLIC ${LIBCAMERA_INCLUDE_DIRS} ${OPENCV_INCLUDE_DIRS})
 target_compile_options(harbour-shutter PUBLIC ${LIBCAMERA_CFLAGS_OTHER} ${OPENCV_CFLAGS_OTHER})
 
@@ -138,13 +151,35 @@ target_sources(harbour-shutter
     resolutionmodel.cpp
     settings.cpp
     viewfinder2d.cpp
-    viewfinderitem.cpp
-    viewfinderrenderer.cpp
     focusmodel.cpp
     flashmodel.cpp
     fsoperations.cpp
     resourcehandler.cpp
     storagemodel.cpp
+    viewfinder3d.cpp
+    openglviewfinderrendernode.cpp
+
+    cameramodel.h
+    cameraproxy.h
+    controlmodel.h
+    exifmodel.h
+    facedetection.h
+    format_converter.h
+    formatmodel.h
+    image.h
+    encoder_jpeg.h
+    metadatamodel.h
+    resolutionmodel.h
+    settings.h
+    focusmodel.h
+    flashmodel.h
+    fsoperations.h
+    resourcehandler.h
+    storagemodel.h
+    viewfinder.h
+    viewfinder2d.h
+    viewfinder3d.h
+    openglviewfinderrendernode.h
 )
 
 target_link_libraries(harbour-shutter

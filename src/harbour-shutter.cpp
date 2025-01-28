@@ -19,11 +19,11 @@
 #include "exifmodel.h"
 #include "formatmodel.h"
 #include "metadatamodel.h"
-#include "viewfinderitem.h"
 #include "viewfinder2d.h"
 #include "cameraproxy.h"
 #include "settings.h"
 #include "controlmodel.h"
+#include "viewfinder3d.h"
 
 int main(int argc, char *argv[])
 {
@@ -54,10 +54,10 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<FormatModel>("uk.co.piggz.shutter", 1, 0, "FormatModel", QStringLiteral("Not to be created within QML"));
     qmlRegisterUncreatableType<ResolutionModel>("uk.co.piggz.shutter", 1, 0, "ResolutionModel", QStringLiteral("Not to be created within QML"));
     qmlRegisterUncreatableType<ControlModel>("uk.co.piggz.shutter", 1, 0, "ControlModel", QStringLiteral("Not to be created within QML"));
-    qmlRegisterType<ViewFinderItem>("uk.co.piggz.shutter", 1, 0, "ViewFinderItem");
     qmlRegisterType<ViewFinder2D>("uk.co.piggz.shutter", 1, 0, "ViewFinder2D");
     qmlRegisterType<Settings>("uk.co.piggz.shutter", 1, 0, "Settings");
     qmlRegisterType<CameraProxy>("uk.co.piggz.shutter", 1, 0, "CameraProxy");
+    qmlRegisterType<ViewFinder3D>("uk.co.piggz.shutter", 1, 0, "ViewFinder3D");
 
     ResourceHandler handler(&app);
     handler.acquire();

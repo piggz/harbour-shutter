@@ -4,6 +4,8 @@
 #include "cameraproxy.h"
 #include "encoder_jpeg.h"
 #include "settings.h"
+#include "viewfinder2d.h"
+#include "viewfinder3d.h"
 
 QDebug operator<< (QDebug d, const libcamera::Size &sz) {
     d << "Size:" << sz.width << "x" << sz.height;
@@ -336,12 +338,21 @@ end:
     return bestSize;
 }
 
-void CameraProxy::setViewFinder(ViewFinder2D *vf)
+void CameraProxy::setViewFinder(ViewFinder *vf)
 {
     qDebug() << Q_FUNC_INFO << vf;
     m_viewFinder = vf;
-    connect(m_viewFinder, &ViewFinder2D::renderComplete,
-            this, &CameraProxy::renderComplete);
+
+    ViewFinder2D *vf2d = dynamic_cast<ViewFinder2D*>(vf);
+    if (vf2d) {
+        connect(vf2d, &ViewFinder2D::renderComplete, this, &CameraProxy::renderComplete);
+        return;
+    }
+
+    ViewFinder3D *vf3d = dynamic_cast<ViewFinder3D*>(vf);
+    if (vf3d) {
+        connect(vf3d, &ViewFinder3D::renderComplete, this, &CameraProxy::renderComplete);
+    }
 }
 
 void CameraProxy::startViewFinder()
@@ -499,10 +510,6 @@ void CameraProxy::stillCapture(const QString &filename)
 
         buildConfiguration({libcamera::StreamRole::StillCapture}, true);
 
-        // Set the preferred still format and size
-        m_stillStreamConfig->pixelFormat = libcamera::PixelFormat::fromString(m_currentStillFormat.toStdString());
-        m_stillStreamConfig->size = m_currentStillResolution;
-
         libcamera::CameraConfiguration::Status validation = m_config->validate();
         if (validation == libcamera::CameraConfiguration::Invalid) {
             qWarning() << "Failed to create valid camera configuration";
@@ -512,12 +519,6 @@ void CameraProxy::stillCapture(const QString &filename)
         if (validation == libcamera::CameraConfiguration::Adjusted) {
             qInfo() << "Stream configuration adjusted to "
                     << m_stillStreamConfig->toString().c_str();
-        }
-
-        ret = m_currentCamera->configure(m_config.get());
-        if (ret < 0) {
-            qInfo() << "Failed to configure camera";
-            return;
         }
 
         ret = m_allocator->allocate(m_stillStream);
@@ -764,7 +765,7 @@ void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
     QList<QRectF> rects;
 
     if (m_enableFaceDetection) {
-        rects = m_fd.detect(m_viewFinder->currentImage());
+        rects = m_fd.detect(m_viewFinder->getCurrentImage());
         if (rects.length() > 0) {
             m_rects = rects;
             m_rectDelay = 30;
@@ -778,7 +779,7 @@ void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
         }
     }
 
-    m_viewFinder->renderImage(buffer, i, m_rects);
+    m_viewFinder->render(buffer, i, m_rects);
 }
 
 void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
@@ -830,7 +831,7 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
 
 void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
 {
-    //qDebug() << Q_FUNC_INFO << buffer << m_state << m_viewFinderStream << m_stillStream;
+    qDebug() << Q_FUNC_INFO << buffer << m_state << m_viewFinderStream << m_stillStream;
     libcamera::Request *request;
     {
         QMutexLocker locker(&m_mutex);

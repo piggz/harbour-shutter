@@ -1,54 +1,49 @@
-#ifndef VIEWFINDERRENDERER_H
-#define VIEWFINDERRENDERER_H
+#ifndef OPENGLVIEWFINDERRENDERNODE_H
+#define OPENGLVIEWFINDERRENDERNODE_H
 
-#include <QObject>
-#include <QSize>
-#include <QQuickWindow>
-#include <QMutex>
+#include "image.h"
+#include <QSGRenderNode>
+#include <QQuickItem>
+
 #include <QOpenGLBuffer>
 #include <QOpenGLFunctions>
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
-#include <QQuickFramebufferObject>
+#include <libcamera/libcamera/color_space.h>
+#include <libcamera/libcamera/framebuffer.h>
+#include <libcamera/libcamera/pixel_format.h>
 
-#include <libcamera/formats.h>
-#include <libcamera/framebuffer.h>
+class QOpenGLShaderProgram;
+class QOpenGLBuffer;
 
-#include "viewfinder.h"
-
-class ViewFinderRenderer : public QQuickFramebufferObject::Renderer,
-        public ViewFinder,
-        protected QOpenGLFunctions
+class OpenGLViewFinderRenderNode : public QSGRenderNode
 {
 public:
-    ViewFinderRenderer();
-    ~ViewFinderRenderer();
+    OpenGLViewFinderRenderNode();
+    ~OpenGLViewFinderRenderNode();
 
-    virtual void render() override;
-    void init();
+    void render(const RenderState *state) override;
+    void releaseResources() override;
+    StateFlags changedStates() const override;
+    RenderingFlags flags() const override;
+    QRectF rect() const override;
+    //! [1]
 
-    const QList<libcamera::PixelFormat> &nativeFormats() const override;
+    void sync(QQuickItem *item);
 
     int setFormat(const libcamera::PixelFormat &format, const QSize &size,
                   const libcamera::ColorSpace &colorSpace,
-                  unsigned int stride) override;
-    void renderImage(libcamera::FrameBuffer *buffer, Image *image, QList<QRectF>) override;
-    void stop() override;
+                  unsigned int stride);
 
+    void preRender(libcamera::FrameBuffer *buffer, Image *image, QList<QRectF>);
 private:
-    QSize m_viewportSize;
-    //QOpenGLShaderProgram *m_program;
-    QQuickWindow *m_window;
+    void init();
 
-    bool selectFormat(const libcamera::PixelFormat &format);
-    void selectColorSpace(const libcamera::ColorSpace &colorSpace);
-
-    void configureTexture(QOpenGLTexture &texture);
-    bool createFragmentShader();
-    bool createVertexShader();
-    void removeShader();
-    void doRender();
+    int m_width = 0;
+    int m_height = 0;
+    int m_matrixUniform;
+    int m_opacityUniform;
 
     /* Captured image size, format and buffer */
     libcamera::FrameBuffer *buffer_;
@@ -57,6 +52,16 @@ private:
     QSize size_;
     unsigned int stride_;
     Image *image_;
+
+
+    bool selectFormat(const libcamera::PixelFormat &format);
+    void selectColorSpace(const libcamera::ColorSpace &colorSpace);
+
+    void configureTexture(QOpenGLTexture &texture, QOpenGLFunctions *f);
+    bool createFragmentShader();
+    bool createVertexShader();
+    void removeShader();
+
 
     /* Shaders */
     QOpenGLShaderProgram shaderProgram_;
@@ -74,6 +79,7 @@ private:
 
     /* Common texture parameters */
     GLuint textureMinMagFilters_;
+    GLuint projMatrixUniform_;
 
     /* YUV texture parameters */
     GLuint textureUniformU_;
@@ -89,12 +95,7 @@ private:
     GLuint textureUniformBayerFirstRed_;
     QPointF firstRed_;
 
-    QMutex mutex_; /* Prevent concurrent access to image_ */
-
-    QOpenGLShaderProgram *m_program;
-
-    bool m_hadConfig = false;
 
 };
 
-#endif // VIEWFINDERRENDERER_H
+#endif // OPENGLVIEWFINDERRENDERNODE_H

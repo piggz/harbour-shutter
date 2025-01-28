@@ -67,7 +67,7 @@ int ViewFinder2D::setFormat(const libcamera::PixelFormat &format, const QSize &s
     return 0;
 }
 
-void ViewFinder2D::renderImage(libcamera::FrameBuffer *buffer, class Image *image, QList<QRectF> rects)
+void ViewFinder2D::render(libcamera::FrameBuffer *buffer, class Image *image, QList<QRectF> rects)
 {
     size_t size1 = buffer->metadata().planes()[0].bytesused;
 
@@ -119,7 +119,7 @@ void ViewFinder2D::stop()
     update();
 }
 
-QImage ViewFinder2D::currentImage()
+QImage ViewFinder2D::getCurrentImage()
 {
     return m_image;
 }
