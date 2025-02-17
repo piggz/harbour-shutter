@@ -45,12 +45,7 @@ private:
     QSize m_size;
     unsigned int m_stride;
     Image *image_;
-
-
-
     QMutex mutex_; /* Prevent concurrent access to image_ */
-
-
 };
 
 #endif // VIEWFINDER3D_H

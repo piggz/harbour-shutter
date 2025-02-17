@@ -9,7 +9,9 @@
 precision mediump float;
 #endif
 
-varying vec2 textureOut;
+in vec2 textureOut;
+
+out vec4 FragColor;
 
 uniform sampler2D tex_y;
 uniform vec2 tex_step;
@@ -49,11 +51,11 @@ void main(void)
 	 * a = fract(x) * 2			if fract(x) < 0.5
 	 * a = fract(x) * 2 - 1			if fract(x) >= 0.5
 	 */
-	vec2 pos = textureOut;
+        vec2 pos = textureOut;
 	float f_x = fract(pos.x / tex_step.x);
 
-	vec4 left = texture2D(tex_y, vec2(pos.x - f_x * tex_step.x, pos.y));
-	vec4 right = texture2D(tex_y, vec2(pos.x + (1.0 - f_x) * tex_step.x , pos.y));
+        vec4 left = texture(tex_y, vec2(pos.x - f_x * tex_step.x, pos.y));
+        vec4 right = texture(tex_y, vec2(pos.x + (1.0 - f_x) * tex_step.x , pos.y));
 
 #if defined(YUV_PATTERN_UYVY)
 	float y_left = mix(left.g, left.a, f_x * 2.0);
@@ -77,7 +79,18 @@ void main(void)
 
 	float y = mix(y_left, y_right, step(0.5, f_x));
 
-	vec3 rgb = yuv2rgb_matrix * (vec3(y, uv) - yuv2rgb_offset);
+        vec3 rgb = yuv2rgb_matrix * (vec3(y, uv) - yuv2rgb_offset);
 
-	gl_FragColor = vec4(rgb, 1.0);
+        //vec3 rgb = texture2D(tex_y, textureOut).rgb;
+
+        //vec3 rgb = vec3(1.0, 1.0, 0.5);
+
+        //FragColor = texture2D(tex_y, textureOut) * vec4(colourOut, 1.0);
+        //FragColor = texture(tex_y, textureOut);
+
+
+        //vec3 rgb;
+        //rgb = texture2D(tex_y, textureOut).rgb;
+        gl_FragColor = vec4(rgb, 1.0);
+
 }

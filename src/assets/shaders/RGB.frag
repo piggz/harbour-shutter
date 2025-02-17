@@ -16,7 +16,7 @@ void main(void)
 {
 	vec3 rgb;
 
-	rgb = texture2D(tex_y, textureOut).RGB_PATTERN;
+        rgb = texture2D(tex_y, textureOut).RGB_PATTERN;
 
-	gl_FragColor = vec4(rgb, 1.0);
+        gl_FragColor = vec4(rgb, 1.0);
 }

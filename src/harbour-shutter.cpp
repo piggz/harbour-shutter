@@ -24,6 +24,7 @@
 #include "settings.h"
 #include "controlmodel.h"
 #include "viewfinder3d.h"
+#include "viewfindergl.h"
 
 int main(int argc, char *argv[])
 {
@@ -38,6 +39,8 @@ int main(int argc, char *argv[])
     QApplication::setApplicationName(QStringLiteral("shutter"));
 
     std::shared_ptr<libcamera::CameraManager> cm = std::make_shared<libcamera::CameraManager>();
+
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
 
     int ret = cm->start();
     if (ret) {
@@ -58,6 +61,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<Settings>("uk.co.piggz.shutter", 1, 0, "Settings");
     qmlRegisterType<CameraProxy>("uk.co.piggz.shutter", 1, 0, "CameraProxy");
     qmlRegisterType<ViewFinder3D>("uk.co.piggz.shutter", 1, 0, "ViewFinder3D");
+    qmlRegisterType<ViewFinderGL>("uk.co.piggz.shutter", 1, 0, "ViewFinderGL");
 
     ResourceHandler handler(&app);
     handler.acquire();

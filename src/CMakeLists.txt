@@ -7,15 +7,20 @@ qt_add_resources(harbour-shutter "classifiers"
 qt_add_resources(harbour-shutter "shaders"
     PREFIX "/"
     FILES
+    assets/shaders/bayer_8.vert
+    assets/shaders/identity.vert
+    assets/shaders/test.vert
+    assets/shaders/test.frag
     assets/shaders/RGB.frag
     assets/shaders/YUV_2_planes.frag
     assets/shaders/YUV_3_planes.frag
     assets/shaders/YUV_packed.frag
     assets/shaders/bayer_1x_packed.frag
     assets/shaders/bayer_8.frag
-    assets/shaders/bayer_8.vert
-    assets/shaders/identity.vert
+    assets/test_pattern.png
+    assets/shaders/YUYV.frag
     )
+
 
 target_include_directories(harbour-shutter PUBLIC ${LIBCAMERA_INCLUDE_DIRS} ${OPENCV_INCLUDE_DIRS})
 target_compile_options(harbour-shutter PUBLIC ${LIBCAMERA_CFLAGS_OTHER} ${OPENCV_CFLAGS_OTHER})
@@ -158,6 +163,7 @@ target_sources(harbour-shutter
     storagemodel.cpp
     viewfinder3d.cpp
     openglviewfinderrendernode.cpp
+    viewfindergl.cpp
 
     cameramodel.h
     cameraproxy.h
@@ -180,6 +186,7 @@ target_sources(harbour-shutter
     viewfinder2d.h
     viewfinder3d.h
     openglviewfinderrendernode.h
+    viewfindergl.h
 )
 
 target_link_libraries(harbour-shutter
@@ -190,6 +197,7 @@ target_link_libraries(harbour-shutter
     Qt6::QuickControls2
     Qt6::Widgets
     Qt6::Multimedia
+    Qt6::GuiPrivate
     ${LIBCAMERA_LIBRARIES}
     ${OPENCV_LIBRARIES}
     dl

@@ -108,7 +108,7 @@ private:
     std::shared_ptr<libcamera::Camera> m_currentCamera;
     Settings *m_settings = nullptr;
 
-    ViewFinder* m_viewFinder;
+    ViewFinder* m_viewFinder = nullptr;
     QString m_currentCameraId;
     QMutex m_mutex;
 

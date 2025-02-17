@@ -6,6 +6,7 @@
 #include "settings.h"
 #include "viewfinder2d.h"
 #include "viewfinder3d.h"
+#include "viewfindergl.h"
 
 QDebug operator<< (QDebug d, const libcamera::Size &sz) {
     d << "Size:" << sz.width << "x" << sz.height;
@@ -346,12 +347,16 @@ void CameraProxy::setViewFinder(ViewFinder *vf)
     ViewFinder2D *vf2d = dynamic_cast<ViewFinder2D*>(vf);
     if (vf2d) {
         connect(vf2d, &ViewFinder2D::renderComplete, this, &CameraProxy::renderComplete);
-        return;
     }
 
     ViewFinder3D *vf3d = dynamic_cast<ViewFinder3D*>(vf);
     if (vf3d) {
         connect(vf3d, &ViewFinder3D::renderComplete, this, &CameraProxy::renderComplete);
+    }
+
+    ViewFinderGL *vfgl = dynamic_cast<ViewFinderGL*>(vf);
+    if (vfgl) {
+        connect(vfgl, &ViewFinderGL::renderComplete, this, &CameraProxy::renderComplete);
     }
 }
 
@@ -375,6 +380,9 @@ void CameraProxy::startViewFinder()
         return;
     }
 
+    if (!m_viewFinder) {
+        return;
+    }
     // Use a format supported by the viewfinder if available. Default to JPEG
     //if supported by the hardware as that is first on the list
     for (const libcamera::PixelFormat &format : m_viewFinder->nativeFormats()) {

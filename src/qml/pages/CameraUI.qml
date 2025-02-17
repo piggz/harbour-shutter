@@ -6,7 +6,7 @@ import QtSensors
 import "../components"
 import uk.co.piggz.shutter 1.0
 
-Page {
+Item {
     id: page
 
     property alias camera: camera
@@ -39,12 +39,13 @@ Page {
         }
     }
 
+    /*
     Rectangle {
         anchors.fill: parent
         z: -10
         color: "black"
     }
-
+*/
     OrientationSensor {
         id: orientationSensor
         active: !settings.useSizeAsOrientation
@@ -55,20 +56,21 @@ Page {
         }
     }
 
-    //! [3]
+    /*
     ViewFinder3D {
         id: viewFinder
         anchors.centerIn: parent
-        width: parent.width
-        height: parent.height
+        height:5
+        width: 5
+        x: 0
         z:-5
 
-        transform: [
-            Rotation { id: rotation; axis.x: 0; axis.z: 0; axis.y: 1; angle: 0; origin.x: viewFinder.width / 2; origin.y: viewFinder.height / 2; },
-            Translate { id: txOut; x: -viewFinder.width / 2; y: -viewFinder.height / 2 },
-            Scale { id: scale; },
-            Translate { id: txIn; x: viewFinder.width / 2; y: viewFinder.height / 2 }
-        ]
+        //transform: [
+        //    Rotation { id: rotation; axis.x: 0; axis.z: 0; axis.y: 1; angle: 0; origin.x: viewFinder.width / 2; origin.y: viewFinder.height / 2; },
+        //    Translate { id: txOut; x: -viewFinder.width / 2; y: -viewFinder.height / 2 },
+        //    Scale { id: scale; },
+        //    Translate { id: txIn; x: viewFinder.width / 2; y: viewFinder.height / 2 }
+        //]
 
         Rectangle {
             id: rectFlash
@@ -82,15 +84,14 @@ Page {
                 duration: 200
             }
         }
-
-    }
+    }*/
 
     /*
     ViewFinder2D {
         id: viewFinder;
-        anchors.centerIn: parent
-        width: parent.width
-        height: parent.height
+        //anchors.centerIn: parent
+        width: parent.width / 2
+        height: parent.height / 2
         z:-5
 
         Rectangle {
@@ -105,8 +106,17 @@ Page {
                 duration: 200
             }
         }
+
+
     }
 */
+    ViewFinderGL {
+        id: viewFinderGL
+        anchors.fill: parent
+        z: -100
+    }
+
+
     /*
     PositionSource {
         id: positionSource
@@ -504,13 +514,14 @@ Page {
         }
     }
 */
+
     function startup() {
         console.log("Orientations:", OrientationReading.TopUp, OrientationReading.TopDown, OrientationReading.LeftUp, OrientationReading.RightUp)
         console.log("Orientation: ", _orientation, controlsRotation, _nativePortrait);
 
         updateRotation(orientationSensor.reading ? orientationSensor.reading.orientation : 0);
 
-        cameraProxy.setViewFinder(viewFinder);
+        cameraProxy.setViewFinder(viewFinderGL);
         cameraProxy.setFaceDetectionEnabled(settings.faceDetection);
 
         for( var i = 0; i < modelCamera.rowCount; i++ ) {

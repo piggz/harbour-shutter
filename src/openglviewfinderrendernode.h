@@ -38,7 +38,7 @@ public:
 
     void preRender(libcamera::FrameBuffer *buffer, Image *image, QList<QRectF>);
 private:
-    void init();
+    void init(QOpenGLFunctions *f);
 
     int m_width = 0;
     int m_height = 0;
@@ -96,6 +96,7 @@ private:
     QPointF firstRed_;
 
 
+    QImage *m_testPattern;
 };
 
 #endif // OPENGLVIEWFINDERRENDERNODE_H

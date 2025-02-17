@@ -11,6 +11,8 @@
 OpenGLViewFinderRenderNode::OpenGLViewFinderRenderNode() : vertexBuffer_(QOpenGLBuffer::VertexBuffer), colorSpace_(libcamera::ColorSpace::Raw)
 {
     qDebug() << Q_FUNC_INFO;
+    m_testPattern = new QImage(QStringLiteral(":/assets/test_pattern.png"));
+
 }
 
 OpenGLViewFinderRenderNode::~OpenGLViewFinderRenderNode()
@@ -26,28 +28,28 @@ void OpenGLViewFinderRenderNode::releaseResources()
     qDebug() << Q_FUNC_INFO;
 }
 
-void OpenGLViewFinderRenderNode::init()
+void OpenGLViewFinderRenderNode::init(QOpenGLFunctions *f)
 {
     qDebug() << Q_FUNC_INFO;
 
     //initializeOpenGLFunctions();
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_DEPTH_TEST);
+    f->glEnable(GL_TEXTURE_2D);
+    f->glDisable(GL_DEPTH_TEST);
 
     const GLfloat coordinates[2][4][2]{
         {
             /* Vertex coordinates */
-            { -1.0f, -1.0f },
-            { -1.0f, +1.0f },
-            { +1.0f, +1.0f },
-            { +1.0f, -1.0f },
+            { 0.0f, 10.0f },
+            { 0.0f, 0.0f },
+            { 10.0f, 0.0f },
+            { 10.0f, 10.0f },
         },
         {
             /* Texture coordinates */
-            { 0.0f, 1.0f },
+            { 0.0f, 10.0f },
             { 0.0f, 0.0f },
-            { 1.0f, 0.0f },
-            { 1.0f, 1.0f },
+            { 10.0f, 0.0f },
+            { 10.0f, 10.0f },
         },
     };
 
@@ -60,111 +62,27 @@ void OpenGLViewFinderRenderNode::init()
         qWarning() << "[ViewFinderGL]: create vertex shader failed.";
 }
 
-#if 0
-void OpenGLViewFinderRenderNode::paintGL()
-{
-    if (!fragmentShader_) {
-        if (!createFragmentShader()) {
-            qWarning() << "[ViewFinderGL]:"
-                   << "create fragment shader failed.";
-        }
-    }
-
-    /* Bind shader pipeline for use. */
-    if (!shaderProgram_.bind()) {
-        qWarning() << "[ViewFinderGL]:" << shaderProgram_.log();
-        close();
-    }
-
-    if (!image_)
-        return;
-
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    doRender();
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-}
-#endif
-
 void OpenGLViewFinderRenderNode::render(const RenderState *state)
 {
-#if 0
-    if (!m_program)
-        init();
-
-    QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
-    m_program->bind();
-    m_program->setUniformValue(m_matrixUniform, *state->projectionMatrix() * *matrix());
-    m_program->setUniformValue(m_opacityUniform, float(inheritedOpacity()));
-//! [2]
-
-    m_vbo->bind();
-
-//! [5]
-    QPointF p0(m_width - 1, m_height - 1);
-    QPointF p1(0, 0);
-    QPointF p2(0, m_height - 1);
-
-    GLfloat vertices[6] = { GLfloat(p0.x()), GLfloat(p0.y()),
-                            GLfloat(p1.x()), GLfloat(p1.y()),
-                            GLfloat(p2.x()), GLfloat(p2.y()) };
-    m_vbo->write(0, vertices, sizeof(vertices));
-//! [5]
-
-    m_program->setAttributeBuffer(0, GL_FLOAT, 0, 2);
-    m_program->setAttributeBuffer(1, GL_FLOAT, sizeof(vertices), 3);
-    m_program->enableAttributeArray(0);
-    m_program->enableAttributeArray(1);
-
-    // We are prepared both for the legacy (direct OpenGL) and the modern
-    // (abstracted by RHI) OpenGL scenegraph. So set all the states that are
-    // important to us.
-
-    //! [3]
-    f->glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-
-    f->glEnable(GL_BLEND);
-    f->glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-    // Regardless of flags() returning DepthAwareRendering or not,
-    // we have to test against what's in the depth buffer already.
-    f->glEnable(GL_DEPTH_TEST);
-
-    // Clip support.
-    if (state->scissorEnabled()) {
-        f->glEnable(GL_SCISSOR_TEST);
-        const QRect r = state->scissorRect(); // already bottom-up
-        f->glScissor(r.x(), r.y(), r.width(), r.height());
-    }
-    if (state->stencilEnabled()) {
-        f->glEnable(GL_STENCIL_TEST);
-        f->glStencilFunc(GL_EQUAL, state->stencilValue(), 0xFF);
-        f->glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-    }
-
-    f->glDrawArrays(GL_TRIANGLES, 0, 3);
-    //! [3]
-    //!
-#endif
-
     qDebug() << Q_FUNC_INFO;
 
+    QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
+
     if (!vertexShader_ && !vertexShaderFile_.isEmpty()) {
-        init();
+        init(f);
     }
 
     if (!fragmentShader_ && !fragmentShaderFile_.isEmpty()) {
         if (!createFragmentShader()) {
             qWarning() << "[ViewFinderGL]:"
-                   << "create fragment shader failed.";
+                       << "create fragment shader failed.";
         }
     }
 
     /* Bind shader pipeline for use. */
     if (!shaderProgram_.bind()) {
-        qWarning() << "[ViewFinderGL]:" << shaderProgram_.log();
-        //close();
+        qWarning() << "[ViewFinderGL]: Unable to bind" << shaderProgram_.log();
+        return;
     }
 
     if (!image_) {
@@ -172,9 +90,8 @@ void OpenGLViewFinderRenderNode::render(const RenderState *state)
         return;
     }
 
-    QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
 
-    f->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    f->glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     f->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     /* Stride of the first plane, in pixels. */
@@ -191,28 +108,28 @@ void OpenGLViewFinderRenderNode::render(const RenderState *state)
         f->glActiveTexture(GL_TEXTURE0);
         configureTexture(*textures_[0], f);
         f->glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_LUMINANCE,
-                 stride_,
-                 size_.height(),
-                 0,
-                 GL_LUMINANCE,
-                 GL_UNSIGNED_BYTE,
-                 image_->data(0).data());
+                        0,
+                        GL_LUMINANCE,
+                        stride_,
+                        size_.height(),
+                        0,
+                        GL_LUMINANCE,
+                        GL_UNSIGNED_BYTE,
+                        image_->data(0).data());
         shaderProgram_.setUniformValue(textureUniformY_, 0);
 
         /* Activate texture UV/VU */
         f->glActiveTexture(GL_TEXTURE1);
         configureTexture(*textures_[1], f);
         f->glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_LUMINANCE_ALPHA,
-                 stride_ / horzSubSample_,
-                 size_.height() / vertSubSample_,
-                 0,
-                 GL_LUMINANCE_ALPHA,
-                 GL_UNSIGNED_BYTE,
-                 image_->data(1).data());
+                        0,
+                        GL_LUMINANCE_ALPHA,
+                        stride_ / horzSubSample_,
+                        size_.height() / vertSubSample_,
+                        0,
+                        GL_LUMINANCE_ALPHA,
+                        GL_UNSIGNED_BYTE,
+                        image_->data(1).data());
         shaderProgram_.setUniformValue(textureUniformU_, 1);
 
         stridePixels = stride_;
@@ -223,42 +140,42 @@ void OpenGLViewFinderRenderNode::render(const RenderState *state)
         f->glActiveTexture(GL_TEXTURE0);
         configureTexture(*textures_[0], f);
         f->glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_LUMINANCE,
-                 stride_,
-                 size_.height(),
-                 0,
-                 GL_LUMINANCE,
-                 GL_UNSIGNED_BYTE,
-                 image_->data(0).data());
+                        0,
+                        GL_LUMINANCE,
+                        stride_,
+                        size_.height(),
+                        0,
+                        GL_LUMINANCE,
+                        GL_UNSIGNED_BYTE,
+                        image_->data(0).data());
         shaderProgram_.setUniformValue(textureUniformY_, 0);
 
         /* Activate texture U */
         f->glActiveTexture(GL_TEXTURE1);
         configureTexture(*textures_[1], f);
         f->glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_LUMINANCE,
-                 stride_ / horzSubSample_,
-                 size_.height() / vertSubSample_,
-                 0,
-                 GL_LUMINANCE,
-                 GL_UNSIGNED_BYTE,
-                 image_->data(1).data());
+                        0,
+                        GL_LUMINANCE,
+                        stride_ / horzSubSample_,
+                        size_.height() / vertSubSample_,
+                        0,
+                        GL_LUMINANCE,
+                        GL_UNSIGNED_BYTE,
+                        image_->data(1).data());
         shaderProgram_.setUniformValue(textureUniformU_, 1);
 
         /* Activate texture V */
         f->glActiveTexture(GL_TEXTURE2);
         configureTexture(*textures_[2], f);
         f->glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_LUMINANCE,
-                 stride_ / horzSubSample_,
-                 size_.height() / vertSubSample_,
-                 0,
-                 GL_LUMINANCE,
-                 GL_UNSIGNED_BYTE,
-                 image_->data(2).data());
+                        0,
+                        GL_LUMINANCE,
+                        stride_ / horzSubSample_,
+                        size_.height() / vertSubSample_,
+                        0,
+                        GL_LUMINANCE,
+                        GL_UNSIGNED_BYTE,
+                        image_->data(2).data());
         shaderProgram_.setUniformValue(textureUniformV_, 2);
 
         stridePixels = stride_;
@@ -269,42 +186,42 @@ void OpenGLViewFinderRenderNode::render(const RenderState *state)
         f->glActiveTexture(GL_TEXTURE0);
         configureTexture(*textures_[0], f);
         f->glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_LUMINANCE,
-                 stride_,
-                 size_.height(),
-                 0,
-                 GL_LUMINANCE,
-                 GL_UNSIGNED_BYTE,
-                 image_->data(0).data());
+                        0,
+                        GL_LUMINANCE,
+                        stride_,
+                        size_.height(),
+                        0,
+                        GL_LUMINANCE,
+                        GL_UNSIGNED_BYTE,
+                        image_->data(0).data());
         shaderProgram_.setUniformValue(textureUniformY_, 0);
 
         /* Activate texture V */
         f->glActiveTexture(GL_TEXTURE2);
         configureTexture(*textures_[2], f);
         f->glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_LUMINANCE,
-                 stride_ / horzSubSample_,
-                 size_.height() / vertSubSample_,
-                 0,
-                 GL_LUMINANCE,
-                 GL_UNSIGNED_BYTE,
-                 image_->data(1).data());
+                        0,
+                        GL_LUMINANCE,
+                        stride_ / horzSubSample_,
+                        size_.height() / vertSubSample_,
+                        0,
+                        GL_LUMINANCE,
+                        GL_UNSIGNED_BYTE,
+                        image_->data(1).data());
         shaderProgram_.setUniformValue(textureUniformV_, 2);
 
         /* Activate texture U */
         f->glActiveTexture(GL_TEXTURE1);
         configureTexture(*textures_[1], f);
         f->glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_LUMINANCE,
-                 stride_ / horzSubSample_,
-                 size_.height() / vertSubSample_,
-                 0,
-                 GL_LUMINANCE,
-                 GL_UNSIGNED_BYTE,
-                 image_->data(2).data());
+                        0,
+                        GL_LUMINANCE,
+                        stride_ / horzSubSample_,
+                        size_.height() / vertSubSample_,
+                        0,
+                        GL_LUMINANCE,
+                        GL_UNSIGNED_BYTE,
+                        image_->data(2).data());
         shaderProgram_.setUniformValue(textureUniformU_, 1);
 
         stridePixels = stride_;
@@ -315,32 +232,32 @@ void OpenGLViewFinderRenderNode::render(const RenderState *state)
     case libcamera::formats::YUYV:
     case libcamera::formats::YVYU:
         /*
-         * Packed YUV formats are stored in a RGBA texture to match the
-         * OpenGL texel size with the 4 bytes repeating pattern in YUV.
-         * The texture width is thus half of the image_ with.
-         */
-        f->glActiveTexture(GL_TEXTURE0);
+                 * Packed YUV formats are stored in a RGBA texture to match the
+                 * OpenGL texel size with the 4 bytes repeating pattern in YUV.
+                 * The texture width is thus half of the image_ with.
+                 */
+        glActiveTexture(GL_TEXTURE0);
         configureTexture(*textures_[0], f);
-        f->glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_RGBA,
-                 stride_ / 4,
-                 size_.height(),
-                 0,
-                 GL_RGBA,
-                 GL_UNSIGNED_BYTE,
-                 image_->data(0).data());
+        glTexImage2D(GL_TEXTURE_2D,
+                     0,
+                     GL_RGB,
+                     stride_ / 4,
+                     size_.height(),
+                     0,
+                     GL_RGB,
+                     GL_UNSIGNED_BYTE,
+                     m_testPattern->bits() /* image_->data(0).data()*/);
         shaderProgram_.setUniformValue(textureUniformY_, 0);
 
         /*
-         * The shader needs the step between two texture pixels in the
-         * horizontal direction, expressed in texture coordinate units
-         * ([0, 1]). There are exactly width - 1 steps between the
-         * leftmost and rightmost texels.
-         */
+                 * The shader needs the step between two texture pixels in the
+                 * horizontal direction, expressed in texture coordinate units
+                 * ([0, 1]). There are exactly width - 1 steps between the
+                 * leftmost and rightmost texels.
+                 */
         shaderProgram_.setUniformValue(textureUniformStep_,
-                           1.0f / (size_.width() / 2 - 1),
-                           1.0f /* not used */);
+                                       1.0f / (size_.width() / 2 - 1),
+                                       1.0f /* not used */);
 
         stridePixels = stride_ / 2;
         break;
@@ -352,14 +269,14 @@ void OpenGLViewFinderRenderNode::render(const RenderState *state)
         f->glActiveTexture(GL_TEXTURE0);
         configureTexture(*textures_[0], f);
         f->glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_RGBA,
-                 stride_ / 4,
-                 size_.height(),
-                 0,
-                 GL_RGBA,
-                 GL_UNSIGNED_BYTE,
-                 image_->data(0).data());
+                        0,
+                        GL_RGBA,
+                        stride_ / 4,
+                        size_.height(),
+                        0,
+                        GL_RGBA,
+                        GL_UNSIGNED_BYTE,
+                        image_->data(0).data());
         shaderProgram_.setUniformValue(textureUniformY_, 0);
 
         stridePixels = stride_ / 4;
@@ -370,14 +287,14 @@ void OpenGLViewFinderRenderNode::render(const RenderState *state)
         f->glActiveTexture(GL_TEXTURE0);
         configureTexture(*textures_[0], f);
         f->glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_RGB,
-                 stride_ / 3,
-                 size_.height(),
-                 0,
-                 GL_RGB,
-                 GL_UNSIGNED_BYTE,
-                 image_->data(0).data());
+                        0,
+                        GL_RGB,
+                        stride_ / 3,
+                        size_.height(),
+                        0,
+                        GL_RGB,
+                        GL_UNSIGNED_BYTE,
+                        image_->data(0).data());
         shaderProgram_.setUniformValue(textureUniformY_, 0);
 
         stridePixels = stride_ / 3;
@@ -403,23 +320,23 @@ void OpenGLViewFinderRenderNode::render(const RenderState *state)
         f->glActiveTexture(GL_TEXTURE0);
         configureTexture(*textures_[0], f);
         f->glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_LUMINANCE,
-                 stride_,
-                 size_.height(),
-                 0,
-                 GL_LUMINANCE,
-                 GL_UNSIGNED_BYTE,
-                 image_->data(0).data());
+                        0,
+                        GL_LUMINANCE,
+                        stride_,
+                        size_.height(),
+                        0,
+                        GL_LUMINANCE,
+                        GL_UNSIGNED_BYTE,
+                        image_->data(0).data());
         shaderProgram_.setUniformValue(textureUniformY_, 0);
         shaderProgram_.setUniformValue(textureUniformBayerFirstRed_,
-                           firstRed_);
+                                       firstRed_);
         shaderProgram_.setUniformValue(textureUniformSize_,
-                           size_.width(), /* in pixels */
-                           size_.height());
+                                       size_.width(), /* in pixels */
+                                       size_.height());
         shaderProgram_.setUniformValue(textureUniformStep_,
-                           1.0f / (stride_ - 1),
-                           1.0f / (size_.height() - 1));
+                                       1.0f / (stride_ - 1),
+                                       1.0f / (size_.height() - 1));
 
         /*
          * The stride is already taken into account in the shaders, set
@@ -439,24 +356,27 @@ void OpenGLViewFinderRenderNode::render(const RenderState *state)
      * of the image.
      */
     shaderProgram_.setUniformValue(textureUniformStrideFactor_,
-                       static_cast<float>(size_.width() - 1) /
-                       (stridePixels - 1));
+                                   static_cast<float>(size_.width() - 1) /
+                                   (stridePixels - 1));
 
     /*
      * Place the viewfinder in the centre of the widget, preserving the
      * aspect ratio of the image.
      */
-    QMatrix4x4 projMatrix;
-    QSizeF scaledSize = size_.scaled(rect().size().toSize(), Qt::KeepAspectRatio);
-    projMatrix.scale(scaledSize.width() / rect().size().width(),
-             scaledSize.height() / rect().size().height());
+    QMatrix4x4 projMatrix = *projectionMatrix() * *matrix();
+    QSizeF scaledSize = size_/*.scaled(rect().size().toSize(), Qt::KeepAspectRatio)*/;
+
+
+    //projMatrix.scale(scaledSize.width() / rect().size().width(),
+    //                 scaledSize.height() / rect().size().height());
+
+    qDebug() << size_ << rect().size() << scaledSize << projMatrix;
 
     shaderProgram_.setUniformValue(projMatrixUniform_, projMatrix);
 
-    f->glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    f->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
-//! [4]
 QSGRenderNode::StateFlags OpenGLViewFinderRenderNode::changedStates() const
 {
     qDebug() << Q_FUNC_INFO;
@@ -489,8 +409,8 @@ void OpenGLViewFinderRenderNode::sync(QQuickItem *item)
 
 
 int OpenGLViewFinderRenderNode::setFormat(const libcamera::PixelFormat &format, const QSize &size,
-                const libcamera::ColorSpace &colorSpace,
-                unsigned int stride)
+                                          const libcamera::ColorSpace &colorSpace,
+                                          unsigned int stride)
 {
     qDebug() << Q_FUNC_INFO << format.toString() << size << colorSpace.toString();
 
@@ -598,7 +518,7 @@ void OpenGLViewFinderRenderNode::selectColorSpace(const libcamera::ColorSpace &c
 
     fragmentShaderDefines_.append(QStringLiteral("#define YUV2RGB_MATRIX ") + matrix.join(QStringLiteral(", ")));
     fragmentShaderDefines_.append(QStringLiteral("#define YUV2RGB_Y_OFFSET %1")
-        .arg(offset, 0, 'f', 1));
+                                  .arg(offset, 0, 'f', 1));
 }
 
 bool OpenGLViewFinderRenderNode::createVertexShader()
@@ -662,17 +582,17 @@ bool OpenGLViewFinderRenderNode::createFragmentShader()
 
     shaderProgram_.enableAttributeArray(attributeVertex);
     shaderProgram_.setAttributeBuffer(attributeVertex,
-                      GL_FLOAT,
-                      0,
-                      2,
-                      2 * sizeof(GLfloat));
+                                      GL_FLOAT,
+                                      0,
+                                      2,
+                                      2 * sizeof(GLfloat));
 
     shaderProgram_.enableAttributeArray(attributeTexture);
     shaderProgram_.setAttributeBuffer(attributeTexture,
-                      GL_FLOAT,
-                      8 * sizeof(GLfloat),
-                      2,
-                      2 * sizeof(GLfloat));
+                                      GL_FLOAT,
+                                      8 * sizeof(GLfloat),
+                                      2,
+                                      2 * sizeof(GLfloat));
 
     vertexBuffer_.release();
 
@@ -703,9 +623,9 @@ void OpenGLViewFinderRenderNode::configureTexture(QOpenGLTexture &texture, QOpen
 
     f->glBindTexture(GL_TEXTURE_2D, texture.textureId());
     f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-            textureMinMagFilters_);
+                       textureMinMagFilters_);
     f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-            textureMinMagFilters_);
+                       textureMinMagFilters_);
     f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
@@ -733,6 +653,7 @@ bool OpenGLViewFinderRenderNode::selectFormat(const libcamera::PixelFormat &form
     vertexShaderFile_ = QStringLiteral(":assets/shaders/identity.vert");
 
     fragmentShaderDefines_.clear();
+    fragmentShaderDefines_.append(QStringLiteral("#version 330"));
 
     switch (format) {
     case libcamera::formats::NV12:
@@ -908,7 +829,7 @@ bool OpenGLViewFinderRenderNode::selectFormat(const libcamera::PixelFormat &form
     default:
         ret = false;
         qWarning() << "[ViewFinderGL]:"
-               << "format not supported.";
+                   << "format not supported.";
         break;
     };
 
