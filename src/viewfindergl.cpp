@@ -103,8 +103,6 @@ ViewFinderGLRenderer::~ViewFinderGLRenderer()
 
 void ViewFinderGL::sync()
 {
-    qDebug() << Q_FUNC_INFO << window()->size() << window()->devicePixelRatio();
-
     if (!m_renderer) {
         m_renderer = new ViewFinderGLRenderer();
         connect(window(), &QQuickWindow::beforeRendering, m_renderer, &ViewFinderGLRenderer::init, Qt::DirectConnection);
@@ -116,7 +114,7 @@ void ViewFinderGL::sync()
 
 void ViewFinderGLRenderer::init()
 {
-    qDebug() << Q_FUNC_INFO;
+    //qDebug() << Q_FUNC_INFO;
 
     if (!m_program) {
         QSGRendererInterface *rif = m_window->rendererInterface();
@@ -138,10 +136,10 @@ void ViewFinderGLRenderer::init()
 
         float vertices[] = {
             // positions   // texture coords
-            -0.5f, -0.5f,  0.0f, 1.0f,
-            -0.5f, 0.5f,   0.0f, 0.0f,
-            0.5f, -0.5f,   1.0f, 1.0f,
-            0.5f,  0.5f,   1.0f, 0.0f
+            -0.95f, -0.95f,  0.0f, 1.0f,
+            -0.95f, 0.95f,   0.0f, 0.0f,
+            0.95f, -0.95f,   1.0f, 1.0f,
+            0.95f,  0.95f,   1.0f, 0.0f
         };
 
         vertexBuffer_.create();
@@ -166,7 +164,7 @@ void ViewFinderGLRenderer::init()
 
 void ViewFinderGLRenderer::paint()
 {
-    qDebug() << Q_FUNC_INFO << image_;
+    //qDebug() << Q_FUNC_INFO << image_;
 
     if (!m_program) {
         return;
@@ -201,32 +199,6 @@ void ViewFinderGLRenderer::paint()
                                   2,
                                   4 * sizeof(GLfloat));
 
-
-    glActiveTexture(GL_TEXTURE0);
-    configureTexture(*textures_[0]);
-    glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_RGBA,
-                 stride_ / 4,
-                 size_.height(),
-                 0,
-                 GL_RGBA,
-                 GL_UNSIGNED_BYTE,
-                 image_->data(0).data());
-    m_program->setUniformValue(textureUniformY_, 0);
-
-    /*
-     * The shader needs the step between two texture pixels in the
-     * horizontal direction, expressed in texture coordinate units
-     * ([0, 1]). There are exactly width - 1 steps between the
-     * leftmost and rightmost texels.
-     */
-    m_program->setUniformValue(textureUniformStep_,
-                               1.0f / (size_.width() / 2 - 1),
-                               1.0f /* not used */);
-
-
-
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -234,9 +206,12 @@ void ViewFinderGLRenderer::paint()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     glDisable(GL_DEPTH_TEST);
 
+    doRender();
+
     glActiveTexture(GL_TEXTURE0);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
+    image_ = nullptr;
     m_program->release();
 
     m_window->endExternalCommands();
@@ -441,7 +416,7 @@ bool ViewFinderGLRenderer::selectFormat(const libcamera::PixelFormat &format)
 
 void ViewFinderGLRenderer::configureTexture(QOpenGLTexture &texture)
 {
-    qDebug() << Q_FUNC_INFO;
+    //qDebug() << Q_FUNC_INFO;
 
     glBindTexture(GL_TEXTURE_2D, texture.textureId());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
@@ -579,30 +554,6 @@ bool ViewFinderGLRenderer::createFragmentShader()
         //close();
     }
 
-    /*
-    attributeVertex = m_program->attributeLocation("vertexIn");
-    attributeTexture = m_program->attributeLocation("textureIn");
-
-    qDebug() << Q_FUNC_INFO << attributeVertex << attributeTexture;
-
-    vertexBuffer_.bind();
-
-    m_program->enableAttributeArray(attributeVertex);
-    m_program->setAttributeBuffer(attributeVertex,
-                                  GL_FLOAT,
-                                  0,
-                                  2,
-                                  2 * sizeof(GLfloat));
-
-    m_program->enableAttributeArray(attributeTexture);
-    m_program->setAttributeBuffer(attributeTexture,
-                                  GL_FLOAT,
-                                  8 * sizeof(GLfloat),
-                                  2,
-                                  2 * sizeof(GLfloat));
-
-    vertexBuffer_.release();
-*/
     projMatrixUniform_ = m_program->uniformLocation("proj_matrix");
     textureUniformY_ = m_program->uniformLocation("tex_y");
     textureUniformU_ = m_program->uniformLocation("tex_u");
@@ -666,6 +617,284 @@ void ViewFinderGLRenderer::preRender(libcamera::FrameBuffer *buffer, Image *imag
     image_ = image;
 }
 
+void ViewFinderGLRenderer::doRender()
+{
+    /* Stride of the first plane, in pixels. */
+    unsigned int stridePixels;
+
+    switch (format_) {
+    case libcamera::formats::NV12:
+    case libcamera::formats::NV21:
+    case libcamera::formats::NV16:
+    case libcamera::formats::NV61:
+    case libcamera::formats::NV24:
+    case libcamera::formats::NV42:
+        /* Activate texture Y */
+        glActiveTexture(GL_TEXTURE0);
+        configureTexture(*textures_[0]);
+        glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_LUMINANCE,
+                 stride_,
+                 size_.height(),
+                 0,
+                 GL_LUMINANCE,
+                 GL_UNSIGNED_BYTE,
+                 image_->data(0).data());
+        m_program->setUniformValue(textureUniformY_, 0);
+
+        /* Activate texture UV/VU */
+        glActiveTexture(GL_TEXTURE1);
+        configureTexture(*textures_[1]);
+        glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_LUMINANCE_ALPHA,
+                 stride_ / horzSubSample_,
+                 size_.height() / vertSubSample_,
+                 0,
+                 GL_LUMINANCE_ALPHA,
+                 GL_UNSIGNED_BYTE,
+                 image_->data(1).data());
+        m_program->setUniformValue(textureUniformU_, 1);
+
+        stridePixels = stride_;
+        break;
+
+    case libcamera::formats::YUV420:
+        /* Activate texture Y */
+        glActiveTexture(GL_TEXTURE0);
+        configureTexture(*textures_[0]);
+        glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_LUMINANCE,
+                 stride_,
+                 size_.height(),
+                 0,
+                 GL_LUMINANCE,
+                 GL_UNSIGNED_BYTE,
+                 image_->data(0).data());
+        m_program->setUniformValue(textureUniformY_, 0);
+
+        /* Activate texture U */
+        glActiveTexture(GL_TEXTURE1);
+        configureTexture(*textures_[1]);
+        glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_LUMINANCE,
+                 stride_ / horzSubSample_,
+                 size_.height() / vertSubSample_,
+                 0,
+                 GL_LUMINANCE,
+                 GL_UNSIGNED_BYTE,
+                 image_->data(1).data());
+        m_program->setUniformValue(textureUniformU_, 1);
+
+        /* Activate texture V */
+        glActiveTexture(GL_TEXTURE2);
+        configureTexture(*textures_[2]);
+        glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_LUMINANCE,
+                 stride_ / horzSubSample_,
+                 size_.height() / vertSubSample_,
+                 0,
+                 GL_LUMINANCE,
+                 GL_UNSIGNED_BYTE,
+                 image_->data(2).data());
+        m_program->setUniformValue(textureUniformV_, 2);
+
+        stridePixels = stride_;
+        break;
+
+    case libcamera::formats::YVU420:
+        /* Activate texture Y */
+        glActiveTexture(GL_TEXTURE0);
+        configureTexture(*textures_[0]);
+        glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_LUMINANCE,
+                 stride_,
+                 size_.height(),
+                 0,
+                 GL_LUMINANCE,
+                 GL_UNSIGNED_BYTE,
+                 image_->data(0).data());
+        m_program->setUniformValue(textureUniformY_, 0);
+
+        /* Activate texture V */
+        glActiveTexture(GL_TEXTURE2);
+        configureTexture(*textures_[2]);
+        glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_LUMINANCE,
+                 stride_ / horzSubSample_,
+                 size_.height() / vertSubSample_,
+                 0,
+                 GL_LUMINANCE,
+                 GL_UNSIGNED_BYTE,
+                 image_->data(1).data());
+        m_program->setUniformValue(textureUniformV_, 2);
+
+        /* Activate texture U */
+        glActiveTexture(GL_TEXTURE1);
+        configureTexture(*textures_[1]);
+        glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_LUMINANCE,
+                 stride_ / horzSubSample_,
+                 size_.height() / vertSubSample_,
+                 0,
+                 GL_LUMINANCE,
+                 GL_UNSIGNED_BYTE,
+                 image_->data(2).data());
+        m_program->setUniformValue(textureUniformU_, 1);
+
+        stridePixels = stride_;
+        break;
+
+    case libcamera::formats::UYVY:
+    case libcamera::formats::VYUY:
+    case libcamera::formats::YUYV:
+    case libcamera::formats::YVYU:
+        /*
+         * Packed YUV formats are stored in a RGBA texture to match the
+         * OpenGL texel size with the 4 bytes repeating pattern in YUV.
+         * The texture width is thus half of the image_ with.
+         */
+        glActiveTexture(GL_TEXTURE0);
+        configureTexture(*textures_[0]);
+        glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_RGBA,
+                 stride_ / 4,
+                 size_.height(),
+                 0,
+                 GL_RGBA,
+                 GL_UNSIGNED_BYTE,
+                 image_->data(0).data());
+        m_program->setUniformValue(textureUniformY_, 0);
+
+        /*
+         * The shader needs the step between two texture pixels in the
+         * horizontal direction, expressed in texture coordinate units
+         * ([0, 1]). There are exactly width - 1 steps between the
+         * leftmost and rightmost texels.
+         */
+        m_program->setUniformValue(textureUniformStep_,
+                           1.0f / (size_.width() / 2 - 1),
+                           1.0f /* not used */);
+
+        stridePixels = stride_ / 2;
+        break;
+
+    case libcamera::formats::ABGR8888:
+    case libcamera::formats::ARGB8888:
+    case libcamera::formats::BGRA8888:
+    case libcamera::formats::RGBA8888:
+        glActiveTexture(GL_TEXTURE0);
+        configureTexture(*textures_[0]);
+        glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_RGBA,
+                 stride_ / 4,
+                 size_.height(),
+                 0,
+                 GL_RGBA,
+                 GL_UNSIGNED_BYTE,
+                 image_->data(0).data());
+        m_program->setUniformValue(textureUniformY_, 0);
+
+        stridePixels = stride_ / 4;
+        break;
+
+    case libcamera::formats::BGR888:
+    case libcamera::formats::RGB888:
+        glActiveTexture(GL_TEXTURE0);
+        configureTexture(*textures_[0]);
+        glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_RGB,
+                 stride_ / 3,
+                 size_.height(),
+                 0,
+                 GL_RGB,
+                 GL_UNSIGNED_BYTE,
+                 image_->data(0).data());
+        m_program->setUniformValue(textureUniformY_, 0);
+
+        stridePixels = stride_ / 3;
+        break;
+
+    case libcamera::formats::SBGGR8:
+    case libcamera::formats::SGBRG8:
+    case libcamera::formats::SGRBG8:
+    case libcamera::formats::SRGGB8:
+    case libcamera::formats::SBGGR10_CSI2P:
+    case libcamera::formats::SGBRG10_CSI2P:
+    case libcamera::formats::SGRBG10_CSI2P:
+    case libcamera::formats::SRGGB10_CSI2P:
+    case libcamera::formats::SBGGR12_CSI2P:
+    case libcamera::formats::SGBRG12_CSI2P:
+    case libcamera::formats::SGRBG12_CSI2P:
+    case libcamera::formats::SRGGB12_CSI2P:
+        /*
+         * Raw Bayer 8-bit, and packed raw Bayer 10-bit/12-bit formats
+         * are stored in a GL_LUMINANCE texture. The texture width is
+         * equal to the stride.
+         */
+        glActiveTexture(GL_TEXTURE0);
+        configureTexture(*textures_[0]);
+        glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_LUMINANCE,
+                 stride_,
+                 size_.height(),
+                 0,
+                 GL_LUMINANCE,
+                 GL_UNSIGNED_BYTE,
+                 image_->data(0).data());
+        m_program->setUniformValue(textureUniformY_, 0);
+        m_program->setUniformValue(textureUniformBayerFirstRed_,
+                           firstRed_);
+        m_program->setUniformValue(textureUniformSize_,
+                           size_.width(), /* in pixels */
+                           size_.height());
+        m_program->setUniformValue(textureUniformStep_,
+                           1.0f / (stride_ - 1),
+                           1.0f / (size_.height() - 1));
+
+        /*
+         * The stride is already taken into account in the shaders, set
+         * the generic stride factor to 1.0.
+         */
+        stridePixels = size_.width();
+        break;
+
+    default:
+        stridePixels = size_.width();
+        break;
+    };
+
+    /*
+     * Compute the stride factor for the vertex shader, to map the
+     * horizontal texture coordinate range [0.0, 1.0] to the active portion
+     * of the image.
+     */
+    m_program->setUniformValue(textureUniformStrideFactor_,
+                       static_cast<float>(size_.width() - 1) /
+                       (stridePixels - 1));
+
+    /*
+     * Place the viewfinder in the centre of the widget, preserving the
+     * aspect ratio of the image.
+     */
+    QMatrix4x4 projMatrix;
+    QSizeF scaledSize = size_.scaled(m_viewportSize, Qt::KeepAspectRatio);
+    projMatrix.scale(scaledSize.width() / m_viewportSize.width(),
+             scaledSize.height() / m_viewportSize.height());
+
+    m_program->setUniformValue(projMatrixUniform_, projMatrix);
+}
 
 
 //=================================================================================================

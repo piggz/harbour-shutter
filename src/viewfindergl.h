@@ -89,6 +89,7 @@ private:
     bool createFragmentShader();
     bool createVertexShader();
     void removeShader();
+    void doRender();
 };
 
 class ViewFinderGL : public QQuickItem, public ViewFinder

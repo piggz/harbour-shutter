@@ -17,7 +17,6 @@ uniform float stride_factor;
 
 void main(void)
 {
-        gl_Position = /*proj_matrix * */vec4(vertexIn, 0.0, 1.0);
+        gl_Position = proj_matrix * vec4(vertexIn, 0.0, 1.0);
         textureOut = vec2(textureIn.x, textureIn.y);
-        //textureOut = textureIn.xy;
 }
