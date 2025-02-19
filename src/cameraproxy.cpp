@@ -201,6 +201,7 @@ bool CameraProxy::buildConfiguration(std::initializer_list<libcamera::StreamRole
         if (roles.size() == 2) {
             m_singleStream = true;
             qDebug() << "Device can only handle a single stream";
+            return false;
         }
         if (roles.begin()[0] == libcamera::StreamRole::Viewfinder) {
             m_vfStreamConfig = &m_config->at(0);
@@ -363,6 +364,11 @@ void CameraProxy::startViewFinder()
     qDebug() << Q_FUNC_INFO << m_vfStreamConfig;
     int ret;
 
+    if (m_state == CapturingViewFinder) {
+        qDebug() << "Already capturing viewfinder";
+        return;
+    }
+
     if (m_state != Stopped) {
         stop();
     }
@@ -374,8 +380,10 @@ void CameraProxy::startViewFinder()
     }
 
     if (!buildConfiguration({libcamera::StreamRole::StillCapture, libcamera::StreamRole::Viewfinder}, true)) {
-        qInfo() << "Failed to build configuration";
-        return;
+        if (!buildConfiguration({libcamera::StreamRole::Viewfinder}, true)) {
+            qInfo() << "Failed to build configuration";
+            return;
+        }
     }
 
     if (!m_viewFinder) {
