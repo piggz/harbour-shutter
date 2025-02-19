@@ -561,7 +561,6 @@ Item {
 
         onStillCaptureFinished: {
             console.log("Still capture finished, starting viewfinder timer");
-            cameraProxy.stop();
             startViewfinder();
 
             console.log("Camera: image saved", path)
