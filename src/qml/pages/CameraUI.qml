@@ -114,6 +114,19 @@ Item {
         id: viewFinderGL
         anchors.fill: parent
         z: -100
+
+        Rectangle {
+            id: rectFlash
+            anchors.fill: parent
+            opacity: 0
+
+            NumberAnimation on opacity {
+                id: animFlash
+                from: 1.0
+                to: 0.0
+                duration: 200
+            }
+        }
     }
 
 
