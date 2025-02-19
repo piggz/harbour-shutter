@@ -5,13 +5,11 @@
  * YUV_packed.frag - Fragment shader code for YUYV packed formats
  */
 
-#ifdef GL_ES
+#if GL_ES
 precision mediump float;
 #endif
 
-in vec2 textureOut;
-
-out vec4 FragColor;
+varying mediump vec2 textureOut;
 
 uniform sampler2D tex_y;
 uniform vec2 tex_step;
@@ -54,8 +52,8 @@ void main(void)
         vec2 pos = textureOut;
 	float f_x = fract(pos.x / tex_step.x);
 
-        vec4 left = texture(tex_y, vec2(pos.x - f_x * tex_step.x, pos.y));
-        vec4 right = texture(tex_y, vec2(pos.x + (1.0 - f_x) * tex_step.x , pos.y));
+        vec4 left = texture2D(tex_y, vec2(pos.x - f_x * tex_step.x, pos.y));
+        vec4 right = texture2D(tex_y, vec2(pos.x + (1.0 - f_x) * tex_step.x , pos.y));
 
 #if defined(YUV_PATTERN_UYVY)
 	float y_left = mix(left.g, left.a, f_x * 2.0);
