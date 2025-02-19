@@ -114,7 +114,7 @@ void ViewFinderGL::sync()
 
 void ViewFinderGLRenderer::init()
 {
-    //qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO;
 
     if (!m_program) {
         QSGRendererInterface *rif = m_window->rendererInterface();
@@ -164,9 +164,13 @@ void ViewFinderGLRenderer::init()
 
 void ViewFinderGLRenderer::paint()
 {
-    //qDebug() << Q_FUNC_INFO << image_;
+    qDebug() << Q_FUNC_INFO << image_;
 
     if (!m_program) {
+        return;
+    }
+
+    if (!image_) {
         return;
     }
 
@@ -175,13 +179,8 @@ void ViewFinderGLRenderer::paint()
     m_window->beginExternalCommands();
 
     vertexBuffer_.bind();
-
     if (!m_program->bind()) {
         qWarning() << "[ViewFinderGL]:" << m_program->log();
-        return;
-    }
-
-    if (!image_) {
         return;
     }
 
@@ -211,7 +210,6 @@ void ViewFinderGLRenderer::paint()
     glActiveTexture(GL_TEXTURE0);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-    image_ = nullptr;
     m_program->release();
 
     m_window->endExternalCommands();
@@ -230,7 +228,6 @@ bool ViewFinderGLRenderer::selectFormat(const libcamera::PixelFormat &format)
     vertexShaderFile_ = QStringLiteral(":assets/shaders/identity.vert");
 
     fragmentShaderDefines_.clear();
-    fragmentShaderDefines_.append(QStringLiteral("#version 330 core"));
 
     switch (format) {
     case libcamera::formats::NV12:
@@ -416,7 +413,7 @@ bool ViewFinderGLRenderer::selectFormat(const libcamera::PixelFormat &format)
 
 void ViewFinderGLRenderer::configureTexture(QOpenGLTexture &texture)
 {
-    //qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO;
 
     glBindTexture(GL_TEXTURE_2D, texture.textureId());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
@@ -538,8 +535,6 @@ bool ViewFinderGLRenderer::createFragmentShader()
     QString defines = fragmentShaderDefines_.join(QStringLiteral("\n")) + QStringLiteral("\n");
     QByteArray src = file.readAll();
     src.prepend(defines.toUtf8());
-
-    qDebug() << src;
 
     if (!fragmentShader_->compileSourceCode(src)) {
         qWarning() << "[ViewFinderGL]:" << fragmentShader_->log();
@@ -931,14 +926,16 @@ void ViewFinderGL::render(libcamera::FrameBuffer *buffer, Image *image, QList<QR
         window()->update();
 
     if (m_buffer)
-        Q_EMIT renderComplete(m_buffer);
-
+        Q_EMIT renderComplete(m_buffer);    
 }
 
 void ViewFinderGL::stop()
 {
     qDebug() << Q_FUNC_INFO;
     if (m_buffer) {
+        QList<QRectF> r;
+        m_renderer->preRender(m_buffer, nullptr, r);
+
         renderComplete(m_buffer);
         m_buffer = nullptr;
     }
