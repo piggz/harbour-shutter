@@ -195,10 +195,8 @@ bool CameraProxy::buildConfiguration(std::initializer_list<libcamera::StreamRole
 
     if (multiConfig) {
         qDebug() << "Multi-stream config....";
-
-        m_vfStreamConfig = &m_config->at(0);
-        m_stillStreamConfig = &m_config->at(1);
-
+        m_stillStreamConfig = &m_config->at(0);
+        m_vfStreamConfig = &m_config->at(1);
     } else {
         if (roles.size() == 2) {
             m_singleStream = true;
@@ -375,7 +373,7 @@ void CameraProxy::startViewFinder()
         qDebug() << f.first.toString().c_str();
     }
 
-    if (!buildConfiguration({libcamera::StreamRole::Viewfinder, libcamera::StreamRole::StillCapture}, true)) {
+    if (!buildConfiguration({libcamera::StreamRole::StillCapture, libcamera::StreamRole::Viewfinder}, true)) {
         qInfo() << "Failed to build configuration";
         return;
     }
@@ -411,7 +409,7 @@ void CameraProxy::startViewFinder()
         if (!stream) {
             return;
         }
-        qDebug() << "Allocating buffer for stream " << stream->configuration().toString().c_str() << stream << m_viewFinderStream << m_stillStream;
+        qDebug() << "Allocating buffer for stream " << stream->configuration().toString().c_str() << stream << "VF Ptr:" << m_viewFinderStream << "Still Ptr:" << m_stillStream;
 
         ret = m_allocator->allocate(stream);
         if (ret < 0) {
@@ -486,6 +484,7 @@ void CameraProxy::stop()
         setState(Stopping);
 
         m_currentCamera->stop();
+        m_viewFinder->stop();
 
         m_currentCamera->requestCompleted.disconnect(this);
 
@@ -818,8 +817,8 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
     file.close();
 
     EncoderJpeg jpeg;
-    libcamera::StreamConfiguration config = m_config->at(m_singleStream ? 0 : 1);
-    bool ok = jpeg.encode(config, buffer, m_mappedBuffers[buffer].get(), QString(m_saveFileName + QStringLiteral(".jpg")).toStdString());
+    libcamera::StreamConfiguration *config = m_stillStreamConfig;//m_config->at(m_singleStream ? 0 : 1);
+    bool ok = jpeg.encode(*config, buffer, m_mappedBuffers[buffer].get(), QString(m_saveFileName + QStringLiteral(".jpg")).toStdString());
     if (!ok) {
         qDebug() << "Unable to save jpeg file";
     }
