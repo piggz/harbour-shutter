@@ -116,7 +116,7 @@ private Q_SLOTS:
     void handleWindowChanged(QQuickWindow *win);
 
 Q_SIGNALS:
-    void renderComplete(libcamera::FrameBuffer *buffer);
+    void renderComplete();
 
 private:
     void releaseResources() override;

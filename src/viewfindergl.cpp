@@ -926,7 +926,7 @@ void ViewFinderGL::render(libcamera::FrameBuffer *buffer, Image *image, QList<QR
         window()->update();
 
     if (m_buffer)
-        Q_EMIT renderComplete(m_buffer);    
+        Q_EMIT renderComplete();
 }
 
 void ViewFinderGL::stop()
@@ -936,7 +936,7 @@ void ViewFinderGL::stop()
         QList<QRectF> r;
         m_renderer->preRender(m_buffer, nullptr, r);
 
-        renderComplete(m_buffer);
+        renderComplete();
         m_buffer = nullptr;
     }
 }
