@@ -444,9 +444,10 @@ void CameraProxy::startViewFinder()
     for (const auto &s : m_freeBuffers) {
         qDebug() << s.first->configuration().toString().c_str();
     }
+
     /* Create requests and fill them with buffers from the viewfinder. */
     while (!m_freeBuffers[m_viewFinderStream].isEmpty()) {
-        qDebug() << "Creating requests...";
+        qDebug() << "Creating vf requests...";
         libcamera::FrameBuffer *buffer = m_freeBuffers[m_viewFinderStream].dequeue();
         qDebug() << "Adding buffer" << buffer << "to VF requests";
 
@@ -459,9 +460,19 @@ void CameraProxy::startViewFinder()
 
         ret = request->addBuffer(m_viewFinderStream, buffer);
         if (ret < 0) {
-            qWarning() << "Can't set buffer for request";
+            qWarning() << "Can't set vf buffer for request";
         }
-
+        if (!m_singleStream) {
+            qDebug() << "Can handle 2 streams";
+            libcamera::FrameBuffer *stillBuffer = m_freeBuffers[m_stillStream].dequeue();
+            if (stillBuffer) {
+                qDebug() << "Adding buffer" << stillBuffer << "to VF requests";
+                ret = request->addBuffer(m_stillStream, buffer);
+                if (ret < 0) {
+                    qWarning() << "Can't set still buffer for request";
+                }
+            }
+        }
         m_requests.push_back(std::move(request));
     }
 
@@ -757,7 +768,7 @@ void CameraProxy::processCapture()
     }
 
     /* Process buffers. */
-    //qDebug() << "VF Buffers" << request->buffers().count(m_viewFinderStream) << " Still buffers " << request->buffers().count(m_stillStream);
+    qDebug() << "VF Buffers" << request->buffers().count(m_viewFinderStream) << " Still buffers " << request->buffers().count(m_stillStream);
     processViewfinder(request->findBuffer(m_viewFinderStream));
     processStill(request->findBuffer(m_stillStream));
 
@@ -772,6 +783,7 @@ void CameraProxy::processCapture()
 
 void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
 {
+    qDebug() << Q_FUNC_INFO << buffer;
     if (!buffer) return;
 
     //qDebug() << Q_FUNC_INFO << "Buffer request:" << buffer << buffer->request();//->toString().c_str();
@@ -799,9 +811,15 @@ void CameraProxy::processViewfinder(libcamera::FrameBuffer *buffer)
 
 void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
 {
-    //qDebug() << Q_FUNC_INFO << m_saveFileName << m_frame;
+    qDebug() << Q_FUNC_INFO << m_saveFileName << m_frame << buffer;
 
-    if (!buffer) return;
+    if (!buffer) {
+        return;
+    }
+
+    if (m_saveFileName.isEmpty()) {
+        return;
+    }
 
     if (m_singleStream && m_frame < 4) {
         qDebug() << "Skipping frame " << m_frame;
@@ -824,16 +842,17 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
     file.write((const char*)m_mappedBuffers[buffer].get()->data(0).data(), totalSize);
     file.close();
 
-    EncoderJpeg jpeg;
-    libcamera::StreamConfiguration *config = m_stillStreamConfig;//m_config->at(m_singleStream ? 0 : 1);
-    bool ok = jpeg.encode(*config, buffer, m_mappedBuffers[buffer].get(), QString(m_saveFileName + QStringLiteral(".jpg")).toStdString());
-    if (!ok) {
-        qDebug() << "Unable to save jpeg file";
-    }
-    qDebug() << "Saved JPEG as " << QString(m_saveFileName + QStringLiteral(".jpg"));
-
     {
         QMutexLocker locker(&m_mutex);
+        EncoderJpeg jpeg;
+        libcamera::StreamConfiguration *config = m_stillStreamConfig;//m_config->at(m_singleStream ? 0 : 1);
+        bool ok = jpeg.encode(*config, buffer, m_mappedBuffers[buffer].get(), QString(m_saveFileName + QStringLiteral(".jpg")).toStdString());
+        if (!ok) {
+            qDebug() << "Unable to save jpeg file";
+        }
+        qDebug() << "Saved JPEG as " << QString(m_saveFileName + QStringLiteral(".jpg"));
+
+
         m_freeBuffers[m_stillStream].enqueue(buffer);
     }
 
@@ -841,12 +860,16 @@ void CameraProxy::processStill(libcamera::FrameBuffer *buffer)
         renderComplete(buffer);
     }
 
+    m_saveFileName.clear();
     Q_EMIT stillCaptureFinished(m_saveFileName + QStringLiteral(".jpg"));
 }
 
 void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
 {
-    qDebug() << Q_FUNC_INFO << buffer << m_state << m_viewFinderStream << m_stillStream;
+    //qDebug() << Q_FUNC_INFO << buffer << m_state << m_viewFinderStream << m_stillStream;
+
+    static bool firstStill = true;
+
     libcamera::Request *request;
     {
         QMutexLocker locker(&m_mutex);
@@ -881,15 +904,32 @@ void CameraProxy::renderComplete(libcamera::FrameBuffer *buffer)
                 stillBuffer = m_freeBuffers[m_stillStream].dequeue();
             }
 
-            /* Create requests and fill them with buffers from the still stream. */
-            libcamera::FrameBuffer *buffer = m_freeBuffers[m_stillStream].dequeue();
+            if (stillBuffer) {
+                int ret = request->addBuffer(m_stillStream, buffer);
+                if (ret < 0) {
+                    qWarning() << "Can't set buffer for request, will try again";
+                }
 
-            int ret = request->addBuffer(m_stillStream, buffer);
-            if (ret < 0) {
-                qWarning() << "Can't set buffer for request";
-                return;
+            } else {
+                qWarning() << "No free buffer available for Still capture";
             }
 
+            if (firstStill) {
+                qInfo() << "First still frame, will queue another buffer";
+                if (!m_freeBuffers[m_stillStream].isEmpty()) {
+                    stillBuffer = m_freeBuffers[m_stillStream].dequeue();
+                }
+
+                if (stillBuffer) {
+                    int ret = request->addBuffer(m_stillStream, buffer);
+                    if (ret < 0) {
+                        qWarning() << "Can't set buffer for request";
+                    }
+                } else {
+                    qWarning() << "No free buffer available for Still capture";
+                }
+                firstStill = false;
+            }
         }
         m_captureStill = false;
     }
