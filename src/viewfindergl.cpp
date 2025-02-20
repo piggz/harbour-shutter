@@ -114,7 +114,7 @@ void ViewFinderGL::sync()
 
 void ViewFinderGLRenderer::init()
 {
-    qDebug() << Q_FUNC_INFO;
+    //qDebug() << Q_FUNC_INFO;
 
     if (!m_program) {
         QSGRendererInterface *rif = m_window->rendererInterface();
@@ -164,7 +164,7 @@ void ViewFinderGLRenderer::init()
 
 void ViewFinderGLRenderer::paint()
 {
-    qDebug() << Q_FUNC_INFO << image_;
+    //qDebug() << Q_FUNC_INFO << image_;
 
     if (!m_program) {
         return;
@@ -413,7 +413,7 @@ bool ViewFinderGLRenderer::selectFormat(const libcamera::PixelFormat &format)
 
 void ViewFinderGLRenderer::configureTexture(QOpenGLTexture &texture)
 {
-    qDebug() << Q_FUNC_INFO;
+    //qDebug() << Q_FUNC_INFO;
 
     glBindTexture(GL_TEXTURE_2D, texture.textureId());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
@@ -607,7 +607,7 @@ int ViewFinderGLRenderer::setFormat(const libcamera::PixelFormat &format, const 
 
 void ViewFinderGLRenderer::preRender(libcamera::FrameBuffer *buffer, Image *image, QList<QRectF>)
 {
-    qDebug() << Q_FUNC_INFO;
+    //qDebug() << Q_FUNC_INFO;
     buffer_ = buffer;
     image_ = image;
 }
@@ -918,7 +918,7 @@ int ViewFinderGL::setFormat(const libcamera::PixelFormat &format, const QSize &s
 
 void ViewFinderGL::render(libcamera::FrameBuffer *buffer, Image *image, QList<QRectF> rects)
 {
-    qDebug() << Q_FUNC_INFO << buffer << image << rects;
+    //qDebug() << Q_FUNC_INFO << buffer << image << rects;
     m_renderer->preRender(buffer, image, rects);
     m_buffer = buffer;
 
