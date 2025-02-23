@@ -737,10 +737,12 @@ void CameraProxy::setState(CameraState newState)
 
 void CameraProxy::requestComplete(libcamera::Request *request)
 {
-    //qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO;
 
-    if (request->status() == libcamera::Request::RequestCancelled)
+    if (request->status() == libcamera::Request::RequestCancelled) {
+        qDebug() << "Request cancelled";
         return;
+    }
 
     /*
      * We're running in the libcamera thread context, expensive operations
@@ -873,6 +875,11 @@ void CameraProxy::renderComplete()
     qDebug() << Q_FUNC_INFO << m_state << m_viewFinderStream << m_stillStream;
 
     static bool firstStill = true;
+    bool requestUsed = false;
+
+    if (m_state == Stopped || m_state == Stopping) {
+        return;
+    }
 
     // Create a new request for future buffers
     libcamera::Request *newRequest;
@@ -909,17 +916,20 @@ void CameraProxy::renderComplete()
                 newRequest->controls().set(c.first, c.second);
             }
         }
+        requestUsed = true;
     }
 
     if (m_singleStream) {
         if ( m_state == CapturingStill && m_frame < 4) {
             newRequest->addBuffer(m_stillStream, stillBuffer);
+            requestUsed = true;
         }
-    } else {
+    } else if (m_state == CapturingViewFinder) {
         qDebug() << "Submitting request for still image " << m_stillStream->configuration().toString().c_str();
 
         if (stillBuffer) {
             int ret = newRequest->addBuffer(m_stillStream, stillBuffer);
+            requestUsed = true;
             if (ret < 0) {
                 qWarning() << "Can't set buffer for request, will try again";
             }
@@ -936,6 +946,7 @@ void CameraProxy::renderComplete()
 
             if (stillBuffer) {
                 int ret = newRequest->addBuffer(m_stillStream, stillBuffer);
+                requestUsed = true;
                 if (ret < 0) {
                     qWarning() << "Can't set buffer for request";
                 }
@@ -948,5 +959,9 @@ void CameraProxy::renderComplete()
         m_captureStill = false;
     }
 
-    m_currentCamera->queueRequest(newRequest);
+    if (!requestUsed) {
+        m_freeQueue.enqueue(newRequest);
+    } else {
+        m_currentCamera->queueRequest(newRequest);
+    }
 }
