@@ -516,9 +516,6 @@ bool ViewFinderGLRenderer::createFragmentShader()
 {
     qDebug() << Q_FUNC_INFO << fragmentShaderFile_;
 
-    int attributeVertex;
-    int attributeTexture;
-
     /*
      * Create the fragment shader, compile it, and add it to the shader
      * program. The #define macros stored in fragmentShaderDefines_, if
@@ -586,6 +583,8 @@ int ViewFinderGLRenderer::setFormat(const libcamera::PixelFormat &format, const 
             m_program->release();
             m_program->removeShader(fragmentShader_.get());
             fragmentShader_.reset();
+            delete m_program;
+            m_program = nullptr;
         }
 
         if (!selectFormat(format)) {
