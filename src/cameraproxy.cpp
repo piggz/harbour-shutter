@@ -243,7 +243,7 @@ bool CameraProxy::configureCamera()
 
     if (m_vfStreamConfig) {
         m_vfStreamConfig->size = bestViewfinderResolution(m_vfStreamConfig->pixelFormat, m_currentStillResolution);
-        m_vfStreamConfig->pixelFormat = libcamera::PixelFormat::fromString(m_currentStillFormat.toStdString());
+        m_vfStreamConfig->pixelFormat = bestViewFinderFormat(libcamera::PixelFormat::fromString(m_currentStillFormat.toStdString()), m_viewFinder->nativeFormats());
     }
 
     libcamera::CameraConfiguration::Status validation = m_config->validate();
@@ -295,7 +295,7 @@ void CameraProxy::cacheFormats(libcamera::StreamRole role)
     }
 }
 
-libcamera::Size CameraProxy::bestViewfinderResolution(libcamera::PixelFormat format, libcamera::Size stillSize)
+libcamera::Size CameraProxy::bestViewfinderResolution(const libcamera::PixelFormat format, const libcamera::Size stillSize)
 {
     std::vector<libcamera::Size> sizesForFormat;
     libcamera::Size bestSize;
@@ -336,6 +336,27 @@ end:
     qDebug() << "Picked " << bestSize.toString().c_str();
 
     return bestSize;
+}
+
+libcamera::PixelFormat CameraProxy::bestViewFinderFormat(const libcamera::PixelFormat preferred, const QList<libcamera::PixelFormat> supported)
+{
+    qDebug() << Q_FUNC_INFO << preferred << supported;
+
+    bool match = supported.contains(preferred);
+    if (match) {
+        return preferred;
+    }
+
+    for (const libcamera::PixelFormat &format : supported) {
+        qDebug() << "Checking if format is supported " << format.toString().c_str();
+
+        auto match = m_viewFinderFormats.find(format);
+        if (match != m_viewFinderFormats.end()) {
+            return format;
+        }
+    }
+
+    return preferred;
 }
 
 void CameraProxy::setViewFinder(ViewFinder *vf)
@@ -388,18 +409,6 @@ void CameraProxy::startViewFinder()
 
     if (!m_viewFinder) {
         return;
-    }
-    // Use a format supported by the viewfinder if available. Default to JPEG
-    //if supported by the hardware as that is first on the list
-    for (const libcamera::PixelFormat &format : m_viewFinder->nativeFormats()) {
-        qDebug() << "Checking if format is supported " << format.toString().c_str();
-
-        auto match = m_viewFinderFormats.find(format);
-        if (match != m_viewFinderFormats.end()) {
-            m_vfStreamConfig->pixelFormat = format;
-            qDebug() << "Setting vf pixel format to " << format.toString().c_str();
-            break;
-        }
     }
 
     // Configure the viewfinder. If no color space is reported, default to sYCC.

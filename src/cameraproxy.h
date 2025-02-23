@@ -152,8 +152,8 @@ private:
     void requestComplete(libcamera::Request *request);
     void cacheFormats(libcamera::StreamRole role);
 
-    libcamera::Size bestViewfinderResolution(libcamera::PixelFormat format, libcamera::Size stillSize);
-
+    libcamera::Size bestViewfinderResolution(const libcamera::PixelFormat format, const libcamera::Size stillSize);
+    libcamera::PixelFormat bestViewFinderFormat(const libcamera::PixelFormat preferred, const QList<libcamera::PixelFormat> supported);
     std::unordered_map<Control, libcamera::ControlValue> m_controlValues;
 
     //Face detection
