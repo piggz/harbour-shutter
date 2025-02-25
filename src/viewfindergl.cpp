@@ -157,7 +157,7 @@ void ViewFinderGLRenderer::init()
         vertexBuffer_.release();
 
 
-        m_testPattern = (new QImage(QStringLiteral(":/assets/test_pattern.png")))->convertToFormat(QImage::Format_RGB888);
+        m_testPattern = (QImage(QStringLiteral(":/assets/test_pattern.png"))).convertToFormat(QImage::Format_RGB888);
     }
 }
 

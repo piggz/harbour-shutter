@@ -38,6 +38,10 @@ CameraProxy::~CameraProxy()
     qDebug() << Q_FUNC_INFO;
     m_currentCamera->stop();
     m_cameraManager.reset();
+
+    if (m_viewFinderStream) m_allocator->free(m_viewFinderStream);
+    if (m_stillStream) m_allocator->free(m_stillStream);
+    delete m_allocator;
 }
 
 bool CameraProxy::event(QEvent *e)
