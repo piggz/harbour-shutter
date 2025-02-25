@@ -255,7 +255,8 @@ bool CameraProxy::configureCamera()
 
     if (validation == libcamera::CameraConfiguration::Adjusted) {
         qInfo() << "Stream configuration adjusted to "
-                << m_vfStreamConfig->toString().c_str();
+                << (m_vfStreamConfig ? m_vfStreamConfig->toString().c_str() : "")
+                << (m_stillStreamConfig ? m_stillStreamConfig->toString().c_str() : "");
     }
 
     if (m_currentCamera->configure(m_config.get()) < 0) {
