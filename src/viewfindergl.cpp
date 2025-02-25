@@ -49,8 +49,7 @@ static const QList<libcamera::PixelFormat> supportedFormats{
 };
 
 ViewFinderGL::ViewFinderGL()
-    : m_renderer(nullptr), m_buffer(nullptr),
-      m_colorSpace(libcamera::ColorSpace::Raw)
+    : m_renderer(nullptr), m_buffer(nullptr)
 {
     qDebug() << Q_FUNC_INFO;
     connect(this, &QQuickItem::windowChanged, this, &ViewFinderGL::handleWindowChanged);
@@ -613,6 +612,8 @@ void ViewFinderGLRenderer::preRender(libcamera::FrameBuffer *buffer, Image *imag
 
 void ViewFinderGLRenderer::doRender()
 {
+    if (!image_) return;
+
     /* Stride of the first plane, in pixels. */
     unsigned int stridePixels;
 
@@ -904,11 +905,6 @@ int ViewFinderGL::setFormat(const libcamera::PixelFormat &format, const QSize &s
 {
     qDebug() << Q_FUNC_INFO;
 
-    m_format = format;
-    m_colorSpace = colorSpace;
-    m_size = size;
-    m_stride = stride;
-
     if (m_renderer) {
         m_renderer->setFormat(format, size, colorSpace, stride);
     }
@@ -917,15 +913,17 @@ int ViewFinderGL::setFormat(const libcamera::PixelFormat &format, const QSize &s
 
 void ViewFinderGL::render(libcamera::FrameBuffer *buffer, Image *image, QList<QRectF> rects)
 {
-    //qDebug() << Q_FUNC_INFO << buffer << image << rects;
+    qDebug() << Q_FUNC_INFO << buffer << image << rects;
+
+    if (m_buffer) {
+        Q_EMIT renderComplete();
+    }
+
     m_renderer->preRender(buffer, image, rects);
     m_buffer = buffer;
 
     if (window())
         window()->update();
-
-    if (m_buffer)
-        Q_EMIT renderComplete();
 }
 
 void ViewFinderGL::stop()
@@ -938,13 +936,5 @@ void ViewFinderGL::stop()
         renderComplete();
         m_buffer = nullptr;
     }
-}
 
-QImage ViewFinderGL::getCurrentImage()
-{
-    qDebug() << Q_FUNC_INFO;
-
-    QMutexLocker locker(&mutex_);
-
-    return QImage(); //TODO
 }

@@ -31,5 +31,8 @@ public:
     virtual void render(libcamera::FrameBuffer *buffer, Image *image, QList<QRectF>) = 0;
     virtual void stop() = 0;
 
-    virtual QImage getCurrentImage() = 0;
+    virtual QImage getCurrentImage()
+    {
+        return QImage();
+    }
 };

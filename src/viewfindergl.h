@@ -106,7 +106,6 @@ public:
                   unsigned int stride) override;
     void render(libcamera::FrameBuffer *buffer, Image *image, QList<QRectF>) override;
     void stop() override;
-    QImage getCurrentImage() override;
 
 public Q_SLOTS:
     void sync();
@@ -124,12 +123,6 @@ private:
 
     /* Captured image size, format and buffer */
     libcamera::FrameBuffer *m_buffer;
-    libcamera::PixelFormat m_format;
-    libcamera::ColorSpace m_colorSpace;
-    QSize m_size;
-    unsigned int m_stride;
-    Image *image_ = nullptr;
-    QMutex mutex_; /* Prevent concurrent access to image_ */
 
 };
 
