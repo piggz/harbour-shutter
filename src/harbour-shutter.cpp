@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    CameraModel cameraModel(0, cm);
+    CameraModel cameraModel(nullptr, cm);
 
     qmlRegisterType<FocusModel>("uk.co.piggz.shutter", 1, 0, "FocusModel");
     qmlRegisterType<FlashModel>("uk.co.piggz.shutter", 1, 0, "FlashModel");

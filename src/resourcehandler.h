@@ -15,7 +15,7 @@ class ResourceHandler : public QObject
 {
     Q_OBJECT
 public:
-    explicit ResourceHandler(QObject *parent = 0);
+    explicit ResourceHandler(QObject *parent = nullptr);
 
 public Q_SLOTS:
     void acquire();

@@ -16,9 +16,9 @@ public:
     };
 
     explicit CameraModel(QObject *parent, std::shared_ptr<libcamera::CameraManager> cameraManager);
-    virtual QHash<int, QByteArray> roleNames() const;
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual QVariant data(const QModelIndex &index, int role) const;
+    virtual QHash<int, QByteArray> roleNames() const override;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    virtual QVariant data(const QModelIndex &index, int role) const override;
     Q_INVOKABLE virtual QVariant get(int idx);
 
 private:

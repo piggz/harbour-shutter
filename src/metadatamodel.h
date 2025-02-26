@@ -15,9 +15,9 @@ public:
         MetadataValue
     };
     MetadataModel();
-    QHash<int, QByteArray> roleNames() const;
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
+    QHash<int, QByteArray> roleNames() const override;
+    int rowCount(const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
     Q_INVOKABLE void setPlayer(QObject *player);
 public Q_SLOTS:
     void getMetadata(bool available);

@@ -20,9 +20,9 @@ public:
     ExifModel();
     ~ExifModel();
     bool loadLibexif();
-    QHash<int, QByteArray> roleNames() const;
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
+    QHash<int, QByteArray> roleNames() const override;
+    int rowCount(const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
     QString getSource() const { return source; }
     void setSource(const QString &path);
 private:

@@ -18,9 +18,9 @@ public:
         FormatValue
     };
 
-    virtual QHash<int, QByteArray> roleNames() const;
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual QVariant data(const QModelIndex &index, int role) const;
+    virtual QHash<int, QByteArray> roleNames() const override;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    virtual QVariant data(const QModelIndex &index, int role) const override;
 
     void setCameraProxy(std::shared_ptr<CameraProxy> cameraProxy);
     Q_INVOKABLE QString defaultFormat() const;
