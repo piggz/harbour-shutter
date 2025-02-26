@@ -25,8 +25,8 @@ find_package(KF6 REQUIRED COMPONENTS
     CoreAddons
 )
 
-pkg_check_modules(LIBCAMERA REQUIRED libcamera)
-pkg_check_modules(OPENCV REQUIRED opencv4)
+pkg_check_modules(LIBCAMERA REQUIRED IMPORTED_TARGET GLOBAL libcamera)
+pkg_check_modules(OPENCV REQUIRED IMPORTED_TARGET GLOBAL opencv4)
 
 #ecm_find_qmlmodule(org.kde.kirigami REQUIRED)
 

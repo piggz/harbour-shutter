@@ -198,8 +198,8 @@ target_link_libraries(harbour-shutter
     Qt6::Widgets
     Qt6::Multimedia
     Qt6::GuiPrivate
-    ${LIBCAMERA_LIBRARIES}
-    ${OPENCV_LIBRARIES}
+    PkgConfig::LIBCAMERA
+    PkgConfig::OPENCV
     dl
 )
 
