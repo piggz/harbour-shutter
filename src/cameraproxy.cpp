@@ -513,7 +513,6 @@ void CameraProxy::stop()
 {
     qDebug() << Q_FUNC_INFO;
     if (m_currentCamera) {
-        qDebug() << "stopping";
         setState(Stopping);
 
         m_currentCamera->stop();

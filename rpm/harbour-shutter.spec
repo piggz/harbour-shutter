@@ -42,6 +42,8 @@ BuildRequires:  opencv-devel
 BuildRequires:  qt6-rpm-macros
 BuildRequires:  kf6-extra-cmake-modules
 BuildRequires:  kf6-kcoreaddons-devel
+BuildRequires:  qt6-qtshadertools-devel
+BuildRequires:  qt6-qtbase-private-devel
 
 %description
 Shutter is a camera application built ontop of libcamera.

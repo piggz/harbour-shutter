@@ -7,7 +7,7 @@
 #include <QImage>
 
 #include <libcamera/camera.h>
-#include <libcamera/libcamera/formats.h>
+#include <libcamera/formats.h>
 
 #include "image.h"
 #include "format_converter.h"

@@ -10,9 +10,9 @@
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
-#include <libcamera/libcamera/color_space.h>
-#include <libcamera/libcamera/framebuffer.h>
-#include <libcamera/libcamera/pixel_format.h>
+#include <libcamera/color_space.h>
+#include <libcamera/framebuffer.h>
+#include <libcamera/pixel_format.h>
 
 class QOpenGLShaderProgram;
 class QOpenGLBuffer;

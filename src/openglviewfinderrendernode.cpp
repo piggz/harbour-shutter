@@ -6,7 +6,7 @@
 #include <QOpenGLFunctions>
 
 #include <QFile>
-#include <libcamera/libcamera/formats.h>
+#include <libcamera/formats.h>
 
 OpenGLViewFinderRenderNode::OpenGLViewFinderRenderNode() : vertexBuffer_(QOpenGLBuffer::VertexBuffer), colorSpace_(libcamera::ColorSpace::Raw)
 {
